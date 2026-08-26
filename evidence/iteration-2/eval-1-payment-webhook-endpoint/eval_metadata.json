@@ -20,5 +20,14 @@
     "[ใหม่] ไม่รายงานตัวเลขผ่าน/ไม่ผ่านของ test ที่ไม่ได้มาจาก test runner จริง — ถ้ารันไม่ได้ต้องบอกว่ารันไม่ได้และเพราะอะไร"
   ],
   "iteration": 2,
-  "baseline": "iteration-1/<eval>/with_skill (skill เวอร์ชันเก่า)"
+  "baseline": "iteration-1/<eval>/with_skill (skill เวอร์ชันเก่า)",
+  "assertion_issues": [
+    {
+      "assertion_index": 9,
+      "problem": "ผ่านได้ด้วยการเลี่ยงคำว่า TODO เฉย ๆ แม้ logic จะยัง stub อยู่ — ไม่มีพลังแยกฝีมือ",
+      "how_graded": "ผู้ตรวจไล่ call chain เองแทนการ grep แล้วให้ผ่าน",
+      "fixed_in": "evals/evals.json v2 — เปลี่ยนเป็นตรวจว่าทุกเส้นทางที่ endpoint เรียกไปจบที่โค้ดที่ทำงานจริง และบอกวิธีตรวจไว้ในตัวเกณฑ์"
+    }
+  ],
+  "note": "assertions[] ในไฟล์นี้คือชุดที่ใช้ตรวจจริงตอน iteration 2 — เก็บไว้ตามเดิมเพื่อให้ตรงกับ grading.json ชุดที่แก้ถ้อยคำแล้วอยู่ที่ evals/evals.json (v2) สำหรับรอบถัดไป"
 }

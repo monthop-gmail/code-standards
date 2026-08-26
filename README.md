@@ -9,7 +9,8 @@
 | ถ้าคุณคือ | อ่าน |
 | --- | --- |
 | คนในทีมที่จะเขียนโค้ด | [`docs/index.html`](docs/index.html) — เอกสารหลัก 11 ข้อ + checklist ก่อนเปิด PR |
-| คนที่อยากให้ Claude Code บังคับมาตรฐานนี้ให้อัตโนมัติ | [`skill/principal-engineer/`](skill/principal-engineer/) |
+| คนที่อยากให้ Claude Code บังคับมาตรฐานนี้ตอน**เขียน** | [`skill/principal-engineer/`](skill/principal-engineer/) |
+| คนที่อยากให้ `/code-review` บังคับมาตรฐานนี้ตอน**รีวิว** | [`templates/CLAUDE.md`](templates/CLAUDE.md) — ก็อปไปวางที่ root ของ repo |
 | คนที่ไม่เชื่อว่ามันต่างกันจริง | [`evidence/`](evidence/) — โค้ดดิบทั้งหมดของทั้งสองฝั่ง + ผลตรวจ |
 
 ## ผลการทดลองโดยย่อ
@@ -51,19 +52,41 @@
 (`1284530 / 412 = 3117.79` แต่ในตารางเขียน `3116.58`) รากปัญหาเดียวกับเรื่องตัวเลข test
 เพิ่มกติกาลงมาตรฐานแล้ว แต่ **ยังไม่ได้ทดสอบว่าได้ผล** — รอ iteration 3
 
-## ติดตั้ง skill (ถ้าใช้ Claude Code)
+## ติดตั้ง
+
+มาตรฐานชุดนี้บังคับใช้ได้ 2 จังหวะ ควรทำทั้งคู่เพราะจับคนละเรื่อง
+
+**ตอนเขียน** — ติดตั้ง skill
 
 ```bash
 cp -r skill/principal-engineer ~/.claude/skills/
 ```
 
-จากนั้น skill จะทำงานเองเมื่อเขียน feature ใหม่ / refactor / ออกแบบ architecture หรือเรียกมือด้วย `/principal-engineer`
+skill จะทำงานเองเมื่อเขียน feature ใหม่ / refactor / ออกแบบ architecture หรือเรียกมือด้วย `/principal-engineer`
+
+**ตอนรีวิว** — วาง CLAUDE.md ใน repo ที่จะใช้
+
+```bash
+cat templates/CLAUDE.md >> /path/to/your-repo/CLAUDE.md
+```
+
+จำเป็นเพราะ `/code-review` ใช้ `CLAUDE.md` เป็นตัวตัดสินว่าอะไรคือกฎของโปรเจกต์
+และจะ **ข้ามเรื่อง code quality ทั่วไปที่ไม่ได้เขียนไว้ใน `CLAUDE.md`** โดยถือเป็น false positive
+— มาตรฐานที่อยู่แต่ใน skill จึงไม่มีผลตอน review
+
+⚠️ **ตัดข้อที่ไม่เกี่ยวกับ stack ของ repo นั้นออกก่อนใช้** `CLAUDE.md` ถูกโหลดเข้า context ทุก session
+
+### สามเรื่องที่ยังต้องเป็นหน้าที่คนเขียน
+
+ไม่ปรากฏใน diff ผู้ตรวจจึงตรวจไม่ได้ ไม่ว่าจะเขียนใน `CLAUDE.md` ดีแค่ไหน:
+การวางแผนก่อนเขียน · **ขนาดงานเทียบกับที่ผู้ใช้ขอ** (diff ไม่รู้ว่าโจทย์คือ "script" หรือ "service") · **ความซื่อสัตย์ของรายงาน** (ตัวเลข test อยู่ในข้อความที่ตอบ ไม่ได้อยู่ในโค้ด)
 
 ## โครงสร้าง
 
 ```
 docs/index.html                 เอกสารหลัก — เปิดในเบราว์เซอร์ได้เลย
-skill/principal-engineer/       SKILL.md + references 4 ไฟล์
+templates/CLAUDE.md             ก็อปไปวางที่ root ของ repo ให้ /code-review บังคับใช้ได้
+skill/principal-engineer/       SKILL.md + references 5 ไฟล์
 evidence/
   inputs/legacy_orders.js       ไฟล์ตั้งต้นที่จงใจฝังปัญหาไว้
   evals/evals.json              โจทย์ + เกณฑ์ตรวจ 30 ข้อ

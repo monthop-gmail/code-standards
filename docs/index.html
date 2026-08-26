@@ -286,6 +286,7 @@ a{color:var(--accent)}
     <p class="grp">ก่อน merge</p>
     <ol>
       <li><a href="#r11">11 · รายงานผลตามจริง</a></li>
+      <li><a href="#review-tools">⇄ /code-review</a></li>
       <li><a href="#checklist">Checklist</a></li>
     </ol>
     <p class="grp">ภาคผนวก</p>
@@ -680,6 +681,34 @@ const SHIPPING_FEE_MINOR = <span class="mark-good">6_000</span>;             <sp
           </div>
         </div>
         <p class="verdict">กติกาที่เพิ่มเข้าไปคือตารางสามแถว: รันได้ → บอกผลจริง · รันไม่ได้ → บอกว่ารันไม่ได้และเพราะอะไร ห้ามพิมพ์ตัวเลข · รันได้บางส่วน → แยกให้ชัดว่าส่วนไหนรัน พร้อมประโยคที่ปิดช่องโหว่ตรง ๆ ว่า <b>การนับ <code>it()</code> ในไฟล์เอาเอง ไม่นับว่าเป็นการรัน test</b></p>
+      </section>
+
+      <section id="review-tools">
+        <h3><span class="n">⇄</span>ให้ /code-review กับ /security-review ทำงานแทน — แต่ต้องบอกมันก่อน</h3>
+        <p>Claude Code มีคำสั่ง <code>/code-review</code> (ตรวจ diff หรือ PR) และ <code>/security-review</code> (ตรวจ pending changes ทั้ง branch) อยู่แล้ว ทั้งคู่ละเอียดกว่าการไล่ checklist ด้วยมือ <b>ใช้มันก่อนเปิด PR ทุกครั้ง</b></p>
+        <div class="why"><b>แต่มีเรื่องที่ต้องรู้:</b> <code>/code-review</code> ใช้ <code>CLAUDE.md</code> ของ repo เป็นตัวตัดสินว่าอะไรคือกฎของโปรเจกต์ และจะ<b>ข้ามเรื่อง code quality ทั่วไปที่ไม่ได้เขียนไว้ใน <code>CLAUDE.md</code></b> โดยถือเป็น false positive — มาตรฐานที่อยู่แต่ในเอกสารหน้านี้จึงไม่มีผลตอน review</div>
+
+        <div class="ev two">
+          <div class="panel bad">
+            <div class="panel-head"><span class="tag">ไม่มีใน CLAUDE.md</span><span class="src">ผลตอน /code-review</span></div>
+<pre><code>PR ต่อ string เข้า SQL
+  <span class="mark-bad">→ ไม่ถูกทัก</span>  (ถือเป็น general code quality)
+
+PR เปลี่ยน total &gt; 1500 เป็น &gt;=
+  <span class="mark-bad">→ ไม่ถูกทัก</span>  (ดูเหมือนตั้งใจ)</code></pre>
+          </div>
+          <div class="panel good">
+            <div class="panel-head"><span class="tag">เขียนไว้ใน CLAUDE.md</span><span class="src">templates/CLAUDE.md ใน repo นี้</span></div>
+<pre><code>PR ต่อ string เข้า SQL
+  <span class="mark-good">→ ถูกทักพร้อมอ้างกฎ</span> ที่บรรทัดนั้น
+
+PR เปลี่ยน total &gt; 1500 เป็น &gt;=
+  <span class="mark-good">→ blocking issue</span> เพราะกฎเขียนไว้ว่า
+     เปลี่ยนพฤติกรรมต้องบอกใน PR description</code></pre>
+          </div>
+        </div>
+        <p class="verdict">ในรีโปนี้มีไฟล์ <code>templates/CLAUDE.md</code> ที่ก็อปไปวางที่ root ของ repo ได้เลย — คัดมาเฉพาะข้อที่ผู้ตรวจชี้ได้จาก diff จริง ๆ ไม่ได้ยกมาทั้ง 11 ข้อ เพราะ <code>CLAUDE.md</code> ถูกโหลดเข้า context ทุก session ยาวไปคือจ่ายค่า token เปล่าทุกครั้งที่เปิดงาน <b>ตัดหมวดที่ไม่เกี่ยวกับ stack ของ repo นั้นออกก่อนใช้</b></p>
+        <p class="verdict">สามเรื่องที่ยังต้องเป็นหน้าที่คนเขียน เพราะไม่ปรากฏใน diff ให้ผู้ตรวจเห็น: <b>การวางแผนก่อนเขียน</b>, <b>ขนาดงานเทียบกับที่ผู้ใช้ขอ</b> (ข้อ <a href="#r2">02</a> — diff ไม่รู้ว่าโจทย์คือ "script" หรือ "service") และ <b>ความซื่อสัตย์ของรายงาน</b> (ข้อ <a href="#r11">11</a> — ตัวเลข test อยู่ในข้อความที่ตอบ ไม่ได้อยู่ในโค้ด)</p>
       </section>
 
       <section id="checklist">

@@ -1,0 +1,17 @@
+{
+  "eval_id": 1,
+  "eval_name": "payment-webhook-endpoint",
+  "prompt": "ทำ endpoint รับ webhook จาก payment gateway หน่อย พอจ่ายเงินสำเร็จให้อัพเดทสถานะ order เป็น paid แล้วส่งอีเมลยืนยัน ใช้ Node + TypeScript + Express นะ",
+  "assertions": [
+    "verify signature ของ webhook ก่อนประมวลผล payload",
+    "มีกลไก idempotency กัน webhook ที่ส่งซ้ำไม่ให้อัพเดท/ส่งอีเมลซ้ำ",
+    "ไม่มี secret hardcode — อ่านจาก env var และมี .env.example",
+    "validate payload ด้วย schema (zod หรือเทียบเท่า) ไม่ใช่ใช้ req.body ดิบ ๆ",
+    "TypeScript strict และไม่มี any ในโค้ดที่เขียนเอง",
+    "ส่งอีเมลล้มเหลวไม่ทำให้สถานะ order ที่อัพเดทแล้วพัง (แยกออกจาก critical path หรือจัดการ error ชัดเจน)",
+    "มีไฟล์ test ที่ครอบเคสสำคัญ (signature ผิด / ส่งซ้ำ)",
+    "ตอบ HTTP status code ถูกต้อง (2xx เมื่อรับสำเร็จ, 4xx เมื่อ signature ผิด)",
+    "ไม่มี TODO / placeholder / ฟังก์ชันที่ยังไม่ implement",
+    "RESPONSE.md บอกชัดว่าต้องตั้ง env var อะไรบ้างและเหลืออะไรต้องทำต่อ"
+  ]
+}

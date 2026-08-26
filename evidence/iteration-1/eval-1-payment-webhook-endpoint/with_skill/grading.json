@@ -1,0 +1,60 @@
+{
+  "expectations": [
+    {
+      "text": "verify signature ของ webhook ก่อนประมวลผล payload",
+      "passed": true,
+      "evidence": "src/http/routes/payment-webhook.ts:50-64 calls verifyWebhookSignature({rawBody, header: req.get(SIGNATURE_HEADER), ...}) and returns 401 before any JSON.parse (line 68) or schema parse (line 75). src/webhook/signature.ts:99-106 computes HMAC-SHA256 over `${timestamp}.` + rawBody and compares via timingSafeEqual."
+    },
+    {
+      "text": "มีกลไก idempotency กัน webhook ที่ส่งซ้ำไม่ให้อัพเดท/ส่งอีเมลซ้ำ",
+      "passed": true,
+      "evidence": "src/infrastructure/postgres/order-repository.ts:48-55 `INSERT INTO payment_events ... ON CONFLICT (event_id) DO NOTHING RETURNING event_id` returns false on a duplicate; migrations/001:37 makes event_id the PRIMARY KEY. The claim runs inside the same transaction as markPaid (src/application/confirm-order-payment.ts:91-127), and a duplicate short-circuits before the email (line 80 only runs for kind 'paid'). Also SELECT ... FOR UPDATE (order-repository.ts:58-65) and a partial unique index on payment_id."
+    },
+    {
+      "text": "ไม่มี secret hardcode — อ่านจาก env var และมี .env.example",
+      "passed": true,
+      "evidence": ".env.example present with PAYMENT_WEBHOOK_SECRET=, DATABASE_URL=, SMTP_URL= left blank and commented. src/config.ts:9-25 parses every secret from process.env via zod (PAYMENT_WEBHOOK_SECRET: z.string().min(32)) and throws at boot when missing. grep for secret literals in src/ found none; the only literal secret is a test constant in tests/."
+    },
+    {
+      "text": "validate payload ด้วย schema (zod หรือเทียบเท่า) ไม่ใช่ใช้ req.body ดิบ ๆ",
+      "passed": true,
+      "evidence": "src/webhook/schema.ts:14-26 zod object with bounded strings, int/nonnegative amount, 3-letter currency regex; parsePaymentNotification() returns a typed camelCase PaymentNotification. The route never passes req.body onward — it JSON.parses the raw Buffer into `unknown` (payment-webhook.ts:66-68) and only the parsed result reaches the use case (line 93)."
+    },
+    {
+      "text": "TypeScript strict และไม่มี any ในโค้ดที่เขียนเอง",
+      "passed": true,
+      "evidence": "tsconfig.json:9-15 strict:true plus noUncheckedIndexedAccess, noImplicitOverride, noUnusedLocals/Parameters, verbatimModuleSyntax. grep -rn '\\bany\\b' over src/ returns only the word 'any' inside an English comment (src/domain/money.ts:26); eslint.config.js:14 sets '@typescript-eslint/no-explicit-any': 'error'. The two hits in tests are the vitest matcher expect.any(String)."
+    },
+    {
+      "text": "ส่งอีเมลล้มเหลวไม่ทำให้สถานะ order ที่อัพเดทแล้วพัง (แยกออกจาก critical path หรือจัดการ error ชัดเจน)",
+      "passed": true,
+      "evidence": "src/application/confirm-order-payment.ts:80 sends the email only AFTER applyInTransaction has committed; sendConfirmation (135-155) wraps it in try/catch, logs 'confirmation email failed; order stays paid and awaits the email retry sweep' and returns false. The route still answers 200 with emailDelivered:false. migrations/001:31-32 adds a partial index on (status='paid' AND confirmation_email_sent_at IS NULL) as the retry queue."
+    },
+    {
+      "text": "มีไฟล์ test ที่ครอบเคสสำคัญ (signature ผิด / ส่งซ้ำ)",
+      "passed": true,
+      "evidence": "5 test files, 674 lines. tests/webhook-signature.test.ts (10 cases: tampered body, wrong secret, stale/future timestamp, malformed header, truncated hash). tests/payment-webhook.route.test.ts (12 cases incl. 401 on missing/tampered signature, replayed delivery). tests/confirm-order-payment.test.ts (10 cases incl. duplicate event id, same payment under a new event id, SMTP failure leaves the order paid)."
+    },
+    {
+      "text": "ตอบ HTTP status code ถูกต้อง (2xx เมื่อรับสำเร็จ, 4xx เมื่อ signature ผิด)",
+      "passed": true,
+      "evidence": "payment-webhook.ts:62 res.status(401) 'invalid_signature'; :71 and :79 400 for non-JSON / schema failure; :89 200 for ignored event types; :94 200 with the outcome for processed/duplicate/already_applied. Documented policy in the header comment (lines 18-25) and mirrored in RESPONSE.md's table."
+    },
+    {
+      "text": "ไม่มี TODO / placeholder / ฟังก์ชันที่ยังไม่ implement",
+      "passed": true,
+      "evidence": "grep for TODO/FIXME/XXX/'not implemented'/placeholder over all .ts/.js returns nothing. Every port has a real implementation: PostgresOrderRepository with parameterised SQL, NodemailerEmailSender with real transport and timeouts, plus migrations/001_orders_and_payment_events.sql. No throwing stubs."
+    },
+    {
+      "text": "RESPONSE.md บอกชัดว่าต้องตั้ง env var อะไรบ้างและเหลืออะไรต้องทำต่อ",
+      "passed": true,
+      "evidence": "RESPONSE.md:66-70 'ต้องตั้งค่าเพิ่มก่อนใช้': npm install -> cp .env.example .env -> เติมค่า -> npm run migrate, plus which two files to adapt per gateway and how to merge into an existing orders table. RESPONSE.md:72-76 'สิ่งที่ยังไม่ได้ทำ (ตั้งใจ)' lists the email retry sweeper, rate limiting and refund/payment.failed. Note: the individual variable names are delegated to the annotated .env.example rather than repeated in RESPONSE.md."
+    }
+  ],
+  "summary": {
+    "passed": 10,
+    "failed": 0,
+    "total": 10,
+    "pass_rate": 1.0
+  }
+}

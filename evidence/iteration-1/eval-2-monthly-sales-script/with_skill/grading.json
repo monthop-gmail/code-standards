@@ -1,0 +1,50 @@
+{
+  "expectations": [
+    {
+      "text": "type hint ครบทุก function signature",
+      "passed": false,
+      "evidence": "AST sweep of every def under with_skill/outputs: 25 of 67 functions are fully annotated. All 25 non-test functions in src/monthly_sales_report/ are complete (e.g. db.py:37 'def fetch_monthly_totals(config: AppConfig, period: MonthRange) -> list[MonthlyTotals]:'), but all 42 test functions lack a return annotation, e.g. tests/test_report.py:28 'def test_empty_result_still_returns_every_month():' and tests/test_periods.py:106 'def test_is_current_month():'. Three also lack parameter annotations: tests/test_config.py:24 'def test_missing_dsn_is_a_config_error(env):', tests/test_config.py:40 '(raw)', tests/test_periods.py:27 '(text)'. The assertion says ครบทุก (every) signature, so this fails on the letter; note also pyproject.toml declares [tool.mypy] strict = true with files = [\"src\", \"tests\"], which those 42 defs would violate."
+    },
+    {
+      "text": "ไม่มี credential hardcode — อ่าน connection string/DSN จาก env var",
+      "passed": true,
+      "evidence": "src/monthly_sales_report/config.py:15 'DSN_ENV_VAR = \"DATABASE_URL\"'; config.py:41-46 reads it from os.environ and raises ConfigError when empty. No literal DSN/password anywhere in src/. config.py:78 mask_dsn() strips the password before any log line (db.py:52 passes mask_dsn(config.dsn) into logger.info). .env.example carries only 'CHANGE_ME'. Deliberately refuses a --dsn CLI flag (config.py:3-4: argv leaks via ps aux / shell history)."
+    },
+    {
+      "text": "aggregate ยอดขายที่ฝั่ง DB ด้วย GROUP BY ไม่ใช่ดึงทุกแถวมารวมใน python",
+      "passed": true,
+      "evidence": "src/monthly_sales_report/db.py:22-34 MONTHLY_SALES_SQL: 'count(*)::bigint AS order_count, count(DISTINCT o.customer_id)::bigint, coalesce(sum(o.total_amount), 0)::numeric AS gross_sales ... GROUP BY 1 ORDER BY 1'. Python only fills gap months and computes MoM over the already-aggregated rows (report.py:43 build_report). db.py:40 docstring: 'จำนวนแถวที่วิ่งกลับมาเท่ากับจำนวนเดือน ไม่ใช่จำนวนออเดอร์'."
+    },
+    {
+      "text": "query เป็น parameterized ไม่ต่อ string",
+      "passed": true,
+      "evidence": "src/monthly_sales_report/db.py:22-34 is a module-level constant with named placeholders %(timezone)s, %(start)s, %(end)s, %(statuses)s, executed at db.py:66 'cursor.execute(MONTHLY_SALES_SQL, params)' with the dict built at db.py:43-48. No f-string, %, .format() or concatenation touches the SQL text anywhere in src/."
+    },
+    {
+      "text": "ใช้ Decimal หรือ NUMERIC กับจำนวนเงิน ไม่ใช่ float",
+      "passed": true,
+      "evidence": "SQL casts sum to ::numeric (db.py:27); MonthlyTotals.gross_sales / MonthlySalesRow.gross_sales, avg_order_value, mom_growth_pct are all typed Decimal (report.py:28, 38-40); report.py:109 _to_money quantizes with Decimal('0.01') ROUND_HALF_UP; division uses Decimal(order_count) (report.py:95) and Decimal(100) (report.py:105); csv_export.py:53 _decimal_cell writes f'{value:f}'. grep for 'float' over src/ returns only the prose in report.py:3 — zero float in the DB-to-CSV path."
+    },
+    {
+      "text": "connection/cursor ถูกปิดเสมอ (context manager หรือ finally)",
+      "passed": true,
+      "evidence": "src/monthly_sales_report/db.py:59-67: 'with psycopg.connect(...) as connection:' nested with 'with connection.cursor(row_factory=class_row(MonthlyTotals)) as cursor:' — psycopg3's connection context manager closes the connection on exit, including on the exception paths handled at db.py:68-73. The file handle in csv_export.py:30 is likewise a 'with destination.open(...)'."
+    },
+    {
+      "text": "ไม่มี except เปล่าที่กลืน error",
+      "passed": true,
+      "evidence": "grep for 'except:' / 'except Exception' over outputs returns nothing. Every handler is narrow and re-raises with cause: db.py:68 'except psycopg.OperationalError as cause: raise DatabaseError(...) from cause', db.py:72 'except psycopg.Error as cause: ... from cause', config.py:51 'except (ZoneInfoNotFoundError, ValueError) as cause: ... from cause', config.py:71 'except ValueError as cause: ... from cause', csv_export.py:32 'except OSError as cause: raise ExportError(...) from cause'. cli.py:89 catches only the SalesReportError base and maps it to exit code 1, printing the message to stderr; unexpected exceptions still surface as tracebacks (errors.py:3-4 states this intent). No 'pass'/'continue' swallow."
+    },
+    {
+      "text": "ไม่มี TODO / placeholder",
+      "passed": true,
+      "evidence": "grep -riE 'todo|fixme|xxx|placeholder|not implemented|NotImplemented' over with_skill/outputs returns zero hits. Every function has a real body; no stub raises NotImplementedError. The only fill-me token is 'CHANGE_ME' inside .env.example, which is the intended purpose of an example env template, not an unfinished code path."
+    },
+    {
+      "text": "มี docstring อธิบาย public function และระบุสมมติฐานเรื่อง schema",
+      "passed": true,
+      "evidence": "Public API functions carry docstrings: db.py:38 fetch_monthly_totals, report.py:44 build_report, periods.py:18 parse_month, periods.py:74 to_utc_bounds, periods.py:90 resolve_month_range, csv_export.py:27 write_csv, csv_export.py:37 write_csv_stream, config.py:35 AppConfig.from_env, config.py:79 mask_dsn, plus module docstrings on all 7 modules. Schema assumptions are stated explicitly: db.py:17-21 comments name the counted statuses and the timezone-truncation rule, the SQL names sales.orders and its columns, and README.md carries the full assumed DDL plus an assumption/where-to-fix table (statuses, total_amount is order-level net, Thai-time month cut, single currency, refunds). Caveat: the DDL lives in README.md and comments rather than inside a docstring, and a handful of small public functions (cli.build_parser, cli.main, periods.first_day_of_month, periods.is_current_month, report.total_gross_sales) have no docstring."
+    }
+  ],
+  "summary": {"passed": 8, "failed": 1, "total": 9, "pass_rate": 0.89}
+}

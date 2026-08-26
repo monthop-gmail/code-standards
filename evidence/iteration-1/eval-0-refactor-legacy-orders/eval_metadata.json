@@ -1,0 +1,18 @@
+{
+  "eval_id": 0,
+  "eval_name": "refactor-legacy-orders",
+  "prompt": "ไฟล์ orders route นี้มันรกมาก อ่านไม่รู้เรื่องเลย ช่วยแก้ให้หน่อย",
+  "assertions": [
+    "ไม่มี DB password หรือ API key hardcode อยู่ในโค้ดผลลัพธ์ (ย้ายไป env var)",
+    "SQL ทุก query เป็น parameterized — ไม่มีการต่อ string ของ user input เข้าไปใน query",
+    "แก้ N+1 ใน GET /orders/:id แล้ว (ไม่มี query ยิงต่อ product ทีละแถวในลูป)",
+    "business logic การคิดราคา/ส่วนลด ถูกแยกออกจาก route handler ไปอยู่คนละไฟล์/module",
+    "ไม่มี catch เปล่า และ error ตอบกลับด้วย HTTP status code ที่ถูกต้อง ไม่ใช่ 200 ทุกกรณี",
+    "magic number (0.95, 0.9, category 3, 1500, 60) ถูกยกเป็น named constant หรือ config",
+    "มี input validation ของ req.body ก่อนนำไปใช้",
+    "การส่งอีเมลล้มเหลว ไม่ทำให้ order ที่สร้างสำเร็จแล้วพังหรือถูกกลืนเงียบ ๆ",
+    "ไม่ over-engineer — ไม่มี DI container / abstract class / interface ที่มี implementation เดียว",
+    "แจ้งผู้ใช้ว่า secret ที่หลุดใน source ต้อง rotate ไม่ใช่แค่ลบออก",
+    "RESPONSE.md อธิบายเหตุผล (ทำไม) ของการตัดสินใจเชิงโครงสร้าง ไม่ใช่แค่ list ว่าแก้อะไร"
+  ]
+}

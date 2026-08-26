@@ -1,0 +1,65 @@
+{
+  "expectations": [
+    {
+      "text": "ไม่มี DB password หรือ API key hardcode อยู่ในโค้ดผลลัพธ์ (ย้ายไป env var)",
+      "passed": true,
+      "evidence": "src/config/env.js:48-63 loads every credential through requireEnv() with no default: host/user/password/database, MAIL_API_URL/MAIL_API_KEY. src/db/pool.js:10-21 and src/notifications/order-mailer.js:12-22 receive config by argument. .env.example:1-11 lists keys with EMPTY values only; .gitignore:2 ignores .env. grep for 'Acm3!prod2023' / 'sk_live_' across src/ and tests/ returns nothing; static_checks hardcoded_secret[] is empty."
+    },
+    {
+      "text": "SQL ทุก query เป็น parameterized — ไม่มีการต่อ string ของ user input เข้าไปใน query",
+      "passed": true,
+      "evidence": "All 7 queries live in src/orders/order.repository.js and use ? binding: line 43 'WHERE code = ? LIMIT 1', line 57 'WHERE id = ? LIMIT 1', line 68 'VALUES (?, ?, ?, NOW())', line 85 'VALUES ?', line 99 'WHERE id = ? AND user_id = ?', line 116 'WHERE oi.order_id = ?'. The one template literal (line 30, `IN (${placeholders})`) builds placeholders from productIds.map(() => '?') — derived from the array LENGTH, never from a value; all ids are passed as bound params. static_checks string_concat_sql[] empty."
+    },
+    {
+      "text": "แก้ N+1 ใน GET /orders/:id แล้ว (ไม่มี query ยิงต่อ product ทีละแถวในลูป)",
+      "passed": true,
+      "evidence": "src/orders/order.repository.js:111-121 findOrderItems() uses a single 'SELECT oi.product_id, p.name, ... FROM order_items oi LEFT JOIN products p ON p.id = oi.product_id WHERE oi.order_id = ?'. src/orders/order.service.js:73-93 getOrder() makes exactly 2 awaits total (findOrderForUser, findOrderItems) then a pure items.map() — no await inside any loop. POST path likewise batches via findProductsByIds (repository.js:25-34) and a single multi-row INSERT (line 84). static_checks await_in_loop[] empty."
+    },
+    {
+      "text": "business logic การคิดราคา/ส่วนลด ถูกแยกออกจาก route handler ไปอยู่คนละไฟล์/module",
+      "passed": true,
+      "evidence": "src/orders/pricing.js (205 lines) holds priceLine/calculateCouponDiscount/calculateShipping/priceOrder as pure functions requiring neither express nor mysql (header comment lines 6-7). src/orders/order.routes.js is 42 lines and contains no arithmetic at all — it validates, calls service.createOrder/getOrder, and picks a status code. tests/pricing.test.js exercises the rules with no DB."
+    },
+    {
+      "text": "ไม่มี catch เปล่า และ error ตอบกลับด้วย HTTP status code ที่ถูกต้อง ไม่ใช่ 200 ทุกกรณี",
+      "passed": true,
+      "evidence": "Every catch has a body: order.service.js:109-113 (rollback failure logged via logger.error 'order.transaction.rollback_failed'), order.service.js:134-140 (mail failure logged with orderId/userId). src/http/middleware.js:37-60 maps AppError.status to res.status(status) and unexpected errors to 500 with a scrubbed message; src/errors.js assigns 422 (ValidationError), 404 (NotFoundError), 401 (Unauthorized), 500 (DataIntegrity/Configuration). Routes return 201 on create and 200 on read. static_checks empty_catch hit at order.service.js:121 is a false positive — it is a JSDoc line quoting the legacy `catch (e) {}`."
+    },
+    {
+      "text": "magic number (0.95, 0.9, category 3, 1500, 60) ถูกยกเป็น named constant หรือ config",
+      "passed": true,
+      "evidence": "src/orders/pricing.js:18-29 — BULK_DISCOUNT_MIN_QTY = 11, BULK_DISCOUNT_RATE = 0.05, PROMO_CATEGORY_ID = 3, PROMO_CATEGORY_RATE = 0.1, FREE_SHIPPING_THRESHOLD_MINOR = 150_000, SHIPPING_FEE_MINOR = 6_000, MINOR_UNITS_PER_MAJOR = 100, each with a comment naming the legacy expression it replaces. Validation limits are likewise named in order.validation.js:13-16."
+    },
+    {
+      "text": "มี input validation ของ req.body ก่อนนำไปใช้",
+      "passed": true,
+      "evidence": "src/orders/order.routes.js:22 calls validateCreateOrderPayload(req.body) before anything touches the service. src/orders/order.validation.js:43-98 rejects non-object bodies, empty/oversized items arrays, non-integer productId/qty, qty > 100, duplicate productIds, and coupon codes failing /^[A-Za-z0-9_-]+$/ or exceeding 64 chars — throwing ValidationError (422). req.params.id goes through validateOrderId (line 104). Covered by tests/order.validation.test.js."
+    },
+    {
+      "text": "การส่งอีเมลล้มเหลว ไม่ทำให้ order ที่สร้างสำเร็จแล้วพังหรือถูกกลืนเงียบ ๆ",
+      "passed": true,
+      "evidence": "src/orders/order.service.js:55 calls sendConfirmationBestEffort AFTER withTransaction has committed. Lines 126-141 wrap the send in try/catch and log logger.error('order.confirmation.failed', { orderId, userId, message }) — plus 'order.confirmation.skipped_no_email' when no address exists. The mailer itself throws on non-2xx (order-mailer.js:27-29) and has a 5s AbortSignal.timeout, so a hung mail host cannot hang the request. tests/order.service.test.js:149 'ส่งอีเมลไม่สำเร็จไม่ทำให้ order ที่ commit แล้วล้ม แต่ต้องมี log พร้อม orderId' asserts both halves."
+    },
+    {
+      "text": "ไม่ over-engineer — ไม่มี DI container / abstract class / interface ที่มี implementation เดียว",
+      "passed": true,
+      "evidence": "No container module, no abstract class, no single-implementation interface. Abstractions counted: (1) AppError base — 5 real subclasses (errors.js:26-61); (2) createOrderService / createOrderMailer / createOrderRouter / createErrorHandler — plain closure factories, each with 2 real call sites (src/app.js wiring + the test suites' fakes); (3) order.repository.js is a module of 7 functions taking an `executor` argument, not a class hierarchy. Wiring is 10 lines inline in src/app.js:31-40, not a separate DI module. order.repository.js:8-10 explicitly justifies NOT splitting into product/coupon/order repos, and RESPONSE.md:48 states 'ไม่ใส่ interface/factory/DI container'. static_checks over_abstraction[] is empty."
+    },
+    {
+      "text": "แจ้งผู้ใช้ว่า secret ที่หลุดใน source ต้อง rotate ไม่ใช่แค่ลบออก (ดู RESPONSE.md)",
+      "passed": true,
+      "evidence": "RESPONSE.md:1-7 opens with '⚠️ ก่อนอื่น — เรื่องด่วนที่ต้องทำวันนี้' and states '**ต้อง rotate ทั้งสองตัว ไม่ใช่แค่ลบออกจากไฟล์** เพราะมันอยู่ใน git history ไปแล้ว ใครที่ clone repo นี้ได้ = มี password production ทั้งคู่ ... แต่การเปลี่ยนรหัสจริงต้องทำที่ฝั่ง DB/mail provider'. Repeated as the first item of 'ต้องทำต่อ' (line 75). It also warns the endpoint should be treated as breached until proven otherwise (line 9). Notably it describes the leaked values without re-printing them."
+    },
+    {
+      "text": "RESPONSE.md อธิบายเหตุผล (ทำไม) ของการตัดสินใจเชิงโครงสร้าง ไม่ใช่แค่ list ว่าแก้อะไร",
+      "passed": true,
+      "evidence": "RESPONSE.md has a dedicated section 'เส้นแบ่งที่เลือก และทำไม' (lines 38-48) arguing four structural decisions with trade-offs, not just outcomes: why pricing.js is pure ('กฎส่วนลด/ค่าส่งเป็นส่วนที่ถูกขอแก้บ่อยที่สุดและผิดแล้วเสียเงินจริง'); why SQL stays in ONE file rather than three repos ('ถ้าแตกจะได้ไฟล์ละ 15 บรรทัดที่ต้องเปิด 4 ไฟล์เพื่ออ่าน flow เดียว ซึ่งแย่กว่าเดิม'); why zero new dependencies and no TypeScript conversion ('ควรเป็น PR แยก ไม่ควรพ่วงมากับงานนี้จนอ่าน diff ไม่ออก'); why no DI container. Line 15 reframes the problem itself ('ปัญหาจริงของไฟล์นี้ไม่ใช่ \"ยาว\" แต่คือฟังก์ชันเดียวทำ 5 อย่าง'). A separate 'สิ่งที่เปลี่ยนพฤติกรรม' section (lines 64-71) lists 6 client-visible breaks with reasons, and PLAN.md carries the same rationale."
+    }
+  ],
+  "summary": {
+    "passed": 11,
+    "failed": 0,
+    "total": 11,
+    "pass_rate": 1.0
+  }
+}

@@ -1,0 +1,523 @@
+{
+  "root": "iteration-1/eval-0-refactor-legacy-orders/without_skill/outputs",
+  "files": [
+    {
+      "path": "src/app.js",
+      "lines": 30
+    },
+    {
+      "path": "src/config/index.js",
+      "lines": 54
+    },
+    {
+      "path": "src/container.js",
+      "lines": 43
+    },
+    {
+      "path": "src/db/pool.js",
+      "lines": 29
+    },
+    {
+      "path": "src/db/transaction.js",
+      "lines": 42
+    },
+    {
+      "path": "src/domain/money.js",
+      "lines": 51
+    },
+    {
+      "path": "src/domain/pricing.js",
+      "lines": 154
+    },
+    {
+      "path": "src/errors/AppError.js",
+      "lines": 43
+    },
+    {
+      "path": "src/http/middleware/asyncHandler.js",
+      "lines": 12
+    },
+    {
+      "path": "src/http/middleware/errorHandler.js",
+      "lines": 43
+    },
+    {
+      "path": "src/http/routes/orders.js",
+      "lines": 67
+    },
+    {
+      "path": "src/http/validators/orderValidators.js",
+      "lines": 100
+    },
+    {
+      "path": "src/lib/logger.js",
+      "lines": 31
+    },
+    {
+      "path": "src/repositories/couponRepository.js",
+      "lines": 36
+    },
+    {
+      "path": "src/repositories/orderRepository.js",
+      "lines": 66
+    },
+    {
+      "path": "src/repositories/productRepository.js",
+      "lines": 43
+    },
+    {
+      "path": "src/services/notificationService.js",
+      "lines": 59
+    },
+    {
+      "path": "src/services/orderService.js",
+      "lines": 142
+    },
+    {
+      "path": "tests/notificationService.test.js",
+      "lines": 52
+    },
+    {
+      "path": "tests/orderService.test.js",
+      "lines": 171
+    },
+    {
+      "path": "tests/orderValidators.test.js",
+      "lines": 88
+    },
+    {
+      "path": "tests/pricing.test.js",
+      "lines": 127
+    },
+    {
+      "path": "tests/transaction.test.js",
+      "lines": 52
+    }
+  ],
+  "hits": {
+    "hardcoded_secret": [
+      {
+        "file": "tests/notificationService.test.js",
+        "line": 8,
+        "snippet": "const config = { baseUrl: 'https://mail.example.test/send', apiKey: 'test-key', timeoutMs: 100 };"
+      }
+    ],
+    "string_concat_sql": [],
+    "fstring_sql": [],
+    "empty_catch": [
+      {
+        "file": "src/services/notificationService.js",
+        "line": 14,
+        "snippet": "*  - failures are logged instead of being swallowed by `catch (e) {}`."
+      }
+    ],
+    "todo_placeholder": [],
+    "ts_any": [
+      {
+        "file": "src/db/transaction.js",
+        "line": 18,
+        "snippet": "* @param {{getConnection: () => Promise<any>}} pool"
+      },
+      {
+        "file": "src/db/transaction.js",
+        "line": 19,
+        "snippet": "* @param {(connection: any) => Promise<T>} work"
+      },
+      {
+        "file": "src/domain/pricing.js",
+        "line": 54,
+        "snippet": "* @param {Map<number, {id:number,name:string,price:any,category:number}>} productsById"
+      },
+      {
+        "file": "src/http/routes/orders.js",
+        "line": 53,
+        "snippet": "// SECURITY: any user could read any order by guessing an id in the"
+      }
+    ],
+    "await_in_loop": [],
+    "env_usage": [
+      {
+        "file": "src/config/index.js",
+        "line": 42,
+        "snippet": "baseUrl: process.env.MAILER_URL ?? 'https://mail.acme.co/send',"
+      },
+      {
+        "file": "src/lib/logger.js",
+        "line": 12,
+        "snippet": "const threshold = LEVELS[process.env.LOG_LEVEL] ?? LEVELS.info;"
+      }
+    ],
+    "param_query": [
+      {
+        "file": "src/domain/pricing.js",
+        "line": 54,
+        "snippet": "* @param {Map<number, {id:number,name:string,price:any,category:number}>} productsById"
+      },
+      {
+        "file": "src/domain/pricing.js",
+        "line": 54,
+        "snippet": "* @param {Map<number, {id:number,name:string,price:any,category:number}>} productsById"
+      },
+      {
+        "file": "src/domain/pricing.js",
+        "line": 54,
+        "snippet": "* @param {Map<number, {id:number,name:string,price:any,category:number}>} productsById"
+      },
+      {
+        "file": "src/domain/pricing.js",
+        "line": 54,
+        "snippet": "* @param {Map<number, {id:number,name:string,price:any,category:number}>} productsById"
+      },
+      {
+        "file": "src/domain/pricing.js",
+        "line": 65,
+        "snippet": "// with \"cannot read property of undefined\" -> a 200 {ok:false}."
+      },
+      {
+        "file": "src/domain/pricing.js",
+        "line": 97,
+        "snippet": "* @param {{type:'percent'|'fixed', value:number}|null} coupon"
+      },
+      {
+        "file": "src/domain/pricing.js",
+        "line": 130,
+        "snippet": "* @returns {{lines:Array<object>, subtotal:number, discount:number, shipping:number, total:number}}"
+      },
+      {
+        "file": "src/domain/pricing.js",
+        "line": 130,
+        "snippet": "* @returns {{lines:Array<object>, subtotal:number, discount:number, shipping:number, total:number}}"
+      },
+      {
+        "file": "src/domain/pricing.js",
+        "line": 130,
+        "snippet": "* @returns {{lines:Array<object>, subtotal:number, discount:number, shipping:number, total:number}}"
+      },
+      {
+        "file": "src/domain/pricing.js",
+        "line": 130,
+        "snippet": "* @returns {{lines:Array<object>, subtotal:number, discount:number, shipping:number, total:number}}"
+      },
+      {
+        "file": "src/http/middleware/errorHandler.js",
+        "line": 9,
+        "snippet": "* The legacy handler answered every failure with HTTP 200 and `{ok:false}`,"
+      },
+      {
+        "file": "src/http/validators/orderValidators.js",
+        "line": 23,
+        "snippet": "* @param {{maxItemsPerOrder:number, maxQtyPerLine:number}} limits"
+      },
+      {
+        "file": "src/http/validators/orderValidators.js",
+        "line": 23,
+        "snippet": "* @param {{maxItemsPerOrder:number, maxQtyPerLine:number}} limits"
+      },
+      {
+        "file": "src/http/validators/orderValidators.js",
+        "line": 24,
+        "snippet": "* @returns {{userId:number, items:Array<{productId:number,qty:number}>, couponCode:string|null, email:string|null}}"
+      },
+      {
+        "file": "src/http/validators/orderValidators.js",
+        "line": 24,
+        "snippet": "* @returns {{userId:number, items:Array<{productId:number,qty:number}>, couponCode:string|null, email:string|null}}"
+      },
+      {
+        "file": "src/http/validators/orderValidators.js",
+        "line": 24,
+        "snippet": "* @returns {{userId:number, items:Array<{productId:number,qty:number}>, couponCode:string|null, email:string|null}}"
+      },
+      {
+        "file": "src/repositories/couponRepository.js",
+        "line": 20,
+        "snippet": "* @returns {Promise<{id:number, code:string, type:string, value:number}|null>}"
+      },
+      {
+        "file": "src/repositories/couponRepository.js",
+        "line": 20,
+        "snippet": "* @returns {Promise<{id:number, code:string, type:string, value:number}|null>}"
+      },
+      {
+        "file": "src/repositories/couponRepository.js",
+        "line": 20,
+        "snippet": "* @returns {Promise<{id:number, code:string, type:string, value:number}|null>}"
+      },
+      {
+        "file": "src/repositories/couponRepository.js",
+        "line": 20,
+        "snippet": "* @returns {Promise<{id:number, code:string, type:string, value:number}|null>}"
+      },
+      {
+        "file": "src/repositories/orderRepository.js",
+        "line": 18,
+        "snippet": "* @param {{userId:number, totalMinor:number, status:string}} order"
+      },
+      {
+        "file": "src/repositories/orderRepository.js",
+        "line": 18,
+        "snippet": "* @param {{userId:number, totalMinor:number, status:string}} order"
+      },
+      {
+        "file": "src/repositories/orderRepository.js",
+        "line": 18,
+        "snippet": "* @param {{userId:number, totalMinor:number, status:string}} order"
+      },
+      {
+        "file": "src/repositories/orderRepository.js",
+        "line": 23,
+        "snippet": "'INSERT INTO orders (user_id, total, status, created_at) VALUES (?, ?, ?, NOW())',"
+      },
+      {
+        "file": "src/repositories/orderRepository.js",
+        "line": 23,
+        "snippet": "'INSERT INTO orders (user_id, total, status, created_at) VALUES (?, ?, ?, NOW())',"
+      },
+      {
+        "file": "src/repositories/orderRepository.js",
+        "line": 23,
+        "snippet": "'INSERT INTO orders (user_id, total, status, created_at) VALUES (?, ?, ?, NOW())',"
+      },
+      {
+        "file": "src/repositories/orderRepository.js",
+        "line": 34,
+        "snippet": "* @param {Array<{productId:number, unitPrice:number, qty:number}>} lines"
+      },
+      {
+        "file": "src/repositories/orderRepository.js",
+        "line": 34,
+        "snippet": "* @param {Array<{productId:number, unitPrice:number, qty:number}>} lines"
+      },
+      {
+        "file": "src/repositories/orderRepository.js",
+        "line": 34,
+        "snippet": "* @param {Array<{productId:number, unitPrice:number, qty:number}>} lines"
+      },
+      {
+        "file": "src/repositories/productRepository.js",
+        "line": 26,
+        "snippet": "'SELECT id, name, price, category FROM products WHERE id IN (?)',"
+      },
+      {
+        "file": "src/repositories/productRepository.js",
+        "line": 37,
+        "snippet": "const [rows] = await this.db.query('SELECT id, name FROM products WHERE id IN (?)', [unique]);"
+      },
+      {
+        "file": "src/services/orderService.js",
+        "line": 35,
+        "snippet": "* @param {{userId:number, items:Array<{productId:number,qty:number}>, couponCode:string|null, email:string|null}} input"
+      },
+      {
+        "file": "src/services/orderService.js",
+        "line": 35,
+        "snippet": "* @param {{userId:number, items:Array<{productId:number,qty:number}>, couponCode:string|null, email:string|null}} input"
+      },
+      {
+        "file": "src/services/orderService.js",
+        "line": 35,
+        "snippet": "* @param {{userId:number, items:Array<{productId:number,qty:number}>, couponCode:string|null, email:string|null}} input"
+      },
+      {
+        "file": "src/services/orderService.js",
+        "line": 36,
+        "snippet": "* @returns {Promise<{orderId:number, subtotal:number, discount:number, shipping:number, total:number, items:Array<object>}>}"
+      },
+      {
+        "file": "src/services/orderService.js",
+        "line": 36,
+        "snippet": "* @returns {Promise<{orderId:number, subtotal:number, discount:number, shipping:number, total:number, items:Array<object>}>}"
+      },
+      {
+        "file": "src/services/orderService.js",
+        "line": 36,
+        "snippet": "* @returns {Promise<{orderId:number, subtotal:number, discount:number, shipping:number, total:number, items:Array<object>}>}"
+      },
+      {
+        "file": "src/services/orderService.js",
+        "line": 36,
+        "snippet": "* @returns {Promise<{orderId:number, subtotal:number, discount:number, shipping:number, total:number, items:Array<object>}>}"
+      },
+      {
+        "file": "src/services/orderService.js",
+        "line": 36,
+        "snippet": "* @returns {Promise<{orderId:number, subtotal:number, discount:number, shipping:number, total:number, items:Array<object>}>}"
+      }
+    ],
+    "decimal_money": [
+      {
+        "file": "src/domain/money.js",
+        "line": 14,
+        "snippet": "/** Convert a DB/API value to integer minor units. mysql2 returns DECIMAL as a string. */"
+      },
+      {
+        "file": "src/domain/money.js",
+        "line": 16,
+        "snippet": "const numeric = typeof value === 'string' ? Number(value) : value;"
+      },
+      {
+        "file": "src/domain/money.js",
+        "line": 17,
+        "snippet": "if (typeof numeric !== 'number' || !Number.isFinite(numeric)) {"
+      },
+      {
+        "file": "src/domain/money.js",
+        "line": 17,
+        "snippet": "if (typeof numeric !== 'number' || !Number.isFinite(numeric)) {"
+      },
+      {
+        "file": "src/domain/money.js",
+        "line": 18,
+        "snippet": "throw new AppError('INVALID_AMOUNT', 'Encountered a non-numeric monetary value.', 500);"
+      },
+      {
+        "file": "src/domain/money.js",
+        "line": 20,
+        "snippet": "return Math.round(numeric * 100);"
+      },
+      {
+        "file": "src/domain/money.js",
+        "line": 23,
+        "snippet": "/** Convert integer minor units back to a 2-decimal major-unit number for API output. */"
+      },
+      {
+        "file": "tests/orderValidators.test.js",
+        "line": 37,
+        "snippet": "test('rejects a non-numeric productId (the legacy SQL injection vector)', () => {"
+      },
+      {
+        "file": "tests/orderValidators.test.js",
+        "line": 84,
+        "snippet": "test('validateOrderId accepts a numeric id and rejects injection attempts', () => {"
+      },
+      {
+        "file": "tests/pricing.test.js",
+        "line": 72,
+        "snippet": "test('priceLines: handles DECIMAL prices returned as strings by mysql2', () => {"
+      }
+    ],
+    "float_money": [],
+    "group_by": [],
+    "context_manager": [
+      {
+        "file": "src/http/middleware/errorHandler.js",
+        "line": 9,
+        "snippet": "* The legacy handler answered every failure with HTTP 200 and `{ok:false}`,"
+      }
+    ],
+    "zod_schema": [],
+    "signature_verify": [],
+    "idempotency": [],
+    "transaction": [
+      {
+        "file": "src/db/transaction.js",
+        "line": 7,
+        "snippet": "* (beginTransaction / commit / rollback / release). That keeps the service"
+      },
+      {
+        "file": "src/db/transaction.js",
+        "line": 27,
+        "snippet": "await connection.commit();"
+      },
+      {
+        "file": "tests/orderService.test.js",
+        "line": 18,
+        "snippet": "commit: async () => { state.committed = true; },"
+      },
+      {
+        "file": "tests/transaction.test.js",
+        "line": 11,
+        "snippet": "beginTransaction: async () => log.push('begin'),"
+      },
+      {
+        "file": "tests/transaction.test.js",
+        "line": 12,
+        "snippet": "commit: async () => log.push('commit'),"
+      },
+      {
+        "file": "tests/transaction.test.js",
+        "line": 12,
+        "snippet": "commit: async () => log.push('commit'),"
+      },
+      {
+        "file": "tests/transaction.test.js",
+        "line": 24,
+        "snippet": "assert.deepEqual(log, ['begin', 'commit', 'release']);"
+      },
+      {
+        "file": "tests/transaction.test.js",
+        "line": 24,
+        "snippet": "assert.deepEqual(log, ['begin', 'commit', 'release']);"
+      },
+      {
+        "file": "tests/transaction.test.js",
+        "line": 34,
+        "snippet": "assert.deepEqual(log, ['begin', 'rollback', 'release']);"
+      },
+      {
+        "file": "tests/transaction.test.js",
+        "line": 40,
+        "snippet": "commit: async () => {},"
+      }
+    ],
+    "http_status": [
+      {
+        "file": "src/http/middleware/errorHandler.js",
+        "line": 37,
+        "snippet": "return res.status(500).json({"
+      }
+    ],
+    "over_abstraction": [
+      {
+        "file": "src/app.js",
+        "line": 5,
+        "snippet": "const { buildContainer } = require('./container');"
+      },
+      {
+        "file": "src/app.js",
+        "line": 14,
+        "snippet": "const container = buildContainer(overrides);"
+      },
+      {
+        "file": "src/app.js",
+        "line": 21,
+        "snippet": "app.use(container.ordersRouter);"
+      },
+      {
+        "file": "src/app.js",
+        "line": 26,
+        "snippet": "return { app, container };"
+      }
+    ],
+    "type_hint_py": [],
+    "docstring_py": []
+  },
+  "all_files": [
+    ".env.example",
+    "RESPONSE.md",
+    "package.json",
+    "src/app.js",
+    "src/config/index.js",
+    "src/container.js",
+    "src/db/pool.js",
+    "src/db/transaction.js",
+    "src/domain/money.js",
+    "src/domain/pricing.js",
+    "src/errors/AppError.js",
+    "src/http/middleware/asyncHandler.js",
+    "src/http/middleware/errorHandler.js",
+    "src/http/routes/orders.js",
+    "src/http/validators/orderValidators.js",
+    "src/lib/logger.js",
+    "src/repositories/couponRepository.js",
+    "src/repositories/orderRepository.js",
+    "src/repositories/productRepository.js",
+    "src/services/notificationService.js",
+    "src/services/orderService.js",
+    "tests/notificationService.test.js",
+    "tests/orderService.test.js",
+    "tests/orderValidators.test.js",
+    "tests/pricing.test.js",
+    "tests/transaction.test.js"
+  ]
+}

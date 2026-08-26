@@ -1,0 +1,41 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "monthly-sales-report"
+version = "0.1.0"
+description = "สรุปยอดขายรายเดือนจาก PostgreSQL ออกเป็นไฟล์ CSV"
+requires-python = ">=3.11"
+dependencies = [
+    "psycopg[binary]>=3.1,<4",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8,<9",
+    "ruff>=0.5",
+    "mypy>=1.10",
+]
+
+[project.scripts]
+monthly-sales-report = "monthly_sales_report.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/monthly_sales_report"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+files = ["src", "tests"]

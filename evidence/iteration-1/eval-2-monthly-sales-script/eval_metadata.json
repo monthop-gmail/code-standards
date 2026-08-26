@@ -1,0 +1,16 @@
+{
+  "eval_id": 2,
+  "eval_name": "monthly-sales-script",
+  "prompt": "เขียน script python ดึงยอดขายรายเดือนจาก postgres มาสรุปเป็น csv ให้หน่อย",
+  "assertions": [
+    "type hint ครบทุก function signature",
+    "ไม่มี credential hardcode — อ่าน connection string/DSN จาก env var",
+    "aggregate ยอดขายที่ฝั่ง DB ด้วย GROUP BY ไม่ใช่ดึงทุกแถวมารวมใน python",
+    "query เป็น parameterized ไม่ต่อ string",
+    "ใช้ Decimal หรือ NUMERIC กับจำนวนเงิน ไม่ใช่ float",
+    "connection/cursor ถูกปิดเสมอ (context manager หรือ finally)",
+    "ไม่มี except เปล่าที่กลืน error",
+    "ไม่มี TODO / placeholder",
+    "มี docstring อธิบาย public function และระบุสมมติฐานเรื่อง schema"
+  ]
+}

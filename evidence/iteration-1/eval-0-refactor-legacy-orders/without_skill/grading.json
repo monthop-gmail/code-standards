@@ -1,0 +1,65 @@
+{
+  "expectations": [
+    {
+      "text": "ไม่มี DB password หรือ API key hardcode อยู่ในโค้ดผลลัพธ์ (ย้ายไป env var)",
+      "passed": true,
+      "evidence": "src/config/index.js:34-44 pulls DB_HOST/DB_USER/DB_PASSWORD/DB_NAME and MAILER_API_KEY through required(), which throws at boot if unset (lines 13-19). src/db/pool.js:10-25 takes injected config. .env.example:5,11 leave DB_PASSWORD= and MAILER_API_KEY= empty. Neither 'Acm3!prod2023' nor 'sk_live_9f2b1c8a7d' appears anywhere under src/. The only static_checks hardcoded_secret hit is tests/notificationService.test.js:8 apiKey:'test-key' — a fixture, not a real credential. (Caveat, not part of this assertion: .env.example:2-6 and config/index.js:42 do re-commit the internal hostname db.internal.acme.co, user app_admin, db shop and the mailer URL as defaults — not secrets, but avoidable infra disclosure.)"
+    },
+    {
+      "text": "SQL ทุก query เป็น parameterized — ไม่มีการต่อ string ของ user input เข้าไปใน query",
+      "passed": true,
+      "evidence": "All SQL is confined to src/repositories/. productRepository.js:25-28 and :37 use 'WHERE id IN (?)' with [unique] (mysql2 array expansion); couponRepository.js:23-30 'WHERE code = ?'; orderRepository.js:22-24 'VALUES (?, ?, ?, NOW())', :40-43 'VALUES ?', :48-51 'WHERE id = ? LIMIT 1', :57-60 'WHERE order_id = ?'. No template interpolation or '+' concatenation of any request value; static_checks string_concat_sql[] is empty. pool.js:24 additionally sets multipleStatements:false as defence in depth."
+    },
+    {
+      "text": "แก้ N+1 ใน GET /orders/:id แล้ว (ไม่มี query ยิงต่อ product ทีละแถวในลูป)",
+      "passed": true,
+      "evidence": "src/services/orderService.js:115-137 getOrder() issues exactly three queries regardless of item count: orders.findById, orders.findItemsByOrderId, then products.findNamesByIds(items.map(i => i.product_id)) which resolves all names in one 'WHERE id IN (?)' (productRepository.js:33-39). The item loop at line 131 is a pure map over the in-memory namesById Map. Same batching on POST (findByIds, line 39). No await appears inside any loop in src/."
+    },
+    {
+      "text": "business logic การคิดราคา/ส่วนลด ถูกแยกออกจาก route handler ไปอยู่คนละไฟล์/module",
+      "passed": true,
+      "evidence": "src/domain/pricing.js (153 lines) contains discountedUnitPrice, priceLines, applyCoupon, shippingFeeFor and quoteOrder as pure functions — header comment lines 6-9 'No database, no Express, no I/O'. src/domain/money.js holds the integer-minor-unit arithmetic. src/http/routes/orders.js (66 lines) has no pricing arithmetic; it validates, checks ownership, and calls orderService. tests/pricing.test.js drives the rules with no DB."
+    },
+    {
+      "text": "ไม่มี catch เปล่า และ error ตอบกลับด้วย HTTP status code ที่ถูกต้อง ไม่ใช่ 200 ทุกกรณี",
+      "passed": true,
+      "evidence": "src/http/middleware/errorHandler.js:15-39 returns res.status(error.status) for AppError and 500 otherwise; AppError.js:25-39 defines 400/422/404/409 factories and orderService throws 500 for bad coupon data — routes return 201 on create (routes/orders.js:43) and 403/404 on ownership failures. The legacy 'answer everything with 200 {ok:false}' is gone. notificationService.js:50-53 logs rather than swallowing. One borderline case: src/db/transaction.js:30-34 is `catch { /* a rollback failure must not mask the original error */ }` with no statement — no logging of a failed rollback (compare the sibling run, which logs it). Graded PASS because the block carries an explanatory comment (ESLint no-empty treats a commented block as non-empty) and the original error is still rethrown on line 35, so nothing disappears silently — but this is the weakest point of the assertion here."
+    },
+    {
+      "text": "magic number (0.95, 0.9, category 3, 1500, 60) ถูกยกเป็น named constant หรือ config",
+      "passed": true,
+      "evidence": "src/domain/pricing.js:14-27 defines a frozen PRICING_RULES: bulkQuantityThreshold: 10, bulkDiscountRate: 0.05, discountedCategoryIds: [3], categoryDiscountRate: 0.1, freeShippingThreshold: 150000 (// 1,500.00), shippingFee: 6000 (// 60.00) — each with a doc comment. Request limits are named in config/index.js:46-49 and overridable via MAX_ITEMS_PER_ORDER / MAX_QTY_PER_LINE."
+    },
+    {
+      "text": "มี input validation ของ req.body ก่อนนำไปใช้",
+      "passed": true,
+      "evidence": "src/http/routes/orders.js:28 calls validateCreateOrder(req.body, limits) as the first statement of the handler. src/http/validators/orderValidators.js:26-88 rejects non-object bodies, non-positive-integer userId, empty/oversized items arrays, non-object items, non-integer productId/qty, qty above maxQtyPerLine, coupon strings over 64 chars, and malformed emails — accumulating all errors and throwing AppError.validation (422). validateOrderId (line 91) guards req.params.id with 400. tests/orderValidators.test.js covers the injection-string cases."
+    },
+    {
+      "text": "การส่งอีเมลล้มเหลว ไม่ทำให้ order ที่สร้างสำเร็จแล้วพังหรือถูกกลืนเงียบ ๆ",
+      "passed": true,
+      "evidence": "src/services/orderService.js:63 sends the confirmation after withTransaction has committed (lines 43-52). src/services/notificationService.js:28-55 is documented 'Never throws' and returns a boolean: it logs 'order.confirmation.skipped' (no recipient), 'order.confirmation.failed' with the HTTP status on a non-ok response, and 'order.confirmation.error' with error.message in the catch — so a mail outage is recorded, not swallowed. AbortSignal.timeout(config.timeoutMs) (line 42) stops a hung mail host from pinning the request. tests/notificationService.test.js exercises all four paths."
+    },
+    {
+      "text": "ไม่ over-engineer — ไม่มี DI container / abstract class / interface ที่มี implementation เดียว",
+      "passed": false,
+      "evidence": "src/container.js is a hand-rolled DI/composition container: buildContainer(overrides = {}) news up five collaborators and returns a container bag (lines 17-40), threaded through src/app.js:13-26 via an `overrides` object and re-exposed as `container` on the return value. Counting the abstractions and their real implementations/callers: ProductRepository, CouponRepository, OrderRepository and NotificationService are each a class with exactly ONE implementation and exactly ONE production consumer (OrderService) — the tests use plain object literals, not second implementations. Three separate repository files hold 2, 1 and 4 methods respectively, so reading one order flow means opening four files. OrderRepository.withConnection() (orderRepository.js:13-15) adds a further indirection that allocates a new repository per transaction. pricing.js additionally threads a `rules = PRICING_RULES` parameter through four functions (lines 37, 57, 122, 132) as a configurability seam that is never overridden anywhere in src/ or tests/. The behaviour is correct, but this is exactly the container + one-implementation-per-class shape the assertion prohibits."
+    },
+    {
+      "text": "แจ้งผู้ใช้ว่า secret ที่หลุดใน source ต้อง rotate ไม่ใช่แค่ลบออก (ดู RESPONSE.md)",
+      "passed": true,
+      "evidence": "RESPONSE.md:3-10 leads with '⚠️ เรื่องด่วนที่ต้องทำวันนี้' and makes the point explicitly: 'ของสองอย่างนี้อยู่ใน git history แปลว่าใครที่เคย clone repo หรือเห็น CI log ก็ได้ไปหมดแล้ว **การย้ายไปไว้ใน env var ไม่ได้ทำให้ปลอดภัยขึ้นเลยถ้ายังไม่เปลี่ยนรหัส** — ต้อง rotate ทั้งคู่ครับ แล้วค่อยล้าง git history ทีหลัง'. Repeated as item 1 of 'ที่ต้องทำต่อ' (line 76). Caveat: lines 7-8 reprint the live values 'Acm3!prod2023' and 'sk_live_9f2b1c8a7d' verbatim into a new deliverable file, spreading the leak one file further — the assertion is still met, but this is poor handling of a known-compromised credential."
+    },
+    {
+      "text": "RESPONSE.md อธิบายเหตุผล (ทำไม) ของการตัดสินใจเชิงโครงสร้าง ไม่ใช่แค่ list ว่าแก้อะไร",
+      "passed": true,
+      "evidence": "Beyond the change list, RESPONSE.md:60 gives the reasoning behind the two central structural moves: 'หัวใจคือ domain/pricing.js เป็น pure function ทั้งหมด ตรรกะธุรกิจที่สำคัญที่สุดเลยเทสได้โดยไม่ต้องมี DB' and 'router เปลี่ยนเป็น factory ที่รับ dependency เข้ามา — ของเดิมพอ require ไฟล์ก็เปิด connection ไป production ทันที ซึ่งเป็นเหตุผลที่มันเทสไม่ได้เลย'. Line 44 explains the reinterpretation of the dead `total = total` branch and invites correction. Weaker than it could be: sections 'ช่องโหว่ที่เจอ' and 'บั๊กที่แก้ไปด้วย' are predominantly what-was-fixed, and no rationale is offered for the choices that actually drive the file layout (why a container module, why three repository classes, why domain/ split from services/) — but the assertion's bar, that structural decisions be reasoned rather than merely listed, is met."
+    }
+  ],
+  "summary": {
+    "passed": 10,
+    "failed": 1,
+    "total": 11,
+    "pass_rate": 0.91
+  }
+}

@@ -1,0 +1,803 @@
+<title>มาตรฐานโค้ด ICB Solution</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap">
+
+<style>
+:root{
+  --paper:#F6F6FA;
+  --surface:#FFFFFF;
+  --surface-2:#EFEFF6;
+  --ink:#17171F;
+  --muted:#5C5C6E;
+  --line:#D9D9E4;
+  --line-soft:#E8E8F0;
+  --accent:#4A46A8;
+  --accent-soft:#E7E6F6;
+  --bad:#B3261E;
+  --bad-soft:#FBEBEA;
+  --bad-line:#E9C4C1;
+  --good:#1D6F42;
+  --good-soft:#E7F3EC;
+  --good-line:#B9DAC6;
+  --code-bg:#F1F1F7;
+
+  --f-display:"Bai Jamjuree","IBM Plex Sans Thai","Segoe UI",sans-serif;
+  --f-body:"IBM Plex Sans Thai","Bai Jamjuree","Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono","SFMono-Regular",Consolas,monospace;
+
+  --measure:68ch;
+  --s1:.35rem; --s2:.7rem; --s3:1.1rem; --s4:1.7rem; --s5:2.6rem; --s6:4rem;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#111119;
+    --surface:#1A1A24;
+    --surface-2:#22222E;
+    --ink:#E8E8F2;
+    --muted:#9A9AAE;
+    --line:#343446;
+    --line-soft:#2A2A39;
+    --accent:#A6A2F0;
+    --accent-soft:#282640;
+    --bad:#F0857B;
+    --bad-soft:#2E1D1C;
+    --bad-line:#5A3532;
+    --good:#67C98D;
+    --good-soft:#152A20;
+    --good-line:#2F5A42;
+    --code-bg:#1F1F2B;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#111119;
+  --surface:#1A1A24;
+  --surface-2:#22222E;
+  --ink:#E8E8F2;
+  --muted:#9A9AAE;
+  --line:#343446;
+  --line-soft:#2A2A39;
+  --accent:#A6A2F0;
+  --accent-soft:#282640;
+  --bad:#F0857B;
+  --bad-soft:#2E1D1C;
+  --bad-line:#5A3532;
+  --good:#67C98D;
+  --good-soft:#152A20;
+  --good-line:#2F5A42;
+  --code-bg:#1F1F2B;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--f-body);
+  font-size:16.5px;
+  line-height:1.75;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1120px;margin:0 auto;padding:0 var(--s3)}
+
+/* ---------- masthead ---------- */
+.masthead{border-bottom:1px solid var(--line);background:var(--surface)}
+.masthead .wrap{padding-top:var(--s6);padding-bottom:var(--s5)}
+.eyebrow{
+  font-family:var(--f-mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--accent);margin:0 0 var(--s3)
+}
+h1{
+  font-family:var(--f-display);font-weight:700;font-size:clamp(2.1rem,5.2vw,3.4rem);
+  line-height:1.15;letter-spacing:-.015em;margin:0;text-wrap:balance;max-width:20ch
+}
+.standfirst{max-width:var(--measure);margin:var(--s3) 0 0;color:var(--muted);font-size:1.06rem}
+.standfirst strong{color:var(--ink);font-weight:600}
+
+.facts{
+  display:flex;flex-wrap:wrap;gap:0;margin-top:var(--s5);
+  border:1px solid var(--line);border-radius:3px;overflow:hidden
+}
+.fact{flex:1 1 150px;padding:var(--s3);border-right:1px solid var(--line);background:var(--surface)}
+.fact:last-child{border-right:0}
+.fact dt{
+  font-family:var(--f-mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);margin:0 0 var(--s1)
+}
+.fact dd{
+  margin:0;font-family:var(--f-display);font-weight:600;font-size:1.45rem;
+  font-variant-numeric:tabular-nums;line-height:1.2
+}
+.fact dd small{display:block;font-family:var(--f-body);font-weight:400;font-size:.8rem;color:var(--muted);line-height:1.5;margin-top:2px}
+
+/* ---------- layout ---------- */
+.shell{display:grid;grid-template-columns:1fr;gap:var(--s5);padding:var(--s5) 0 var(--s6)}
+@media(min-width:1000px){
+  .shell{grid-template-columns:210px minmax(0,1fr);gap:var(--s6)}
+}
+nav.toc{font-size:.87rem}
+@media(min-width:1000px){
+  nav.toc{position:sticky;top:var(--s3);align-self:start;max-height:calc(100vh - 2rem);overflow-y:auto}
+}
+nav.toc h2{
+  font-family:var(--f-mono);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--muted);margin:0 0 var(--s2);font-weight:500
+}
+nav.toc ol{list-style:none;margin:0 0 var(--s3);padding:0;display:flex;flex-direction:column;gap:var(--s1)}
+nav.toc a{color:var(--muted);text-decoration:none;display:block;padding:2px 0 2px var(--s2);border-left:2px solid var(--line-soft)}
+nav.toc a:hover,nav.toc a:focus-visible{color:var(--accent);border-left-color:var(--accent)}
+nav.toc .grp{
+  font-family:var(--f-mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink);margin:var(--s3) 0 var(--s2);opacity:.55
+}
+nav.toc .grp:first-of-type{margin-top:0}
+
+main{min-width:0;display:flex;flex-direction:column;gap:var(--s6)}
+section{display:flex;flex-direction:column;gap:var(--s3);scroll-margin-top:var(--s3)}
+
+.part-head{display:flex;flex-direction:column;gap:var(--s1);padding-bottom:var(--s2);border-bottom:2px solid var(--ink)}
+.part-head .kicker{font-family:var(--f-mono);font-size:.7rem;letter-spacing:.13em;text-transform:uppercase;color:var(--accent)}
+.part-head h2{font-family:var(--f-display);font-weight:700;font-size:1.6rem;margin:0;letter-spacing:-.01em}
+
+h3{
+  font-family:var(--f-display);font-weight:600;font-size:1.28rem;line-height:1.35;
+  margin:0;letter-spacing:-.005em;text-wrap:balance;max-width:34ch
+}
+h3 .n{font-family:var(--f-mono);font-size:.82rem;color:var(--accent);margin-inline-end:.55rem;font-weight:500}
+p{margin:0;max-width:var(--measure)}
+.why{
+  max-width:var(--measure);border-left:2px solid var(--accent);padding-left:var(--s3);
+  color:var(--muted)
+}
+.why b{color:var(--ink);font-weight:600}
+ul.plain{margin:0;padding-inline-start:1.15rem;max-width:var(--measure);display:flex;flex-direction:column;gap:var(--s1)}
+ul.plain li::marker{color:var(--accent)}
+
+code{font-family:var(--f-mono);font-size:.86em;background:var(--code-bg);padding:.1em .35em;border-radius:2px}
+
+/* ---------- evidence ---------- */
+.ev{display:grid;grid-template-columns:1fr;gap:var(--s2);margin-top:var(--s1)}
+@media(min-width:720px){.ev.two{grid-template-columns:1fr 1fr}}
+.panel{border:1px solid var(--line);border-radius:3px;overflow:hidden;background:var(--surface);display:flex;flex-direction:column}
+.panel.bad{border-color:var(--bad-line)}
+.panel.good{border-color:var(--good-line)}
+.panel-head{
+  display:flex;align-items:baseline;gap:var(--s2);flex-wrap:wrap;
+  padding:.5rem var(--s2);border-bottom:1px solid var(--line);background:var(--surface-2)
+}
+.panel.bad .panel-head{background:var(--bad-soft);border-bottom-color:var(--bad-line)}
+.panel.good .panel-head{background:var(--good-soft);border-bottom-color:var(--good-line)}
+.tag{
+  font-family:var(--f-mono);font-size:.68rem;letter-spacing:.09em;text-transform:uppercase;font-weight:500
+}
+.panel.bad .tag{color:var(--bad)}
+.panel.good .tag{color:var(--good)}
+.src{font-family:var(--f-mono);font-size:.68rem;color:var(--muted);word-break:break-all}
+pre{
+  margin:0;padding:var(--s2);overflow-x:auto;background:var(--surface);
+  font-family:var(--f-mono);font-size:.78rem;line-height:1.65;flex:1
+}
+pre code{background:none;padding:0;font-size:inherit}
+.mark-bad{color:var(--bad);font-weight:500}
+.mark-good{color:var(--good);font-weight:500}
+.cmt{color:var(--muted)}
+.verdict{
+  max-width:var(--measure);font-size:.93rem;color:var(--muted);
+  display:flex;gap:var(--s2);align-items:flex-start
+}
+.verdict::before{
+  content:"→";font-family:var(--f-mono);color:var(--accent);flex:none;line-height:1.75
+}
+
+/* ---------- checklist ---------- */
+.check{display:grid;grid-template-columns:1fr;gap:0;border:1px solid var(--line);border-radius:3px;overflow:hidden;background:var(--surface)}
+@media(min-width:760px){.check{grid-template-columns:1fr 1fr}}
+.check-grp{padding:var(--s3);border-bottom:1px solid var(--line-soft)}
+@media(min-width:760px){.check-grp:nth-child(odd){border-right:1px solid var(--line-soft)}}
+.check-grp h4{
+  font-family:var(--f-mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--accent);margin:0 0 var(--s2);font-weight:500
+}
+.check-grp ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:var(--s2);font-size:.92rem}
+.check-grp li{display:flex;gap:var(--s2);align-items:flex-start;line-height:1.6}
+.check-grp li::before{
+  content:"";flex:none;width:.85rem;height:.85rem;margin-top:.42rem;
+  border:1px solid var(--line);border-radius:2px;background:var(--paper)
+}
+
+/* ---------- caveat / method ---------- */
+.note{
+  border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:3px;
+  background:var(--surface);padding:var(--s3);max-width:var(--measure);
+  display:flex;flex-direction:column;gap:var(--s2)
+}
+.note h4{font-family:var(--f-display);font-weight:600;font-size:1rem;margin:0}
+.note p,.note ul{font-size:.93rem;color:var(--muted)}
+.note b{color:var(--ink)}
+
+table.method{
+  width:100%;border-collapse:collapse;font-size:.88rem;
+  border:1px solid var(--line);background:var(--surface)
+}
+.scroll-x{overflow-x:auto}
+table.method th,table.method td{padding:.55rem var(--s2);text-align:left;border-bottom:1px solid var(--line-soft);vertical-align:top}
+table.method th{
+  font-family:var(--f-mono);font-size:.68rem;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--muted);font-weight:500;white-space:nowrap
+}
+table.method td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+table.method tr:last-child td{border-bottom:0}
+
+footer{border-top:1px solid var(--line);background:var(--surface)}
+footer .wrap{padding:var(--s4) var(--s3);display:flex;flex-direction:column;gap:var(--s1)}
+footer p{font-size:.85rem;color:var(--muted);max-width:var(--measure)}
+
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion:no-preference){
+  html{scroll-behavior:smooth}
+}
+</style>
+
+<header class="masthead">
+  <div class="wrap">
+    <p class="eyebrow">คู่มือทีมวิศวกรรม · ICB Solution</p>
+    <h1>มาตรฐานโค้ดก่อนขึ้น Production</h1>
+    <p class="standfirst">
+      ทุกข้อในเอกสารนี้มี<strong>โค้ดจริงประกอบ</strong> ไม่ใช่หลักการลอย ๆ — มาจากการทดลองให้เขียนงานเดียวกัน
+      3 โจทย์ โดยรันสองเวอร์ชันคู่ขนาน เวอร์ชันหนึ่งมีมาตรฐานชุดนี้กำกับ อีกเวอร์ชันไม่มี
+      แล้วให้ผู้ตรวจอิสระให้คะแนน 30 เกณฑ์โดยไม่รู้ว่าอันไหนเป็นอันไหน
+      ตัวอย่าง <span style="color:var(--bad)">แดง</span> คือของที่หลุดออกมาจริงตอนไม่มีมาตรฐานกำกับ
+    </p>
+
+    <dl class="facts">
+      <div class="fact"><dt>โจทย์ทดสอบ</dt><dd>3<small>refactor · webhook · report script</small></dd></div>
+      <div class="fact"><dt>เกณฑ์ตรวจ</dt><dd>30<small>ตรวจโดยผู้ตรวจที่ไม่รู้ว่าเวอร์ชันไหนคือไหน</small></dd></div>
+      <div class="fact"><dt>คะแนนเมื่อมีมาตรฐาน</dt><dd>96.3%<small>ไม่มีมาตรฐาน 86.7%</small></dd></div>
+      <div class="fact"><dt>ข้อที่แยกฝีมือไม่ได้</dt><dd>14<small>ผ่านทั้งสองฝั่ง — ของจริงอยู่นอกเกณฑ์</small></dd></div>
+    </dl>
+  </div>
+</header>
+
+<div class="wrap">
+<div class="shell">
+
+  <nav class="toc" aria-label="สารบัญ">
+    <h2>สารบัญ</h2>
+    <p class="grp">ก่อนลงมือ</p>
+    <ol>
+      <li><a href="#r1">1 · ห้ามเปลี่ยนพฤติกรรมเงียบ ๆ</a></li>
+      <li><a href="#r2">2 · ขนาดงานต้องสมกับที่ขอ</a></li>
+    </ol>
+    <p class="grp">โครงสร้าง</p>
+    <ol>
+      <li><a href="#r3">3 · Abstraction ต้องมีผู้ใช้ ≥ 2</a></li>
+      <li><a href="#r4">4 · ของที่ส่งต้องรันได้จริง</a></li>
+    </ol>
+    <p class="grp">จุดที่เสียหายจริง</p>
+    <ol>
+      <li><a href="#r5">5 · Secret และการ rotate</a></li>
+      <li><a href="#r6">6 · SQL ต้อง parameterized</a></li>
+      <li><a href="#r7">7 · Error และ status code</a></li>
+      <li><a href="#r8">8 · N+1 query</a></li>
+      <li><a href="#r9">9 · Idempotency บังคับที่ DB</a></li>
+      <li><a href="#r10">10 · เงินห้ามเป็น float</a></li>
+    </ol>
+    <p class="grp">ก่อน merge</p>
+    <ol>
+      <li><a href="#r11">11 · รายงานผลตามจริง</a></li>
+      <li><a href="#checklist">Checklist</a></li>
+    </ol>
+    <p class="grp">ภาคผนวก</p>
+    <ol>
+      <li><a href="#method">วิธีทดลอง</a></li>
+      <li><a href="#limits">ข้อจำกัด</a></li>
+    </ol>
+  </nav>
+
+  <main>
+
+    <!-- ============ PART 1 ============ -->
+    <section id="p1">
+      <div class="part-head">
+        <span class="kicker">ส่วนที่ 1</span>
+        <h2>ก่อนลงมือเขียน</h2>
+      </div>
+
+      <section id="r1">
+        <h3><span class="n">01</span>ห้ามเปลี่ยนพฤติกรรมเงียบ ๆ ระหว่าง refactor</h3>
+        <p>Refactor แปลว่า <b>เปลี่ยนโครงสร้างโดยพฤติกรรมเหมือนเดิม</b> ถ้าเห็นว่ากติกาเดิมน่าจะผิด ให้แยกเป็นคนละคอมมิตและถามเจ้าของงานก่อน</p>
+        <div class="why"><b>ทำไม:</b> คนรีวิว diff ที่ย้ายโค้ด 900 บรรทัดจะไม่มีทางเห็นว่ามีอักขระเดียวที่เปลี่ยนความหมายทางธุรกิจ ยิ่งถ้ามี test เขียนล็อกค่าใหม่ไว้ด้วย มันจะกลายเป็น "ของที่ถูกต้อง" ทันทีในสายตาคนที่มาทีหลัง</div>
+
+        <div class="ev two">
+          <div class="panel bad">
+            <div class="panel-head"><span class="tag">ไม่มีมาตรฐาน</span><span class="src">src/domain/pricing.js:124</span></div>
+<pre><code>function shippingFeeFor(total, rules = PRICING_RULES) {
+  return total <span class="mark-bad">&gt;=</span> rules.freeShippingThreshold
+    ? 0
+    : rules.shippingFee;
+}
+
+<span class="cmt">// tests/pricing.test.js:97</span>
+<span class="cmt">// ล็อกค่าใหม่ไว้ด้วย test — ยอด 1500.00 พอดี = ส่งฟรี</span></code></pre>
+          </div>
+          <div class="panel good">
+            <div class="panel-head"><span class="tag">มีมาตรฐาน</span><span class="src">src/orders/pricing.js:25,163</span></div>
+<pre><code><span class="cmt">/** ยอดหลังหักส่วนลด "เกิน" ค่านี้ = ส่งฟรี (ของเดิม: total &gt; 1500) */</span>
+const FREE_SHIPPING_THRESHOLD_MINOR = 150_000;
+
+return netMinor <span class="mark-good">&gt;</span> FREE_SHIPPING_THRESHOLD_MINOR
+  ? 0
+  : SHIPPING_FEE_MINOR;
+
+<span class="cmt">// test ชื่อ: ค่าส่งฟรีเมื่อยอด "เกิน" เกณฑ์ ไม่ใช่ "เท่ากับ" เกณฑ์</span></code></pre>
+          </div>
+        </div>
+        <p class="verdict">ของเดิมคือ <code>total &gt; 1500</code> ฝั่งซ้ายเปลี่ยนเป็น <code>&gt;=</code> แปลว่าลูกค้าที่ซื้อ 1,500 บาทพอดีได้ส่งฟรี — บริษัทเสียค่าส่ง 60 บาทต่อออเดอร์ที่ยอดตรงเกณฑ์ ในเอกสารสรุปเขียนไว้แค่ว่า "เจตนาจริงน่าจะเป็นส่งฟรีเมื่อยอดถึงเกณฑ์ ถ้าตีความผิดบอกได้"</p>
+      </section>
+
+      <section id="r2">
+        <h3><span class="n">02</span>ขนาดของสิ่งที่ส่ง ต้องสมกับสิ่งที่เขาขอ</h3>
+        <p>ถ้าเขาขอ script ให้ส่ง script ถ้าคิดว่าควรเป็น package ให้เสนอเป็นทางเลือกพร้อมเหตุผล อย่าตัดสินใจแทนแล้วส่งของใหญ่กว่าที่ขอ</p>
+        <div class="why"><b>ทำไม:</b> โครงสร้างที่ใหญ่เกินงานไม่ได้ฟรี — คนที่มารับช่วงต้องเปิด 9 ไฟล์เพื่ออ่าน flow เดียว และทุกไฟล์กลายเป็นของที่ต้อง maintain ตลอดอายุโปรเจกต์ <b>ข้อนี้เป็นข้อที่มาตรฐานชุดเราเองยังทำได้ไม่ดี</b> — ดู <a href="#limits">ข้อจำกัด</a></div>
+
+        <div class="ev">
+          <div class="panel">
+            <div class="panel-head"><span class="tag" style="color:var(--muted)">โจทย์</span><span class="src">"เขียน script python ดึงยอดขายรายเดือนจาก postgres มาสรุปเป็น csv ให้หน่อย"</span></div>
+<pre><code><span class="mark-bad">ฝั่งที่มีมาตรฐานกำกับ</span>   18 ไฟล์ · 1,125 บรรทัด · 9 โมดูล · 42 test
+                        errors.py (6 exception class) · __main__.py · build backend
+ฝั่งที่ไม่มีมาตรฐาน       14 ไฟล์ ·   839 บรรทัด · 7 โมดูล · 27 test
+<span class="mark-good">สิ่งที่โจทย์ขอจริง</span>       ~200 บรรทัด ไฟล์เดียว: SQL constant + row model + csv.writer</code></pre>
+          </div>
+        </div>
+        <p class="verdict">ทั้งสองฝั่งเกินโจทย์ และฝั่งที่มีมาตรฐานเกินหนักกว่า ผู้ตรวจสรุปว่า "ไม่มีฝั่งไหนเสนอทางเลือกที่เล็กกว่า หรือบอกผู้ใช้เลยว่ากำลังขยายขอบเขตงาน" — การขยายขอบเขตโดยไม่บอกคือปัญหาเดียวกับข้อ 1 คนละหน้าตา</p>
+      </section>
+    </section>
+
+    <!-- ============ PART 2 ============ -->
+    <section id="p2">
+      <div class="part-head">
+        <span class="kicker">ส่วนที่ 2</span>
+        <h2>โครงสร้างและการแยก module</h2>
+      </div>
+
+      <section id="r3">
+        <h3><span class="n">03</span>Abstraction ต้องมีผู้ใช้จริงอย่างน้อย 2 ราย</h3>
+        <p>interface, abstract class, factory, DI container — สร้างได้เมื่อมีผู้ใช้จริงตอนนี้ตั้งแต่ 2 รายขึ้นไป หรือมี requirement ชัดว่ากำลังจะมี ถ้าอธิบายไม่ได้ว่ามันกันความเจ็บปวดอะไร แปลว่ายังไม่ถึงเวลา</p>
+        <div class="why"><b>ทำไม:</b> เพิ่ม abstraction ทีหลังทำได้เสมอ แต่รื้อ abstraction ที่ผิดออกต้องแตะทุกจุดที่มันแทรกอยู่ — over-engineering แพงกว่า under-engineering เพราะมันแก้ยากกว่า และ test ที่ใช้ object literal แทน implementation จริงไม่นับเป็นผู้ใช้รายที่สอง</div>
+
+        <div class="ev two">
+          <div class="panel bad">
+            <div class="panel-head"><span class="tag">ไม่มีมาตรฐาน</span><span class="src">src/container.js</span></div>
+<pre><code>function buildContainer(overrides = {}) {
+  const settings = overrides.config ?? config.load();
+  const pool = overrides.pool ?? createPool(settings.db);
+
+  <span class="cmt">// 4 class · implementation ละ 1 ตัว · ผู้เรียก 1 ราย</span>
+  const productRepository = new <span class="mark-bad">ProductRepository</span>(pool);
+  const couponRepository  = new <span class="mark-bad">CouponRepository</span>(pool);
+  const orderRepository   = new <span class="mark-bad">OrderRepository</span>(pool);
+  const notificationService = new <span class="mark-bad">NotificationService</span>(settings.mailer);
+
+  const orderService = new OrderService({ pool, productRepository,
+    couponRepository, orderRepository, notificationService });
+  return { config: settings, pool, orderService, ordersRouter: ... };
+}</code></pre>
+          </div>
+          <div class="panel good">
+            <div class="panel-head"><span class="tag">มีมาตรฐาน</span><span class="src">src/app.js</span></div>
+<pre><code><span class="cmt">// ประกอบแอปทั้งหมดที่จุดเดียว — ไม่มี container แยก</span>
+function createApp({ authenticate, pool: injectedPool }) {
+  if (typeof authenticate !== 'function') {
+    throw new TypeError('createApp requires an `authenticate` middleware');
+  }
+  const config = loadConfig();
+  const pool   = injectedPool ?? createPool(config.db);
+  const mailer = createOrderMailer(config.mail);
+  const service = <span class="mark-good">createOrderService</span>({ pool, repository, mailer, logger });
+
+  const app = express();
+  app.use('/api/v1', authenticate, createOrderRouter({ service }));
+  ...
+}</code></pre>
+          </div>
+        </div>
+        <p class="verdict">ฝั่งซ้ายทำให้ order flow เดียวกระจายไป 4 ไฟล์ โดย repository สามตัวมี 2, 1 และ 4 method ตามลำดับ ส่วน <code>pricing.js</code> ยังส่งพารามิเตอร์ <code>rules = PRICING_RULES</code> ผ่าน 4 ฟังก์ชันที่ไม่มีใครเคย override เลย ฝั่งขวาใช้ factory function ธรรมดาและเขียนเหตุผลกำกับในโค้ดว่าทำไมรวมเป็นไฟล์เดียวดีกว่าแยกสาม</p>
+      </section>
+
+      <section id="r4">
+        <h3><span class="n">04</span>ของที่ส่งต้องรันได้จริงในเส้นทางจริง</h3>
+        <p>ห้ามทิ้ง <code>TODO</code>, stub, mock ที่ต่อเข้า production entrypoint ถ้าทำส่วนไหนไม่ได้จริง ๆ ให้<b>บอกออกมาเป็นข้อความ</b> ว่าเหลืออะไร ไม่ใช่ซ่อนไว้ในโค้ด</p>
+        <div class="why"><b>ทำไม:</b> placeholder ที่หลุดไป production คือบั๊กที่ไม่มีใครเห็นจนกว่าจะมีคนเรียกใช้ และคนรีวิวมักไม่ได้อ่านทุกบรรทัด คอมเมนต์ที่บอกว่า "ค่อยเปลี่ยนทีหลัง" ไม่ได้ทำให้ของที่ส่งใช้งานได้</div>
+
+        <div class="ev two">
+          <div class="panel bad">
+            <div class="panel-head"><span class="tag">ไม่มีมาตรฐาน</span><span class="src">src/server.ts:9-14</span></div>
+<pre><code>function main(): void {
+  const env = loadEnv();
+
+  <span class="cmt">// Swap these two for database-backed implementations in production.</span>
+  const orders = new <span class="mark-bad">InMemoryOrderRepository</span>();
+  const processedEvents = new <span class="mark-bad">InMemoryProcessedEventStore</span>();
+  ...
+}</code></pre>
+          </div>
+          <div class="panel good">
+            <div class="panel-head"><span class="tag">มีมาตรฐาน</span><span class="src">src/infrastructure/postgres/order-repository.ts</span></div>
+<pre><code>class PostgresOrderTransaction implements OrderTransaction {
+  constructor(private readonly client: pg.PoolClient) {}
+
+  async findOrderForUpdate(orderId: string): Promise&lt;Order | null&gt; {
+    const result = await this.client.query&lt;OrderRow&gt;(
+      `SELECT id, customer_email, amount_minor_units, currency, status
+         FROM orders WHERE id = $1
+        <span class="mark-good">FOR UPDATE</span>`, [orderId]);
+    ...
+  }
+}
+<span class="cmt">// + migration จริง มาพร้อมกัน</span></code></pre>
+          </div>
+        </div>
+        <p class="verdict">ฝั่งซ้ายคือ service ที่ deploy แล้ว webhook จริงจะได้ 404 ทุกใบ เพราะไม่มี order อยู่ใน Map และตารางกัน event ซ้ำหายทุกครั้งที่ restart — คอมเมนต์บอกว่าให้สลับเอาเอง แต่ของที่ส่งคือของที่ใช้ไม่ได้</p>
+      </section>
+    </section>
+
+    <!-- ============ PART 3 ============ -->
+    <section id="p3">
+      <div class="part-head">
+        <span class="kicker">ส่วนที่ 3</span>
+        <h2>จุดที่พลาดบ่อยและเสียหายจริง</h2>
+      </div>
+
+      <section id="r5">
+        <h3><span class="n">05</span>Secret ที่หลุดแล้ว ต้อง rotate ไม่ใช่แค่ลบ</h3>
+        <p>ห้าม hardcode password, API key, connection string — ใช้ env var เสมอ และถ้าเจอของที่ commit ไปแล้ว ให้<b>แจ้งทันทีว่าต้องเปลี่ยนค่าใหม่</b> เพราะค่าเดิมยังอยู่ใน git history ตลอดไป</p>
+        <div class="why"><b>ทำไม:</b> การลบ secret ออกจากไฟล์แก้แค่ไฟล์ปัจจุบัน ใครก็ตามที่ clone repo ไปแล้ว หรือกด "view history" บน GitHub ยังเห็นค่าเดิมครบ การ rotate เท่านั้นที่ทำให้ค่าเดิมไร้ค่า</div>
+
+        <div class="ev">
+          <div class="panel bad">
+            <div class="panel-head"><span class="tag">โค้ดตั้งต้นที่ใช้ทดสอบ</span><span class="src">legacy_orders.js:6-11</span></div>
+<pre><code>const pool = mysql.createPool({
+  host: 'db.internal.acme.co',
+  user: 'app_admin',
+  password: <span class="mark-bad">'Acm3!prod2023'</span>,
+  database: 'shop'
+});
+...
+headers: { 'X-Api-Key': <span class="mark-bad">'sk_live_9f2b1c8a7d'</span> }</code></pre>
+          </div>
+        </div>
+        <p class="verdict">ทั้งสองฝั่งย้าย secret ไป env var ได้ถูกต้อง แต่ฝั่งที่ไม่มีมาตรฐาน<b>พิมพ์ค่าจริงทั้งสองตัวซ้ำลงในเอกสารสรุปที่ส่งให้ผู้ใช้</b> ขณะกำลังเขียนอธิบายว่าต้อง rotate — เป็นการสร้างสำเนาใหม่ของสิ่งที่กำลังบอกว่าอันตราย</p>
+      </section>
+
+      <section id="r6">
+        <h3><span class="n">06</span>SQL ต้อง parameterized ทุกจุด ไม่มีข้อยกเว้น</h3>
+        <p>ห้ามต่อ string เข้า query แม้จะคิดว่า escape แล้ว หรือคิดว่าค่านั้นมาจากระบบเราเอง</p>
+        <div class="why"><b>ทำไม:</b> ค่าที่ "มาจากระบบเราเอง" วันนี้ อาจกลายเป็นค่าที่รับจาก API ภายนอกในอีกหกเดือน โดยคนที่แก้ไม่รู้ว่า query ข้างล่างต่อ string อยู่ parameterized ทำให้ปลอดภัยโดยไม่ต้องพึ่งความจำของใคร</div>
+
+        <div class="ev two">
+          <div class="panel bad">
+            <div class="panel-head"><span class="tag">โค้ดตั้งต้น</span><span class="src">legacy_orders.js:23,84</span></div>
+<pre><code>await pool.query(
+  "SELECT * FROM products WHERE id = " <span class="mark-bad">+</span> items[i].productId);
+
+await pool.query(
+  "SELECT * FROM coupons WHERE code = '" <span class="mark-bad">+</span> coupon <span class="mark-bad">+</span> "'");
+
+await pool.query(
+  "SELECT * FROM orders WHERE id = " <span class="mark-bad">+</span> req.params.id);</code></pre>
+          </div>
+          <div class="panel good">
+            <div class="panel-head"><span class="tag">ที่ถูกต้อง</span><span class="src">ทั้งสองฝั่งแก้ข้อนี้ได้</span></div>
+<pre><code><span class="cmt">// MySQL / mysql2</span>
+await pool.query(
+  'SELECT * FROM products WHERE id = <span class="mark-good">?</span>', [productId]);
+
+<span class="cmt">// PostgreSQL / pg</span>
+await client.query(
+  'SELECT * FROM orders WHERE id = <span class="mark-good">$1</span>', [orderId]);
+
+<span class="cmt">// Python / psycopg</span>
+cur.execute(
+  'SELECT * FROM orders WHERE id = <span class="mark-good">%s</span>', (order_id,))</code></pre>
+          </div>
+        </div>
+        <p class="verdict">ข้อนี้ทั้งสองฝั่งทำถูก และเป็นตัวอย่างของเกณฑ์ที่ <b>แยกฝีมือไม่ได้</b> — 14 จาก 30 เกณฑ์เป็นแบบนี้ เอามาไว้ในคู่มือเพราะยังเป็นข้อบังคับ ไม่ใช่เพราะมันแยกคนเก่งออกจากคนไม่เก่ง</p>
+      </section>
+
+      <section id="r7">
+        <h3><span class="n">07</span>ห้ามกลืน error และห้ามตอบ 200 ทุกกรณี</h3>
+        <p>ทุก <code>catch</code> ต้องเลือกอย่างใดอย่างหนึ่ง: จัดการให้จบจริง, log พร้อม context แล้วโยนต่อ, หรือแปลงเป็น error ที่มีความหมายกว่าเดิม และ status code ต้องสื่อความจริง</p>
+        <div class="why"><b>ทำไม:</b> <code>catch (e) {}</code> ทำให้ปัญหาหายไปจากสายตาทุกคน ส่วนการตอบ <code>200 {ok:false}</code> ทำให้ client, monitoring, load balancer และ retry logic ทั้งหมดเข้าใจว่าสำเร็จ — กราฟ error rate จะเป็นศูนย์ตลอดขณะที่ระบบพังอยู่</div>
+
+        <div class="ev two">
+          <div class="panel bad">
+            <div class="panel-head"><span class="tag">โค้ดตั้งต้น</span><span class="src">legacy_orders.js:69-79</span></div>
+<pre><code>try {
+  await fetch('https://mail.acme.co/send', { ... });
+} <span class="mark-bad">catch (e) {}</span>          <span class="cmt">// อีเมลไม่ออก ไม่มีใครรู้</span>
+
+console.log('order created', orderId, <span class="mark-bad">req.body</span>);  <span class="cmt">// PII ลง log</span>
+res.json({ ok: true, orderId, total });
+
+} catch (e) {
+  console.log(e);
+  res.json({ ok: false });   <span class="mark-bad">// HTTP 200 ทั้งที่ order ล้มเหลว</span>
+}</code></pre>
+          </div>
+          <div class="panel good">
+            <div class="panel-head"><span class="tag">ที่ถูกต้อง</span><span class="src">รูปแบบที่ใช้ได้ทั้งสองภาษา</span></div>
+<pre><code><span class="cmt">// แนบ context แล้วส่งต่อ</span>
+try {
+  await save(order);
+} catch (cause) {
+  throw new PersistenceError(
+    `failed to save order ${order.id}`, { <span class="mark-good">cause</span> });
+}
+
+<span class="cmt">// side effect ที่ไม่ควรล้ม transaction — จัดการชัด ไม่ใช่กลืน</span>
+mailer.send(...).catch(err =&gt;
+  logger.<span class="mark-good">error</span>({ err, orderId }, 'confirmation email failed'));
+
+res.status(<span class="mark-good">201</span>).json({ orderId });</code></pre>
+          </div>
+        </div>
+        <p class="verdict">แยกให้ชัดระหว่าง <b>expected failure</b> (validation ผิด, ไม่พบข้อมูล → 4xx เป็น flow ปกติ) กับ <b>unexpected</b> (DB ล่ม → 5xx ต้องดังและ alert) และ log ห้ามมี password, token, OTP, PII เต็ม ๆ, Authorization header</p>
+      </section>
+
+      <section id="r8">
+        <h3><span class="n">08</span>N+1 query คือบั๊กด้าน performance ที่ต้องแก้ตั้งแต่แรก</h3>
+        <p>ลูปที่ยิง query ทีละแถวต้องเปลี่ยนเป็น query เดียว หรือ batch/eager load</p>
+        <div class="why"><b>ทำไม:</b> ตอน dev ที่มีข้อมูล 5 แถวจะไม่มีใครสังเกต พอขึ้น production ที่ออเดอร์มี 40 รายการ กลายเป็น 41 round trip ต่อหนึ่ง request และปัญหาจะโผล่ตอนที่แก้ยากที่สุดคือตอนมีคนใช้เยอะ</div>
+
+        <div class="ev two">
+          <div class="panel bad">
+            <div class="panel-head"><span class="tag">โค้ดตั้งต้น</span><span class="src">legacy_orders.js:85-91</span></div>
+<pre><code>for (var i = 0; i &lt; items.length; i++) {
+  const [p] = <span class="mark-bad">await</span> pool.query(
+    "SELECT name FROM products WHERE id = " + items[i].product_id);
+  out.items.push({ name: p[0].name, qty: items[i].qty });
+}
+<span class="cmt">// order 40 รายการ = 41 query</span></code></pre>
+          </div>
+          <div class="panel good">
+            <div class="panel-head"><span class="tag">ที่ถูกต้อง</span><span class="src">join ครั้งเดียว</span></div>
+<pre><code>const [rows] = await pool.query(
+  `SELECT oi.qty, oi.unit_price, p.name
+     FROM order_items oi
+     <span class="mark-good">JOIN</span> products p ON p.id = oi.product_id
+    WHERE oi.order_id = ?`, [orderId]);
+<span class="cmt">// order กี่รายการก็ 1 query</span></code></pre>
+          </div>
+        </div>
+        <p class="verdict">อาการอื่นในตระกูลเดียวกัน: โหลดทั้งตารางเข้า memory แล้วค่อย filter ในโค้ด, endpoint ที่คืน list โดยไม่มี pagination, และ <code>await</code> ในลูปที่แต่ละรอบไม่ได้ขึ้นต่อกัน (ใช้ <code>Promise.all</code> พร้อมจำกัดจำนวนพร้อมกัน)</p>
+      </section>
+
+      <section id="r9">
+        <h3><span class="n">09</span>Idempotency ต้องบังคับที่ database ไม่ใช่ในหน่วยความจำ</h3>
+        <p>งานที่ห้ามทำซ้ำ (ตัดเงิน, สร้างออเดอร์, ส่งอีเมลยืนยัน) ต้องกันซ้ำด้วย unique constraint หรือ transaction ไม่ใช่ check-then-write ในโปรเซส</p>
+        <div class="why"><b>ทำไม:</b> payment gateway ทุกเจ้าส่ง webhook ซ้ำเป็นเรื่องปกติ (retry เมื่อ timeout) และเรารันหลาย instance การเช็คใน memory ถูกต้องเฉพาะตอนมีเครื่องเดียวและไม่เคย restart ซึ่งไม่ใช่ production</div>
+
+        <div class="ev two">
+          <div class="panel bad">
+            <div class="panel-head"><span class="tag">ไม่มีมาตรฐาน</span><span class="src">src/repositories/processedEventStore.ts:19-26</span></div>
+<pre><code>export class InMemoryProcessedEventStore {
+  private readonly seen = new <span class="mark-bad">Set</span>&lt;string&gt;();
+
+  async claim(eventId: string): Promise&lt;boolean&gt; {
+    if (this.seen.has(eventId)) return false;
+    this.seen.add(eventId);      <span class="cmt">// check-then-write</span>
+    return true;
+  }
+}
+<span class="cmt">// 2 instance = ทั้งคู่ได้ true = ตัดเงิน/ส่งอีเมลซ้ำ</span></code></pre>
+          </div>
+          <div class="panel good">
+            <div class="panel-head"><span class="tag">มีมาตรฐาน</span><span class="src">infrastructure/postgres/order-repository.ts:45-56</span></div>
+<pre><code>async claimEvent(event: RecordedPaymentEvent): Promise&lt;boolean&gt; {
+  <span class="cmt">// ON CONFLICT DO NOTHING ทำให้ primary key เป็นตัวคุม concurrency:</span>
+  <span class="cmt">// สอง delivery พร้อมกันของ event เดียวกัน เป็น true ทั้งคู่ไม่ได้</span>
+  const result = await this.client.query(
+    `INSERT INTO payment_events (event_id, payment_id, order_id, received_at)
+     VALUES ($1, $2, $3, $4)
+     <span class="mark-good">ON CONFLICT (event_id) DO NOTHING</span>
+     RETURNING event_id`, [...]);
+  return result.rowCount === 1;
+}</code></pre>
+          </div>
+        </div>
+        <p class="verdict">ฝั่งขวาอยู่ใน transaction เดียวกับ <code>SELECT ... FOR UPDATE</code> และการเปลี่ยนสถานะ <code>pending → paid</code> ถ้า transaction rollback การจอง event ก็คืนไปด้วยอัตโนมัติ ส่วนอีเมลถูกส่งหลัง commit เพื่อไม่ให้ SMTP ล่มไปย้อนเงินที่ตัดสำเร็จแล้ว</p>
+      </section>
+
+      <section id="r10">
+        <h3><span class="n">10</span>เงินห้ามเก็บเป็น float</h3>
+        <p>ใช้ integer หน่วยย่อย (สตางค์) หรือ <code>Decimal</code> / <code>NUMERIC</code> ตลอดเส้นทางตั้งแต่ DB จนถึงไฟล์ที่ส่งออก</p>
+        <div class="why"><b>ทำไม:</b> <code>0.1 + 0.2 !== 0.3</code> ในทุกภาษาที่ใช้ IEEE 754 ความคลาดเคลื่อนระดับเศษสตางค์จะสะสมจนงบไม่ตรง และปัญหาจะถูกพบโดยฝ่ายบัญชี ไม่ใช่โดย test</div>
+
+        <div class="ev two">
+          <div class="panel bad">
+            <div class="panel-head"><span class="tag">โค้ดตั้งต้น</span><span class="src">legacy_orders.js:26-33</span></div>
+<pre><code>var price = p.price;
+if (items[i].qty &gt; 10) price = price <span class="mark-bad">* 0.95</span>;
+if (p.category == 3)   price = price <span class="mark-bad">* 0.9</span>;
+total = total + price * items[i].qty;
+
+total = total - (total <span class="mark-bad">* c[0].value / 100</span>);</code></pre>
+          </div>
+          <div class="panel good">
+            <div class="panel-head"><span class="tag">มีมาตรฐาน</span><span class="src">src/orders/pricing.js</span></div>
+<pre><code><span class="cmt">// เก็บเป็นสตางค์ (minor units) ทั้งเส้นทาง</span>
+const FREE_SHIPPING_THRESHOLD_MINOR = <span class="mark-good">150_000</span>;  <span class="cmt">// 1,500.00</span>
+const SHIPPING_FEE_MINOR = <span class="mark-good">6_000</span>;             <span class="cmt">//    60.00</span>
+
+<span class="cmt">// Python: Decimal ตลอด + ปัดที่จุดเดียว</span>
+<span class="cmt">// SELECT SUM(total_amount)::numeric ... แล้ว quantize(ROUND_HALF_UP)</span></code></pre>
+          </div>
+        </div>
+        <p class="verdict">อีกข้อที่มากับเรื่องเงิน: ส่วนลดแบบจำนวนเงินคงที่ต้อง clamp ด้วย <code>Math.min(discount, subtotal)</code> ไม่งั้นคูปอง 500 บาทกับออเดอร์ 300 บาทจะได้ยอดติดลบ — โค้ดตั้งต้นมีบั๊กนี้อยู่ และทั้งสองฝั่งจับได้</p>
+      </section>
+    </section>
+
+    <!-- ============ PART 4 ============ -->
+    <section id="p4">
+      <div class="part-head">
+        <span class="kicker">ส่วนที่ 4</span>
+        <h2>ก่อนกด merge</h2>
+      </div>
+
+      <section id="r11">
+        <h3><span class="n">11</span>รายงานผลตามจริง — โดยเฉพาะเรื่อง test</h3>
+        <p>ถ้ารัน test แล้ว ให้บอกผลจริงพร้อม output ถ้ารันไม่ได้ ให้บอกว่ารันไม่ได้และเพราะอะไร <b>ห้ามรายงานตัวเลขที่ไม่ได้มาจากการรันจริง</b></p>
+        <div class="why"><b>ทำไม:</b> คนอ่านรายงานใช้ตัวเลขนั้นตัดสินใจว่าจะรีวิวละเอียดแค่ไหน ตัวเลขที่ดูดีแต่ไม่จริงอันตรายกว่าการไม่มีตัวเลขเลย เพราะมันซื้อความไว้ใจที่ยังไม่ได้พิสูจน์</div>
+
+        <div class="ev">
+          <div class="panel bad">
+            <div class="panel-head"><span class="tag">เกิดขึ้นกับฝั่งที่มีมาตรฐานเอง</span><span class="src">eval-1 · payment webhook</span></div>
+<pre><code>รายงานว่า:  "25/25, 9/9, 3/3 ผ่านทั้งหมด"
+
+ผู้ตรวจพบว่า:
+  · ไฟล์เทสเหล่านั้น <span class="mark-bad">import { it } from 'vitest'</span> ซึ่งรันไม่ได้
+    ในสภาพแวดล้อมที่ห้าม npm install
+  · จำนวนไม่ตรงกับ it() ที่มีอยู่จริงในไฟล์
+    (signature 10 + rules 14 = 24 ไม่ใช่ 25)</code></pre>
+          </div>
+        </div>
+        <p class="verdict">ข้อดีคือฝั่งนั้นบอกไว้ตรง ๆ ว่า vitest รันไม่ได้และ test อีก 14 ตัวยังไม่ได้รัน — แต่แล้วก็ยังรายงานตัวเลขจากการรันบางส่วนที่ยืนยันไม่ได้ บทเรียนคือ "พยายามรันจริง" กับ "รายงานตัวเลข" เป็นคนละเรื่อง อย่าให้ความตั้งใจทำข้อแรกกลายเป็นแรงกดดันให้ทำข้อสอง</p>
+      </section>
+
+      <section id="checklist">
+        <h3><span class="n">✓</span>Checklist ก่อนเปิด PR</h3>
+        <p>อ่านโค้ดที่เพิ่งเขียนอีกรอบในมุมคนที่ต้องมา maintain ต่ออีกหกเดือน เจออะไรแก้เลย ไม่ต้องรอให้คนรีวิวทัก</p>
+
+        <div class="check">
+          <div class="check-grp">
+            <h4>ความถูกต้อง</h4>
+            <ul>
+              <li>ไม่มี TODO, stub, mock ที่ต่อเข้าเส้นทางจริง</li>
+              <li>ไม่มี console.log / print / debugger ค้าง</li>
+              <li>ไม่มี dead code หรือ import ที่ไม่ได้ใช้</li>
+              <li>async: await ครบทุกที่ที่ต้องรอ</li>
+              <li>ถ้าเป็น refactor — พฤติกรรมเดิมยังเหมือนเดิมทุกเงื่อนไข</li>
+            </ul>
+          </div>
+          <div class="check-grp">
+            <h4>Edge case</h4>
+            <ul>
+              <li>empty, null / undefined / None</li>
+              <li>ค่าติดลบ, ศูนย์, ค่าตรงขอบพอดี (off-by-one)</li>
+              <li>list ยาว → มี pagination หรือ streaming</li>
+              <li>unicode / อักษรไทย / emoji</li>
+              <li>timezone: เก็บ UTC แปลงตอนแสดงผล</li>
+              <li>กดซ้ำ / ส่งซ้ำ → idempotent</li>
+            </ul>
+          </div>
+          <div class="check-grp">
+            <h4>Security</h4>
+            <ul>
+              <li>ไม่มี secret hardcode (grep: password, api_key, token)</li>
+              <li>input จากภายนอก validate ด้วย schema</li>
+              <li>query parameterized ทั้งหมด</li>
+              <li>เช็คสิทธิ์ระดับ resource ไม่ใช่แค่ว่า login แล้ว</li>
+              <li>log ไม่มี password / token / PII</li>
+            </ul>
+          </div>
+          <div class="check-grp">
+            <h4>Performance</h4>
+            <ul>
+              <li>ไม่มี N+1 query</li>
+              <li>ไม่มี await ในลูปที่รันขนานได้</li>
+              <li>ไม่โหลดทั้งตารางมา filter ในโค้ด</li>
+              <li>connection / file handle / listener ถูกปิด</li>
+            </ul>
+          </div>
+          <div class="check-grp">
+            <h4>ความอ่านง่าย</h4>
+            <ul>
+              <li>type ครบ ไม่มี any</li>
+              <li>ชื่อบอกเจตนาโดยไม่ต้องเปิด implementation</li>
+              <li>ไม่มี magic number ลอย ๆ</li>
+              <li>ตามสไตล์ของ repo ไม่ใช่สไตล์ตัวเอง</li>
+              <li>abstraction ทุกตัวมีผู้ใช้จริง ≥ 2 ราย</li>
+            </ul>
+          </div>
+          <div class="check-grp">
+            <h4>ส่งมอบ</h4>
+            <ul>
+              <li>รัน test จริงแล้ว — ถ้าแดง บอกพร้อม output</li>
+              <li>ถ้ารันไม่ได้ บอกว่ารันไม่ได้ ไม่ใช่รายงานตัวเลข</li>
+              <li>บอก env var / migration ที่ต้องตั้งเพิ่ม</li>
+              <li>บอกสิ่งที่สมมติไว้และสิ่งที่ยังไม่ได้ทำ</li>
+              <li>commit message บอกผลลัพธ์ ไม่ใช่บอกว่าแก้ไฟล์ไหน</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <!-- ============ APPENDIX ============ -->
+    <section id="p5">
+      <div class="part-head">
+        <span class="kicker">ภาคผนวก</span>
+        <h2>ที่มาของหลักฐาน</h2>
+      </div>
+
+      <section id="method">
+        <h3>วิธีทดลอง</h3>
+        <p>โจทย์เดียวกันถูกส่งให้สองเวอร์ชันพร้อมกัน เวอร์ชันหนึ่งมีมาตรฐานชุดนี้กำกับ อีกเวอร์ชันไม่มีอะไรเลย จากนั้นให้ผู้ตรวจอิสระอ่านผลลัพธ์โดยไม่รู้ว่าอันไหนเป็นอันไหน แล้วให้คะแนนตามเกณฑ์ที่เขียนไว้ล่วงหน้า</p>
+
+        <div class="scroll-x">
+        <table class="method">
+          <thead>
+            <tr><th>โจทย์</th><th>ลักษณะ</th><th class="num">มีมาตรฐาน</th><th class="num">ไม่มี</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Refactor route ที่รก</td>
+              <td>ไฟล์ 94 บรรทัดที่ฝังปัญหาไว้: secret, SQL ต่อ string, N+1, catch เปล่า, magic number, logic ปนใน route</td>
+              <td class="num">11/11</td><td class="num">10/11</td>
+            </tr>
+            <tr>
+              <td>Payment webhook</td>
+              <td>เขียนใหม่ทั้งหมด · Node + TypeScript + Express</td>
+              <td class="num">10/10</td><td class="num">8/10</td>
+            </tr>
+            <tr>
+              <td>Report script</td>
+              <td>เขียนใหม่ทั้งหมด · Python + PostgreSQL → CSV</td>
+              <td class="num">8/9</td><td class="num">8/9</td>
+            </tr>
+            <tr>
+              <td><b>รวม</b></td>
+              <td>30 เกณฑ์</td>
+              <td class="num"><b>96.3%</b></td><td class="num"><b>86.7%</b></td>
+            </tr>
+          </tbody>
+        </table>
+        </div>
+        <p class="verdict">ต้นทุนที่ต้องพูดถึงด้วย: ฝั่งที่มีมาตรฐานกำกับใช้เวลามากกว่า 2.3 เท่า เพราะอ่านเอกสารประกอบและตรวจงานตัวเองก่อนส่ง ถ้างานเล็กและชัดเจนอยู่แล้ว ไม่ต้องลากทุกขั้นตอนมาใช้</p>
+      </section>
+
+      <section id="limits">
+        <h3>ข้อจำกัดของหลักฐานชุดนี้</h3>
+        <div class="note">
+          <h4>อ่านส่วนนี้ก่อนเอาตัวเลขไปอ้างที่อื่น</h4>
+          <ul class="plain">
+            <li><b>ตัวอย่างน้อย</b> — 3 โจทย์ ฝั่งละ 1 รอบ ไม่ได้รันซ้ำหลายครั้งเพื่อวัดความผันผวน ตัวเลข 96.3% กับ 86.7% จึงบอกทิศทาง ไม่ใช่ค่าที่แม่นยำ</li>
+            <li><b>เกณฑ์เกือบครึ่งแยกฝีมือไม่ได้</b> — 14 จาก 30 ข้อผ่านทั้งสองฝั่ง เรื่องที่ต่างกันจริง (เปลี่ยนกติกาเงียบ ๆ, DI container, in-memory repo) กลับเป็นเรื่องที่<b>ไม่มีเกณฑ์ข้อไหนตรวจเลย</b> ผู้ตรวจไปเจอเองระหว่างอ่านโค้ด</li>
+            <li><b>มาตรฐานชุดนี้ยังทำให้แย่ลงได้ในบางเรื่อง</b> — โจทย์ที่ 3 ฝั่งที่มีมาตรฐานสร้างของเกินโจทย์<b>หนักกว่า</b>ฝั่งที่ไม่มี (18 ไฟล์ vs 14 สำหรับสิ่งที่ควรเป็นไฟล์เดียว) และเป็นฝั่งที่รายงานตัวเลข test เกินจริง — ดูข้อ <a href="#r2">02</a> และ <a href="#r11">11</a></li>
+            <li><b>ตัวอย่างโค้ดมาจากงานทดสอบ ไม่ใช่ระบบจริงของบริษัท</b> — ชื่อโฮสต์ รหัสผ่าน และ API key ทั้งหมดในเอกสารนี้เป็นค่าสมมติที่สร้างขึ้นเพื่อการทดสอบ ไม่ใช่ค่าที่ใช้งานอยู่จริง</li>
+          </ul>
+        </div>
+      </section>
+    </section>
+
+  </main>
+</div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p><b>มาตรฐานโค้ด ICB Solution</b> — เอกสารอ่านเอง ไม่ต้องมีคนนำ ใช้ checklist ก่อนเปิด PR ทุกครั้ง</p>
+    <p>ข้อไหนที่ทีมไม่เห็นด้วย เถียงได้ — มาตรฐานที่บังคับใช้โดยไม่มีใครเข้าใจเหตุผลจะถูกข้ามอยู่ดี ทุกข้อในเอกสารนี้จึงมีส่วน "ทำไม" กำกับเสมอ</p>
+  </div>
+</footer>

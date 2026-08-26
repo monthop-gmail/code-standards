@@ -1,0 +1,240 @@
+{
+  "root": "iteration-1/eval-0-refactor-legacy-orders/with_skill/outputs",
+  "files": [
+    {
+      "path": "src/app.js",
+      "lines": 46
+    },
+    {
+      "path": "src/config/env.js",
+      "lines": 67
+    },
+    {
+      "path": "src/db/pool.js",
+      "lines": 25
+    },
+    {
+      "path": "src/errors.js",
+      "lines": 71
+    },
+    {
+      "path": "src/http/middleware.js",
+      "lines": 64
+    },
+    {
+      "path": "src/logger.js",
+      "lines": 27
+    },
+    {
+      "path": "src/notifications/order-mailer.js",
+      "lines": 36
+    },
+    {
+      "path": "src/orders/order.repository.js",
+      "lines": 132
+    },
+    {
+      "path": "src/orders/order.routes.js",
+      "lines": 42
+    },
+    {
+      "path": "src/orders/order.service.js",
+      "lines": 147
+    },
+    {
+      "path": "src/orders/order.validation.js",
+      "lines": 115
+    },
+    {
+      "path": "src/orders/pricing.js",
+      "lines": 205
+    },
+    {
+      "path": "tests/order.service.test.js",
+      "lines": 216
+    },
+    {
+      "path": "tests/order.validation.test.js",
+      "lines": 101
+    },
+    {
+      "path": "tests/pricing.test.js",
+      "lines": 217
+    }
+  ],
+  "hits": {
+    "hardcoded_secret": [],
+    "string_concat_sql": [],
+    "fstring_sql": [],
+    "empty_catch": [
+      {
+        "file": "src/orders/order.service.js",
+        "line": 121,
+        "snippet": "* แต่ต้อง log พร้อม orderId เพื่อให้ตามส่งซ้ำได้ (ของเดิม `catch (e) {}` เปล่า = หายเงียบ)"
+      }
+    ],
+    "todo_placeholder": [],
+    "ts_any": [],
+    "await_in_loop": [],
+    "env_usage": [],
+    "param_query": [
+      {
+        "file": "src/orders/order.repository.js",
+        "line": 68,
+        "snippet": "'INSERT INTO orders (user_id, total, status, created_at) VALUES (?, ?, ?, NOW())',"
+      },
+      {
+        "file": "src/orders/order.repository.js",
+        "line": 68,
+        "snippet": "'INSERT INTO orders (user_id, total, status, created_at) VALUES (?, ?, ?, NOW())',"
+      },
+      {
+        "file": "src/orders/order.repository.js",
+        "line": 68,
+        "snippet": "'INSERT INTO orders (user_id, total, status, created_at) VALUES (?, ?, ?, NOW())',"
+      }
+    ],
+    "decimal_money": [
+      {
+        "file": "src/db/pool.js",
+        "line": 18,
+        "snippet": "// DECIMAL มาเป็น string เสมอ — โค้ดคิดเงินแปลงเป็นจำนวนเต็มสตางค์เอง"
+      },
+      {
+        "file": "src/orders/pricing.js",
+        "line": 35,
+        "snippet": "* @property {string|number} price ราคาหน่วยบาท — mysql2 ส่ง DECIMAL มาเป็น string"
+      },
+      {
+        "file": "src/orders/pricing.js",
+        "line": 63,
+        "snippet": "* แปลงจำนวนเงินหน่วยบาท (number หรือ string จาก DECIMAL) เป็นจำนวนเต็มสตางค์"
+      },
+      {
+        "file": "src/orders/pricing.js",
+        "line": 80,
+        "snippet": "* แปลงกลับเป็นหน่วยบาทสำหรับเขียนลง column DECIMAL เดิม"
+      },
+      {
+        "file": "tests/pricing.test.js",
+        "line": 18,
+        "snippet": "// price เป็น string เหมือนที่ mysql2 ส่ง DECIMAL กลับมาจริง ๆ"
+      }
+    ],
+    "float_money": [],
+    "group_by": [],
+    "context_manager": [],
+    "zod_schema": [
+      {
+        "file": "src/orders/order.validation.js",
+        "line": 9,
+        "snippet": "* ไม่ได้ใช้ zod เพื่อไม่เพิ่ม dependency ให้ PR refactor; ถ้าวันหนึ่ง repo รับ zod แล้ว"
+      },
+      {
+        "file": "src/orders/order.validation.js",
+        "line": 9,
+        "snippet": "* ไม่ได้ใช้ zod เพื่อไม่เพิ่ม dependency ให้ PR refactor; ถ้าวันหนึ่ง repo รับ zod แล้ว"
+      }
+    ],
+    "signature_verify": [],
+    "idempotency": [],
+    "transaction": [
+      {
+        "file": "src/orders/order.service.js",
+        "line": 107,
+        "snippet": "await connection.commit();"
+      },
+      {
+        "file": "src/orders/order.service.js",
+        "line": 120,
+        "snippet": "* อีเมลยืนยันคือ dependency รอง — ส่งไม่ได้ไม่ควรทำให้ order ที่ commit แล้วกลายเป็น error"
+      },
+      {
+        "file": "tests/order.service.test.js",
+        "line": 10,
+        "snippet": "* fake pool ที่นับ commit/rollback/release เพื่อพิสูจน์ว่า transaction ถูกปิดจริงทุกเส้นทาง"
+      },
+      {
+        "file": "tests/order.service.test.js",
+        "line": 13,
+        "snippet": "const calls = { begin: 0, commit: 0, rollback: 0, release: 0 };"
+      },
+      {
+        "file": "tests/order.service.test.js",
+        "line": 13,
+        "snippet": "const calls = { begin: 0, commit: 0, rollback: 0, release: 0 };"
+      },
+      {
+        "file": "tests/order.service.test.js",
+        "line": 15,
+        "snippet": "async beginTransaction() { calls.begin += 1; },"
+      },
+      {
+        "file": "tests/order.service.test.js",
+        "line": 16,
+        "snippet": "async commit() { calls.commit += 1; },"
+      },
+      {
+        "file": "tests/order.service.test.js",
+        "line": 16,
+        "snippet": "async commit() { calls.commit += 1; },"
+      },
+      {
+        "file": "tests/order.service.test.js",
+        "line": 92,
+        "snippet": "assert.deepEqual(calls, { begin: 1, commit: 1, rollback: 0, release: 1 });"
+      },
+      {
+        "file": "tests/order.service.test.js",
+        "line": 92,
+        "snippet": "assert.deepEqual(calls, { begin: 1, commit: 1, rollback: 0, release: 1 });"
+      },
+      {
+        "file": "tests/order.service.test.js",
+        "line": 113,
+        "snippet": "assert.equal(calls.begin, 0);"
+      },
+      {
+        "file": "tests/order.service.test.js",
+        "line": 146,
+        "snippet": "assert.deepEqual(calls, { begin: 1, commit: 0, rollback: 1, release: 1 });"
+      },
+      {
+        "file": "tests/order.service.test.js",
+        "line": 146,
+        "snippet": "assert.deepEqual(calls, { begin: 1, commit: 0, rollback: 1, release: 1 });"
+      },
+      {
+        "file": "tests/order.service.test.js",
+        "line": 149,
+        "snippet": "test('ส่งอีเมลไม่สำเร็จไม่ทำให้ order ที่ commit แล้วล้ม แต่ต้องมี log พร้อม orderId', async () => {"
+      }
+    ],
+    "http_status": [],
+    "over_abstraction": [],
+    "type_hint_py": [],
+    "docstring_py": []
+  },
+  "all_files": [
+    ".env.example",
+    ".gitignore",
+    "PLAN.md",
+    "RESPONSE.md",
+    "package.json",
+    "src/app.js",
+    "src/config/env.js",
+    "src/db/pool.js",
+    "src/errors.js",
+    "src/http/middleware.js",
+    "src/logger.js",
+    "src/notifications/order-mailer.js",
+    "src/orders/order.repository.js",
+    "src/orders/order.routes.js",
+    "src/orders/order.service.js",
+    "src/orders/order.validation.js",
+    "src/orders/pricing.js",
+    "tests/order.service.test.js",
+    "tests/order.validation.test.js",
+    "tests/pricing.test.js"
+  ]
+}

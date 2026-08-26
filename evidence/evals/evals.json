@@ -1,0 +1,64 @@
+{
+  "skill_name": "principal-engineer",
+  "evals": [
+    {
+      "id": 0,
+      "name": "refactor-legacy-orders",
+      "prompt": "ไฟล์ orders route นี้มันรกมาก อ่านไม่รู้เรื่องเลย ช่วยแก้ให้หน่อย",
+      "expected_output": "แยก layer (route/service/repository), เอา secret ออกไป env, ใช้ parameterized query, แก้ N+1, เอา magic number ออก, error handling จริงจัง, ไม่ over-engineer",
+      "files": [
+        "inputs/legacy_orders.js"
+      ],
+      "assertions": [
+        "ไม่มี DB password หรือ API key hardcode อยู่ในโค้ดผลลัพธ์ (ย้ายไป env var)",
+        "SQL ทุก query เป็น parameterized — ไม่มีการต่อ string ของ user input เข้าไปใน query",
+        "แก้ N+1 ใน GET /orders/:id แล้ว (ไม่มี query ยิงต่อ product ทีละแถวในลูป)",
+        "business logic การคิดราคา/ส่วนลด ถูกแยกออกจาก route handler ไปอยู่คนละไฟล์/module",
+        "ไม่มี catch เปล่า และ error ตอบกลับด้วย HTTP status code ที่ถูกต้อง ไม่ใช่ 200 ทุกกรณี",
+        "magic number (0.95, 0.9, category 3, 1500, 60) ถูกยกเป็น named constant หรือ config",
+        "มี input validation ของ req.body ก่อนนำไปใช้",
+        "การส่งอีเมลล้มเหลว ไม่ทำให้ order ที่สร้างสำเร็จแล้วพังหรือถูกกลืนเงียบ ๆ",
+        "ไม่ over-engineer — ไม่มี DI container / abstract class / interface ที่มี implementation เดียว",
+        "แจ้งผู้ใช้ว่า secret ที่หลุดใน source ต้อง rotate ไม่ใช่แค่ลบออก",
+        "RESPONSE.md อธิบายเหตุผล (ทำไม) ของการตัดสินใจเชิงโครงสร้าง ไม่ใช่แค่ list ว่าแก้อะไร"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "payment-webhook-endpoint",
+      "prompt": "ทำ endpoint รับ webhook จาก payment gateway หน่อย พอจ่ายเงินสำเร็จให้อัพเดทสถานะ order เป็น paid แล้วส่งอีเมลยืนยัน ใช้ Node + TypeScript + Express นะ",
+      "expected_output": "verify signature, idempotency, typed + schema validation, transaction, error handling, ไม่ hardcode secret, มี test",
+      "files": [],
+      "assertions": [
+        "verify signature ของ webhook ก่อนประมวลผล payload",
+        "มีกลไก idempotency กัน webhook ที่ส่งซ้ำไม่ให้อัพเดท/ส่งอีเมลซ้ำ",
+        "ไม่มี secret hardcode — อ่านจาก env var และมี .env.example",
+        "validate payload ด้วย schema (zod หรือเทียบเท่า) ไม่ใช่ใช้ req.body ดิบ ๆ",
+        "TypeScript strict และไม่มี any ในโค้ดที่เขียนเอง",
+        "ส่งอีเมลล้มเหลวไม่ทำให้สถานะ order ที่อัพเดทแล้วพัง (แยกออกจาก critical path หรือจัดการ error ชัดเจน)",
+        "มีไฟล์ test ที่ครอบเคสสำคัญ (signature ผิด / ส่งซ้ำ)",
+        "ตอบ HTTP status code ถูกต้อง (2xx เมื่อรับสำเร็จ, 4xx เมื่อ signature ผิด)",
+        "ไม่มี TODO / placeholder / ฟังก์ชันที่ยังไม่ implement",
+        "RESPONSE.md บอกชัดว่าต้องตั้ง env var อะไรบ้างและเหลืออะไรต้องทำต่อ"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "monthly-sales-script",
+      "prompt": "เขียน script python ดึงยอดขายรายเดือนจาก postgres มาสรุปเป็น csv ให้หน่อย",
+      "expected_output": "type hints, ไม่ hardcode credential, aggregate ที่ DB ไม่ใช่ใน python, ใช้ Decimal กับเงิน, error handling, ปิด connection",
+      "files": [],
+      "assertions": [
+        "type hint ครบทุก function signature",
+        "ไม่มี credential hardcode — อ่าน connection string/DSN จาก env var",
+        "aggregate ยอดขายที่ฝั่ง DB ด้วย GROUP BY ไม่ใช่ดึงทุกแถวมารวมใน python",
+        "query เป็น parameterized ไม่ต่อ string",
+        "ใช้ Decimal หรือ NUMERIC กับจำนวนเงิน ไม่ใช่ float",
+        "connection/cursor ถูกปิดเสมอ (context manager หรือ finally)",
+        "ไม่มี except เปล่าที่กลืน error",
+        "ไม่มี TODO / placeholder",
+        "มี docstring อธิบาย public function และระบุสมมติฐานเรื่อง schema"
+      ]
+    }
+  ]
+}

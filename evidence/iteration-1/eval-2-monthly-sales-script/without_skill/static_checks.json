@@ -1,0 +1,916 @@
+{
+  "root": "iteration-1/eval-2-monthly-sales-script/without_skill/outputs",
+  "files": [
+    {
+      "path": "monthly_sales/__init__.py",
+      "lines": 4
+    },
+    {
+      "path": "monthly_sales/__main__.py",
+      "lines": 7
+    },
+    {
+      "path": "monthly_sales/cli.py",
+      "lines": 120
+    },
+    {
+      "path": "monthly_sales/config.py",
+      "lines": 114
+    },
+    {
+      "path": "monthly_sales/db.py",
+      "lines": 78
+    },
+    {
+      "path": "monthly_sales/queries.py",
+      "lines": 42
+    },
+    {
+      "path": "monthly_sales/report.py",
+      "lines": 154
+    },
+    {
+      "path": "schema.sql",
+      "lines": 22
+    },
+    {
+      "path": "tests/__init__.py",
+      "lines": 1
+    },
+    {
+      "path": "tests/test_config_and_db.py",
+      "lines": 122
+    },
+    {
+      "path": "tests/test_report.py",
+      "lines": 110
+    }
+  ],
+  "hits": {
+    "hardcoded_secret": [],
+    "string_concat_sql": [],
+    "fstring_sql": [],
+    "empty_catch": [],
+    "todo_placeholder": [],
+    "ts_any": [],
+    "await_in_loop": [],
+    "env_usage": [
+      {
+        "file": "monthly_sales/config.py",
+        "line": 43,
+        "snippet": "source = os.environ if env is None else env"
+      }
+    ],
+    "param_query": [
+      {
+        "file": "monthly_sales/cli.py",
+        "line": 94,
+        "snippet": "logger.error(\"Configuration error: %s\", exc)"
+      },
+      {
+        "file": "monthly_sales/cli.py",
+        "line": 97,
+        "snippet": "logger.info(\"Reporting months %s .. %s\", request.start, request.end)"
+      },
+      {
+        "file": "monthly_sales/cli.py",
+        "line": 97,
+        "snippet": "logger.info(\"Reporting months %s .. %s\", request.start, request.end)"
+      },
+      {
+        "file": "monthly_sales/cli.py",
+        "line": 104,
+        "snippet": "logger.error(\"Database error: %s\", exc)"
+      },
+      {
+        "file": "monthly_sales/cli.py",
+        "line": 114,
+        "snippet": "logger.info(\"Wrote %d row(s) to %s\", len(rows), path)"
+      },
+      {
+        "file": "monthly_sales/db.py",
+        "line": 40,
+        "snippet": "logger.info(\"Connecting to %s:%s/%s\", config.host, config.port, config.dbname)"
+      },
+      {
+        "file": "monthly_sales/db.py",
+        "line": 40,
+        "snippet": "logger.info(\"Connecting to %s:%s/%s\", config.host, config.port, config.dbname)"
+      },
+      {
+        "file": "monthly_sales/db.py",
+        "line": 40,
+        "snippet": "logger.info(\"Connecting to %s:%s/%s\", config.host, config.port, config.dbname)"
+      }
+    ],
+    "decimal_money": [
+      {
+        "file": "monthly_sales/queries.py",
+        "line": 12,
+        "snippet": "total_amount  numeric(12,2) not null  -- gross, incl. tax, excl. shipping"
+      },
+      {
+        "file": "monthly_sales/queries.py",
+        "line": 32,
+        "snippet": "coalesce(sum(o.total_amount), 0)::numeric(14, 2)           AS gross_revenue,"
+      },
+      {
+        "file": "monthly_sales/queries.py",
+        "line": 33,
+        "snippet": "coalesce(avg(o.total_amount), 0)::numeric(14, 2)           AS avg_order_value"
+      },
+      {
+        "file": "monthly_sales/report.py",
+        "line": 12,
+        "snippet": "from decimal import Decimal"
+      },
+      {
+        "file": "monthly_sales/report.py",
+        "line": 12,
+        "snippet": "from decimal import Decimal"
+      },
+      {
+        "file": "monthly_sales/report.py",
+        "line": 34,
+        "snippet": "gross_revenue: Decimal"
+      },
+      {
+        "file": "monthly_sales/report.py",
+        "line": 35,
+        "snippet": "avg_order_value: Decimal"
+      },
+      {
+        "file": "monthly_sales/report.py",
+        "line": 62,
+        "snippet": "def _as_decimal(value: object) -> Decimal:"
+      },
+      {
+        "file": "monthly_sales/report.py",
+        "line": 63,
+        "snippet": "if isinstance(value, Decimal):"
+      },
+      {
+        "file": "monthly_sales/report.py",
+        "line": 66,
+        "snippet": "return Decimal(value)"
+      },
+      {
+        "file": "monthly_sales/report.py",
+        "line": 68,
+        "snippet": "return Decimal(str(value))"
+      },
+      {
+        "file": "monthly_sales/report.py",
+        "line": 69,
+        "snippet": "raise TypeError(f\"cannot convert {type(value).__name__} to Decimal\")"
+      },
+      {
+        "file": "monthly_sales/report.py",
+        "line": 122,
+        "snippet": "gross_revenue=Decimal(\"0.00\"),"
+      },
+      {
+        "file": "monthly_sales/report.py",
+        "line": 123,
+        "snippet": "avg_order_value=Decimal(\"0.00\"),"
+      },
+      {
+        "file": "schema.sql",
+        "line": 10,
+        "snippet": "total_amount numeric(12, 2) NOT NULL CHECK (total_amount >= 0)"
+      },
+      {
+        "file": "tests/test_config_and_db.py",
+        "line": 8,
+        "snippet": "from decimal import Decimal"
+      },
+      {
+        "file": "tests/test_config_and_db.py",
+        "line": 8,
+        "snippet": "from decimal import Decimal"
+      },
+      {
+        "file": "tests/test_config_and_db.py",
+        "line": 109,
+        "snippet": "cursor = FakeCursor(rows=[(\"2026-01\", \"THB\", 4, 3, Decimal(\"1200.00\"), Decimal(\"300.00\"))])"
+      },
+      {
+        "file": "tests/test_config_and_db.py",
+        "line": 109,
+        "snippet": "cursor = FakeCursor(rows=[(\"2026-01\", \"THB\", 4, 3, Decimal(\"1200.00\"), Decimal(\"300.00\"))])"
+      },
+      {
+        "file": "tests/test_report.py",
+        "line": 9,
+        "snippet": "from decimal import Decimal"
+      },
+      {
+        "file": "tests/test_report.py",
+        "line": 9,
+        "snippet": "from decimal import Decimal"
+      },
+      {
+        "file": "tests/test_report.py",
+        "line": 33,
+        "snippet": "gross_revenue=Decimal(revenue),"
+      },
+      {
+        "file": "tests/test_report.py",
+        "line": 34,
+        "snippet": "avg_order_value=Decimal(revenue) / 2,"
+      },
+      {
+        "file": "tests/test_report.py",
+        "line": 60,
+        "snippet": "row = MonthlySalesRow.from_db_row((\"2026-01\", \"THB\", 3, 2, \"900.50\", Decimal(\"300.17\")))"
+      },
+      {
+        "file": "tests/test_report.py",
+        "line": 62,
+        "snippet": "self.assertEqual(row.gross_revenue, Decimal(\"900.50\"))"
+      },
+      {
+        "file": "tests/test_report.py",
+        "line": 63,
+        "snippet": "self.assertIsInstance(row.avg_order_value, Decimal)"
+      },
+      {
+        "file": "tests/test_report.py",
+        "line": 70,
+        "snippet": "row = MonthlySalesRow.from_db_row((\"2026-01\", \"THB\", 1, 1, Decimal(\"5\"), Decimal(\"5\")))"
+      },
+      {
+        "file": "tests/test_report.py",
+        "line": 70,
+        "snippet": "row = MonthlySalesRow.from_db_row((\"2026-01\", \"THB\", 1, 1, Decimal(\"5\"), Decimal(\"5\")))"
+      },
+      {
+        "file": "tests/test_report.py",
+        "line": 79,
+        "snippet": "self.assertEqual(filled[1].gross_revenue, Decimal(\"0.00\"))"
+      },
+      {
+        "file": "tests/test_report.py",
+        "line": 84,
+        "snippet": "self.assertEqual(filled[1].gross_revenue, Decimal(\"250.00\"))"
+      }
+    ],
+    "float_money": [],
+    "group_by": [
+      {
+        "file": "monthly_sales/queries.py",
+        "line": 39,
+        "snippet": "GROUP BY 1, 2"
+      }
+    ],
+    "context_manager": [
+      {
+        "file": "monthly_sales/cli.py",
+        "line": 100,
+        "snippet": "with connect(db_config) as conn:"
+      },
+      {
+        "file": "monthly_sales/cli.py",
+        "line": 101,
+        "snippet": "with conn.cursor() as cursor:  # type: ignore[attr-defined]"
+      },
+      {
+        "file": "monthly_sales/db.py",
+        "line": 49,
+        "snippet": "finally:"
+      },
+      {
+        "file": "monthly_sales/db.py",
+        "line": 50,
+        "snippet": "conn.close()"
+      },
+      {
+        "file": "monthly_sales/report.py",
+        "line": 142,
+        "snippet": "with tmp.open(\"w\", newline=\"\", encoding=\"utf-8\") as handle:"
+      },
+      {
+        "file": "tests/test_config_and_db.py",
+        "line": 49,
+        "snippet": "with self.assertRaises(ConfigError) as ctx:"
+      },
+      {
+        "file": "tests/test_config_and_db.py",
+        "line": 55,
+        "snippet": "with self.assertRaises(ConfigError):"
+      },
+      {
+        "file": "tests/test_config_and_db.py",
+        "line": 59,
+        "snippet": "with self.assertRaises(ConfigError):"
+      },
+      {
+        "file": "tests/test_config_and_db.py",
+        "line": 73,
+        "snippet": "with self.assertRaises(ConfigError):"
+      },
+      {
+        "file": "tests/test_config_and_db.py",
+        "line": 77,
+        "snippet": "with self.assertRaises(ConfigError):"
+      },
+      {
+        "file": "tests/test_config_and_db.py",
+        "line": 91,
+        "snippet": "with self.assertRaises(SystemExit):"
+      },
+      {
+        "file": "tests/test_config_and_db.py",
+        "line": 116,
+        "snippet": "with self.assertRaises(DatabaseError):"
+      },
+      {
+        "file": "tests/test_report.py",
+        "line": 54,
+        "snippet": "with self.assertRaises(ValueError):"
+      },
+      {
+        "file": "tests/test_report.py",
+        "line": 66,
+        "snippet": "with self.assertRaises(ValueError):"
+      },
+      {
+        "file": "tests/test_report.py",
+        "line": 89,
+        "snippet": "with TemporaryDirectory() as tmp:"
+      },
+      {
+        "file": "tests/test_report.py",
+        "line": 91,
+        "snippet": "with path.open(encoding=\"utf-8\", newline=\"\") as handle:"
+      },
+      {
+        "file": "tests/test_report.py",
+        "line": 98,
+        "snippet": "with TemporaryDirectory() as tmp:"
+      },
+      {
+        "file": "tests/test_report.py",
+        "line": 103,
+        "snippet": "with TemporaryDirectory() as tmp:"
+      }
+    ],
+    "zod_schema": [],
+    "signature_verify": [],
+    "idempotency": [],
+    "transaction": [],
+    "http_status": [],
+    "over_abstraction": [],
+    "type_hint_py": [
+      {
+        "file": "monthly_sales/cli.py",
+        "line": 22,
+        "snippet": "def build_parser() -> argparse.ArgumentParser:"
+      },
+      {
+        "file": "monthly_sales/cli.py",
+        "line": 63,
+        "snippet": "def _month_arg(raw: str) -> date:"
+      },
+      {
+        "file": "monthly_sales/cli.py",
+        "line": 70,
+        "snippet": "def resolve_range(args: argparse.Namespace, today: date) -> tuple[date, date]:"
+      },
+      {
+        "file": "monthly_sales/cli.py",
+        "line": 80,
+        "snippet": "def main(argv: list[str] | None = None) -> int:"
+      },
+      {
+        "file": "monthly_sales/config.py",
+        "line": 37,
+        "snippet": "def from_env(cls, env: dict[str, str] | None = None) -> \"DatabaseConfig\":"
+      },
+      {
+        "file": "monthly_sales/config.py",
+        "line": 68,
+        "snippet": "def to_conninfo_kwargs(self) -> dict[str, object]:"
+      },
+      {
+        "file": "monthly_sales/config.py",
+        "line": 81,
+        "snippet": "def __repr__(self) -> str:  # pragma: no cover - trivial"
+      },
+      {
+        "file": "monthly_sales/config.py",
+        "line": 97,
+        "snippet": "def __post_init__(self) -> None:"
+      },
+      {
+        "file": "monthly_sales/config.py",
+        "line": 104,
+        "snippet": "def _positive_int(raw: str | None, default: int, name: str) -> int:"
+      },
+      {
+        "file": "monthly_sales/db.py",
+        "line": 26,
+        "snippet": "def execute(self, query: str, params: object = ..., /) -> object: ..."
+      },
+      {
+        "file": "monthly_sales/db.py",
+        "line": 27,
+        "snippet": "def fetchall(self) -> list[tuple[object, ...]]: ..."
+      },
+      {
+        "file": "monthly_sales/db.py",
+        "line": 31,
+        "snippet": "def connect(config: DatabaseConfig) -> Iterator[object]:"
+      },
+      {
+        "file": "monthly_sales/db.py",
+        "line": 53,
+        "snippet": "def fetch_monthly_sales("
+      },
+      {
+        "file": "monthly_sales/report.py",
+        "line": 38,
+        "snippet": "def from_db_row(cls, row: Sequence[object]) -> \"MonthlySalesRow\":"
+      },
+      {
+        "file": "monthly_sales/report.py",
+        "line": 51,
+        "snippet": "def as_csv_record(self) -> dict[str, str]:"
+      },
+      {
+        "file": "monthly_sales/report.py",
+        "line": 62,
+        "snippet": "def _as_decimal(value: object) -> Decimal:"
+      },
+      {
+        "file": "monthly_sales/report.py",
+        "line": 72,
+        "snippet": "def month_start(value: date) -> date:"
+      },
+      {
+        "file": "monthly_sales/report.py",
+        "line": 77,
+        "snippet": "def add_month(value: date) -> date:"
+      },
+      {
+        "file": "monthly_sales/report.py",
+        "line": 82,
+        "snippet": "def default_range(today: date, months: int) -> tuple[date, date]:"
+      },
+      {
+        "file": "monthly_sales/report.py",
+        "line": 97,
+        "snippet": "def subtract_month(value: date) -> date:"
+      },
+      {
+        "file": "monthly_sales/report.py",
+        "line": 104,
+        "snippet": "def fill_missing_months("
+      },
+      {
+        "file": "monthly_sales/report.py",
+        "line": 131,
+        "snippet": "def write_csv(rows: Sequence[MonthlySalesRow], destination: Path) -> Path:"
+      },
+      {
+        "file": "tests/test_config_and_db.py",
+        "line": 33,
+        "snippet": "def execute(self, query: str, params: object = None, /) -> None:"
+      },
+      {
+        "file": "tests/test_config_and_db.py",
+        "line": 38,
+        "snippet": "def fetchall(self) -> list[tuple[object, ...]]:"
+      },
+      {
+        "file": "tests/test_config_and_db.py",
+        "line": 43,
+        "snippet": "def test_defaults_applied(self) -> None:"
+      },
+      {
+        "file": "tests/test_config_and_db.py",
+        "line": 48,
+        "snippet": "def test_missing_required_vars_are_reported_together(self) -> None:"
+      },
+      {
+        "file": "tests/test_config_and_db.py",
+        "line": 54,
+        "snippet": "def test_invalid_port_rejected(self) -> None:"
+      },
+      {
+        "file": "tests/test_config_and_db.py",
+        "line": 58,
+        "snippet": "def test_non_positive_timeout_rejected(self) -> None:"
+      },
+      {
+        "file": "tests/test_config_and_db.py",
+        "line": 62,
+        "snippet": "def test_password_not_exposed_in_repr(self) -> None:"
+      },
+      {
+        "file": "tests/test_config_and_db.py",
+        "line": 66,
+        "snippet": "def test_conninfo_sets_statement_timeout(self) -> None:"
+      },
+      {
+        "file": "tests/test_config_and_db.py",
+        "line": 72,
+        "snippet": "def test_reversed_range_rejected(self) -> None:"
+      },
+      {
+        "file": "tests/test_config_and_db.py",
+        "line": 76,
+        "snippet": "def test_start_must_be_month_start(self) -> None:"
+      },
+      {
+        "file": "tests/test_config_and_db.py",
+        "line": 82,
+        "snippet": "def test_explicit_range_used_verbatim(self) -> None:"
+      },
+      {
+        "file": "tests/test_config_and_db.py",
+        "line": 86,
+        "snippet": "def test_default_range_is_last_n_full_months(self) -> None:"
+      },
+      {
+        "file": "tests/test_config_and_db.py",
+        "line": 90,
+        "snippet": "def test_bad_month_format_rejected(self) -> None:"
+      },
+      {
+        "file": "tests/test_config_and_db.py",
+        "line": 96,
+        "snippet": "def test_parameters_are_bound_not_interpolated(self) -> None:"
+      },
+      {
+        "file": "tests/test_config_and_db.py",
+        "line": 108,
+        "snippet": "def test_rows_are_mapped_to_domain_objects(self) -> None:"
+      },
+      {
+        "file": "tests/test_config_and_db.py",
+        "line": 114,
+        "snippet": "def test_driver_errors_wrapped(self) -> None:"
+      },
+      {
+        "file": "tests/test_report.py",
+        "line": 27,
+        "snippet": "def make_row(month: str, revenue: str = \"100.00\") -> MonthlySalesRow:"
+      },
+      {
+        "file": "tests/test_report.py",
+        "line": 39,
+        "snippet": "def test_add_month_rolls_over_year(self) -> None:"
+      },
+      {
+        "file": "tests/test_report.py",
+        "line": 42,
+        "snippet": "def test_subtract_month_rolls_back_year(self) -> None:"
+      },
+      {
+        "file": "tests/test_report.py",
+        "line": 45,
+        "snippet": "def test_month_start_normalises_day(self) -> None:"
+      },
+      {
+        "file": "tests/test_report.py",
+        "line": 48,
+        "snippet": "def test_default_range_excludes_current_partial_month(self) -> None:"
+      },
+      {
+        "file": "tests/test_report.py",
+        "line": 53,
+        "snippet": "def test_default_range_rejects_zero_months(self) -> None:"
+      },
+      {
+        "file": "tests/test_report.py",
+        "line": 59,
+        "snippet": "def test_from_db_row_coerces_types(self) -> None:"
+      },
+      {
+        "file": "tests/test_report.py",
+        "line": 65,
+        "snippet": "def test_from_db_row_rejects_wrong_arity(self) -> None:"
+      },
+      {
+        "file": "tests/test_report.py",
+        "line": 69,
+        "snippet": "def test_csv_record_formats_money_to_two_places(self) -> None:"
+      },
+      {
+        "file": "tests/test_report.py",
+        "line": 75,
+        "snippet": "def test_gaps_are_filled_with_zero_rows(self) -> None:"
+      },
+      {
+        "file": "tests/test_report.py",
+        "line": 82,
+        "snippet": "def test_existing_rows_are_preserved(self) -> None:"
+      },
+      {
+        "file": "tests/test_report.py",
+        "line": 88,
+        "snippet": "def test_header_and_rows_written(self) -> None:"
+      },
+      {
+        "file": "tests/test_report.py",
+        "line": 97,
+        "snippet": "def test_empty_result_still_writes_header(self) -> None:"
+      },
+      {
+        "file": "tests/test_report.py",
+        "line": 102,
+        "snippet": "def test_no_temp_files_left_behind(self) -> None:"
+      }
+    ],
+    "docstring_py": [
+      {
+        "file": "monthly_sales/__init__.py",
+        "line": 1,
+        "snippet": "\"\"\"Monthly sales report: aggregate PostgreSQL order data into a CSV summary.\"\"\""
+      },
+      {
+        "file": "monthly_sales/__init__.py",
+        "line": 1,
+        "snippet": "\"\"\"Monthly sales report: aggregate PostgreSQL order data into a CSV summary.\"\"\""
+      },
+      {
+        "file": "monthly_sales/__main__.py",
+        "line": 1,
+        "snippet": "\"\"\"Enable ``python -m monthly_sales``.\"\"\""
+      },
+      {
+        "file": "monthly_sales/__main__.py",
+        "line": 1,
+        "snippet": "\"\"\"Enable ``python -m monthly_sales``.\"\"\""
+      },
+      {
+        "file": "monthly_sales/cli.py",
+        "line": 1,
+        "snippet": "\"\"\"Command-line entry point for the monthly sales CSV export.\"\"\""
+      },
+      {
+        "file": "monthly_sales/cli.py",
+        "line": 1,
+        "snippet": "\"\"\"Command-line entry point for the monthly sales CSV export.\"\"\""
+      },
+      {
+        "file": "monthly_sales/cli.py",
+        "line": 71,
+        "snippet": "\"\"\"Turn CLI arguments into an inclusive (start, end) month range.\"\"\""
+      },
+      {
+        "file": "monthly_sales/cli.py",
+        "line": 71,
+        "snippet": "\"\"\"Turn CLI arguments into an inclusive (start, end) month range.\"\"\""
+      },
+      {
+        "file": "monthly_sales/config.py",
+        "line": 1,
+        "snippet": "\"\"\"Configuration loading and validation."
+      },
+      {
+        "file": "monthly_sales/config.py",
+        "line": 5,
+        "snippet": "\"\"\""
+      },
+      {
+        "file": "monthly_sales/config.py",
+        "line": 20,
+        "snippet": "\"\"\"Raised when the runtime configuration is missing or invalid.\"\"\""
+      },
+      {
+        "file": "monthly_sales/config.py",
+        "line": 20,
+        "snippet": "\"\"\"Raised when the runtime configuration is missing or invalid.\"\"\""
+      },
+      {
+        "file": "monthly_sales/config.py",
+        "line": 25,
+        "snippet": "\"\"\"Immutable PostgreSQL connection settings.\"\"\""
+      },
+      {
+        "file": "monthly_sales/config.py",
+        "line": 25,
+        "snippet": "\"\"\"Immutable PostgreSQL connection settings.\"\"\""
+      },
+      {
+        "file": "monthly_sales/config.py",
+        "line": 38,
+        "snippet": "\"\"\"Build a config from environment variables."
+      },
+      {
+        "file": "monthly_sales/config.py",
+        "line": 42,
+        "snippet": "\"\"\""
+      },
+      {
+        "file": "monthly_sales/config.py",
+        "line": 69,
+        "snippet": "\"\"\"Return keyword arguments suitable for ``psycopg.connect``.\"\"\""
+      },
+      {
+        "file": "monthly_sales/config.py",
+        "line": 69,
+        "snippet": "\"\"\"Return keyword arguments suitable for ``psycopg.connect``.\"\"\""
+      },
+      {
+        "file": "monthly_sales/config.py",
+        "line": 91,
+        "snippet": "\"\"\"Validated parameters describing which months to report on.\"\"\""
+      },
+      {
+        "file": "monthly_sales/config.py",
+        "line": 91,
+        "snippet": "\"\"\"Validated parameters describing which months to report on.\"\"\""
+      },
+      {
+        "file": "monthly_sales/db.py",
+        "line": 1,
+        "snippet": "\"\"\"Thin PostgreSQL access layer."
+      },
+      {
+        "file": "monthly_sales/db.py",
+        "line": 5,
+        "snippet": "\"\"\""
+      },
+      {
+        "file": "monthly_sales/db.py",
+        "line": 22,
+        "snippet": "\"\"\"Raised when the database cannot be reached or the query fails.\"\"\""
+      },
+      {
+        "file": "monthly_sales/db.py",
+        "line": 22,
+        "snippet": "\"\"\"Raised when the database cannot be reached or the query fails.\"\"\""
+      },
+      {
+        "file": "monthly_sales/db.py",
+        "line": 32,
+        "snippet": "\"\"\"Open a read-only connection, yielding it and always closing it.\"\"\""
+      },
+      {
+        "file": "monthly_sales/db.py",
+        "line": 32,
+        "snippet": "\"\"\"Open a read-only connection, yielding it and always closing it.\"\"\""
+      },
+      {
+        "file": "monthly_sales/db.py",
+        "line": 59,
+        "snippet": "\"\"\"Run the aggregation for months in ``[start, end]`` inclusive."
+      },
+      {
+        "file": "monthly_sales/db.py",
+        "line": 63,
+        "snippet": "\"\"\""
+      },
+      {
+        "file": "monthly_sales/queries.py",
+        "line": 1,
+        "snippet": "\"\"\"SQL for the monthly sales aggregation."
+      },
+      {
+        "file": "monthly_sales/queries.py",
+        "line": 18,
+        "snippet": "\"\"\""
+      },
+      {
+        "file": "monthly_sales/queries.py",
+        "line": 26,
+        "snippet": "MONTHLY_SALES_SQL: Final[str] = \"\"\""
+      },
+      {
+        "file": "monthly_sales/queries.py",
+        "line": 41,
+        "snippet": "\"\"\""
+      },
+      {
+        "file": "monthly_sales/report.py",
+        "line": 1,
+        "snippet": "\"\"\"Pure domain logic: row model, month helpers and CSV rendering."
+      },
+      {
+        "file": "monthly_sales/report.py",
+        "line": 4,
+        "snippet": "\"\"\""
+      },
+      {
+        "file": "monthly_sales/report.py",
+        "line": 28,
+        "snippet": "\"\"\"One aggregated month (per currency).\"\"\""
+      },
+      {
+        "file": "monthly_sales/report.py",
+        "line": 28,
+        "snippet": "\"\"\"One aggregated month (per currency).\"\"\""
+      },
+      {
+        "file": "monthly_sales/report.py",
+        "line": 73,
+        "snippet": "\"\"\"Return the first day of ``value``'s month.\"\"\""
+      },
+      {
+        "file": "monthly_sales/report.py",
+        "line": 73,
+        "snippet": "\"\"\"Return the first day of ``value``'s month.\"\"\""
+      },
+      {
+        "file": "monthly_sales/report.py",
+        "line": 78,
+        "snippet": "\"\"\"Return the first day of the month after ``value``'s month.\"\"\""
+      },
+      {
+        "file": "monthly_sales/report.py",
+        "line": 78,
+        "snippet": "\"\"\"Return the first day of the month after ``value``'s month.\"\"\""
+      },
+      {
+        "file": "monthly_sales/report.py",
+        "line": 83,
+        "snippet": "\"\"\"Return (start, end) covering the ``months`` complete months before ``today``."
+      },
+      {
+        "file": "monthly_sales/report.py",
+        "line": 87,
+        "snippet": "\"\"\""
+      },
+      {
+        "file": "monthly_sales/report.py",
+        "line": 98,
+        "snippet": "\"\"\"Return the first day of the month before ``value``'s month.\"\"\""
+      },
+      {
+        "file": "monthly_sales/report.py",
+        "line": 98,
+        "snippet": "\"\"\"Return the first day of the month before ``value``'s month.\"\"\""
+      },
+      {
+        "file": "monthly_sales/report.py",
+        "line": 107,
+        "snippet": "\"\"\"Insert zero rows for months with no sales so the CSV has no gaps.\"\"\""
+      },
+      {
+        "file": "monthly_sales/report.py",
+        "line": 107,
+        "snippet": "\"\"\"Insert zero rows for months with no sales so the CSV has no gaps.\"\"\""
+      },
+      {
+        "file": "monthly_sales/report.py",
+        "line": 132,
+        "snippet": "\"\"\"Write ``rows`` to ``destination`` atomically and return the path."
+      },
+      {
+        "file": "monthly_sales/report.py",
+        "line": 136,
+        "snippet": "\"\"\""
+      },
+      {
+        "file": "tests/test_config_and_db.py",
+        "line": 1,
+        "snippet": "\"\"\"Tests for configuration parsing, CLI range resolution and the query layer.\"\"\""
+      },
+      {
+        "file": "tests/test_config_and_db.py",
+        "line": 1,
+        "snippet": "\"\"\"Tests for configuration parsing, CLI range resolution and the query layer.\"\"\""
+      },
+      {
+        "file": "tests/test_config_and_db.py",
+        "line": 26,
+        "snippet": "\"\"\"Minimal stand-in for a psycopg cursor.\"\"\""
+      },
+      {
+        "file": "tests/test_config_and_db.py",
+        "line": 26,
+        "snippet": "\"\"\"Minimal stand-in for a psycopg cursor.\"\"\""
+      },
+      {
+        "file": "tests/test_report.py",
+        "line": 1,
+        "snippet": "\"\"\"Tests for the pure reporting logic (no database required).\"\"\""
+      },
+      {
+        "file": "tests/test_report.py",
+        "line": 1,
+        "snippet": "\"\"\"Tests for the pure reporting logic (no database required).\"\"\""
+      }
+    ]
+  },
+  "all_files": [
+    ".env.example",
+    "README.md",
+    "RESPONSE.md",
+    "monthly_sales/__init__.py",
+    "monthly_sales/__main__.py",
+    "monthly_sales/cli.py",
+    "monthly_sales/config.py",
+    "monthly_sales/db.py",
+    "monthly_sales/queries.py",
+    "monthly_sales/report.py",
+    "requirements.txt",
+    "schema.sql",
+    "tests/__init__.py",
+    "tests/test_config_and_db.py",
+    "tests/test_report.py"
+  ]
+}

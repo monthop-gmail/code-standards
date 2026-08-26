@@ -1,0 +1,905 @@
+{
+  "root": "iteration-1/eval-1-payment-webhook-endpoint/with_skill/outputs",
+  "files": [
+    {
+      "path": "eslint.config.js",
+      "lines": 29
+    },
+    {
+      "path": "migrations/001_orders_and_payment_events.sql",
+      "lines": 46
+    },
+    {
+      "path": "src/application/confirm-order-payment.ts",
+      "lines": 179
+    },
+    {
+      "path": "src/application/ports.ts",
+      "lines": 47
+    },
+    {
+      "path": "src/config.ts",
+      "lines": 40
+    },
+    {
+      "path": "src/domain/money.ts",
+      "lines": 48
+    },
+    {
+      "path": "src/domain/order.ts",
+      "lines": 67
+    },
+    {
+      "path": "src/errors.ts",
+      "lines": 21
+    },
+    {
+      "path": "src/http/app.ts",
+      "lines": 66
+    },
+    {
+      "path": "src/http/error-handler.ts",
+      "lines": 65
+    },
+    {
+      "path": "src/http/request-context.ts",
+      "lines": 29
+    },
+    {
+      "path": "src/http/routes/payment-webhook.ts",
+      "lines": 96
+    },
+    {
+      "path": "src/index.ts",
+      "lines": 83
+    },
+    {
+      "path": "src/infrastructure/email/nodemailer-email-sender.ts",
+      "lines": 58
+    },
+    {
+      "path": "src/infrastructure/email/order-paid-template.ts",
+      "lines": 68
+    },
+    {
+      "path": "src/infrastructure/postgres/order-repository.ts",
+      "lines": 129
+    },
+    {
+      "path": "src/infrastructure/postgres/pool.ts",
+      "lines": 21
+    },
+    {
+      "path": "src/logger.ts",
+      "lines": 62
+    },
+    {
+      "path": "src/webhook/schema.ts",
+      "lines": 65
+    },
+    {
+      "path": "src/webhook/signature.ts",
+      "lines": 117
+    },
+    {
+      "path": "tests/confirm-order-payment.test.ts",
+      "lines": 139
+    },
+    {
+      "path": "tests/order-paid-template.test.ts",
+      "lines": 43
+    },
+    {
+      "path": "tests/order-payment-rules.test.ts",
+      "lines": 96
+    },
+    {
+      "path": "tests/payment-webhook.route.test.ts",
+      "lines": 187
+    },
+    {
+      "path": "tests/support/test-doubles.ts",
+      "lines": 130
+    },
+    {
+      "path": "tests/webhook-signature.test.ts",
+      "lines": 85
+    },
+    {
+      "path": "vitest.config.ts",
+      "lines": 10
+    }
+  ],
+  "hits": {
+    "hardcoded_secret": [
+      {
+        "file": "tests/payment-webhook.route.test.ts",
+        "line": 15,
+        "snippet": "const SECRET = 'test-secret-that-is-long-enough-000000';"
+      },
+      {
+        "file": "tests/webhook-signature.test.ts",
+        "line": 5,
+        "snippet": "const SECRET = 'test-secret-that-is-long-enough-000000';"
+      }
+    ],
+    "string_concat_sql": [],
+    "fstring_sql": [],
+    "empty_catch": [],
+    "todo_placeholder": [],
+    "ts_any": [],
+    "await_in_loop": [],
+    "env_usage": [],
+    "param_query": [
+      {
+        "file": "src/infrastructure/postgres/order-repository.ts",
+        "line": 50,
+        "snippet": "VALUES ($1, $2, $3, $4)"
+      },
+      {
+        "file": "src/infrastructure/postgres/order-repository.ts",
+        "line": 50,
+        "snippet": "VALUES ($1, $2, $3, $4)"
+      },
+      {
+        "file": "src/infrastructure/postgres/order-repository.ts",
+        "line": 50,
+        "snippet": "VALUES ($1, $2, $3, $4)"
+      },
+      {
+        "file": "src/infrastructure/postgres/order-repository.ts",
+        "line": 50,
+        "snippet": "VALUES ($1, $2, $3, $4)"
+      },
+      {
+        "file": "src/infrastructure/postgres/order-repository.ts",
+        "line": 62,
+        "snippet": "WHERE id = $1"
+      },
+      {
+        "file": "src/infrastructure/postgres/order-repository.ts",
+        "line": 75,
+        "snippet": "SET status = 'paid', payment_id = $2, paid_at = $3, updated_at = now()"
+      },
+      {
+        "file": "src/infrastructure/postgres/order-repository.ts",
+        "line": 75,
+        "snippet": "SET status = 'paid', payment_id = $2, paid_at = $3, updated_at = now()"
+      },
+      {
+        "file": "src/infrastructure/postgres/order-repository.ts",
+        "line": 76,
+        "snippet": "WHERE id = $1 AND status = 'pending'`,"
+      },
+      {
+        "file": "src/infrastructure/postgres/order-repository.ts",
+        "line": 109,
+        "snippet": "`UPDATE orders SET confirmation_email_sent_at = $2, updated_at = now() WHERE id = $1`,"
+      },
+      {
+        "file": "src/infrastructure/postgres/order-repository.ts",
+        "line": 109,
+        "snippet": "`UPDATE orders SET confirmation_email_sent_at = $2, updated_at = now() WHERE id = $1`,"
+      },
+      {
+        "file": "tests/order-payment-rules.test.ts",
+        "line": 55,
+        "snippet": "it.each(['cancelled', 'expired'] as const)('refuses to pay a %s order', (status) => {"
+      },
+      {
+        "file": "tests/webhook-signature.test.ts",
+        "line": 63,
+        "snippet": "])('rejects a malformed header (%s)', (_label, header) => {"
+      }
+    ],
+    "decimal_money": [
+      {
+        "file": "src/domain/money.ts",
+        "line": 18,
+        "snippet": "// \"divide by 100\" breaks the moment a zero-decimal currency is enabled."
+      },
+      {
+        "file": "tests/order-payment-rules.test.ts",
+        "line": 68,
+        "snippet": "it('formats two-decimal currencies from minor units', () => {"
+      },
+      {
+        "file": "tests/order-payment-rules.test.ts",
+        "line": 72,
+        "snippet": "it('formats zero-decimal currencies without inventing decimals', () => {"
+      },
+      {
+        "file": "tests/order-payment-rules.test.ts",
+        "line": 77,
+        "snippet": "it('formats an unknown but well-formed code with the two-decimal default', () => {"
+      },
+      {
+        "file": "tests/webhook-signature.test.ts",
+        "line": 62,
+        "snippet": "['non-numeric timestamp', 't=not-a-number,v1=abcdef'],"
+      }
+    ],
+    "float_money": [],
+    "group_by": [],
+    "context_manager": [
+      {
+        "file": "src/index.ts",
+        "line": 60,
+        "snippet": "void Promise.allSettled([email.close(), pool.end()]).then(() => {"
+      },
+      {
+        "file": "src/infrastructure/email/nodemailer-email-sender.ts",
+        "line": 55,
+        "snippet": "this.transporter.close();"
+      }
+    ],
+    "zod_schema": [
+      {
+        "file": "src/config.ts",
+        "line": 1,
+        "snippet": "import { z } from 'zod';"
+      },
+      {
+        "file": "src/config.ts",
+        "line": 9,
+        "snippet": "const environmentSchema = z.object({"
+      },
+      {
+        "file": "src/webhook/schema.ts",
+        "line": 1,
+        "snippet": "import { z } from 'zod';"
+      },
+      {
+        "file": "src/webhook/schema.ts",
+        "line": 14,
+        "snippet": "const paymentEventSchema = z.object({"
+      },
+      {
+        "file": "src/webhook/schema.ts",
+        "line": 18,
+        "snippet": "data: z.object({"
+      }
+    ],
+    "signature_verify": [
+      {
+        "file": "src/config.ts",
+        "line": 16,
+        "snippet": "// 32 chars is the shortest secret worth calling a secret for HMAC-SHA256."
+      },
+      {
+        "file": "src/http/routes/payment-webhook.ts",
+        "line": 6,
+        "snippet": "import { SIGNATURE_HEADER, verifyWebhookSignature } from '../../webhook/signature.js';"
+      },
+      {
+        "file": "src/http/routes/payment-webhook.ts",
+        "line": 6,
+        "snippet": "import { SIGNATURE_HEADER, verifyWebhookSignature } from '../../webhook/signature.js';"
+      },
+      {
+        "file": "src/http/routes/payment-webhook.ts",
+        "line": 6,
+        "snippet": "import { SIGNATURE_HEADER, verifyWebhookSignature } from '../../webhook/signature.js';"
+      },
+      {
+        "file": "src/http/routes/payment-webhook.ts",
+        "line": 6,
+        "snippet": "import { SIGNATURE_HEADER, verifyWebhookSignature } from '../../webhook/signature.js';"
+      },
+      {
+        "file": "src/http/routes/payment-webhook.ts",
+        "line": 20,
+        "snippet": "*  - 401 invalid/absent signature  -> not our caller, no retry wanted"
+      },
+      {
+        "file": "src/http/routes/payment-webhook.ts",
+        "line": 31,
+        "snippet": "// Raw, not JSON: the signature covers the exact bytes sent. Re-serialising a"
+      },
+      {
+        "file": "src/http/routes/payment-webhook.ts",
+        "line": 50,
+        "snippet": "const verification = verifyWebhookSignature({"
+      },
+      {
+        "file": "src/http/routes/payment-webhook.ts",
+        "line": 50,
+        "snippet": "const verification = verifyWebhookSignature({"
+      },
+      {
+        "file": "src/http/routes/payment-webhook.ts",
+        "line": 52,
+        "snippet": "header: req.get(SIGNATURE_HEADER),"
+      },
+      {
+        "file": "src/http/routes/payment-webhook.ts",
+        "line": 61,
+        "snippet": "log.warn({ reason: verification.reason, ip: req.ip }, 'rejected webhook with invalid signature');"
+      },
+      {
+        "file": "src/http/routes/payment-webhook.ts",
+        "line": 62,
+        "snippet": "res.status(401).json(apiError('invalid_signature', 'Signature verification failed'));"
+      },
+      {
+        "file": "src/http/routes/payment-webhook.ts",
+        "line": 62,
+        "snippet": "res.status(401).json(apiError('invalid_signature', 'Signature verification failed'));"
+      },
+      {
+        "file": "src/logger.ts",
+        "line": 47,
+        "snippet": "// future `req.headers` dump must not spill signatures or credentials."
+      },
+      {
+        "file": "src/logger.ts",
+        "line": 52,
+        "snippet": "'req.headers[\"x-payment-signature\"]',"
+      },
+      {
+        "file": "src/logger.ts",
+        "line": 53,
+        "snippet": "'signature',"
+      },
+      {
+        "file": "src/webhook/signature.ts",
+        "line": 1,
+        "snippet": "import { createHmac, timingSafeEqual } from 'node:crypto';"
+      },
+      {
+        "file": "src/webhook/signature.ts",
+        "line": 1,
+        "snippet": "import { createHmac, timingSafeEqual } from 'node:crypto';"
+      },
+      {
+        "file": "src/webhook/signature.ts",
+        "line": 3,
+        "snippet": "export const SIGNATURE_HEADER = 'x-payment-signature';"
+      },
+      {
+        "file": "src/webhook/signature.ts",
+        "line": 3,
+        "snippet": "export const SIGNATURE_HEADER = 'x-payment-signature';"
+      },
+      {
+        "file": "src/webhook/signature.ts",
+        "line": 5,
+        "snippet": "const SIGNATURE_SCHEME_VERSION = 'v1';"
+      },
+      {
+        "file": "src/webhook/signature.ts",
+        "line": 8,
+        "snippet": "export type SignatureFailureReason ="
+      },
+      {
+        "file": "src/webhook/signature.ts",
+        "line": 12,
+        "snippet": "| 'signature_mismatch';"
+      },
+      {
+        "file": "src/webhook/signature.ts",
+        "line": 14,
+        "snippet": "export type SignatureVerification ="
+      },
+      {
+        "file": "src/webhook/signature.ts",
+        "line": 16,
+        "snippet": "| { readonly ok: false; readonly reason: SignatureFailureReason };"
+      },
+      {
+        "file": "src/webhook/signature.ts",
+        "line": 18,
+        "snippet": "interface SignatureHeaderParts {"
+      },
+      {
+        "file": "src/webhook/signature.ts",
+        "line": 20,
+        "snippet": "readonly signatureHex: string;"
+      },
+      {
+        "file": "src/webhook/signature.ts",
+        "line": 25,
+        "snippet": "*   x-payment-signature: t=1717070000,v1=9f86d0818..."
+      },
+      {
+        "file": "src/webhook/signature.ts",
+        "line": 29,
+        "snippet": "function parseSignatureHeader(header: string): SignatureHeaderParts | null {"
+      },
+      {
+        "file": "src/webhook/signature.ts",
+        "line": 29,
+        "snippet": "function parseSignatureHeader(header: string): SignatureHeaderParts | null {"
+      },
+      {
+        "file": "src/webhook/signature.ts",
+        "line": 31,
+        "snippet": "let signatureHex: string | null = null;"
+      },
+      {
+        "file": "src/webhook/signature.ts",
+        "line": 43,
+        "snippet": "} else if (key === SIGNATURE_SCHEME_VERSION && HEX_PATTERN.test(value)) {"
+      },
+      {
+        "file": "src/webhook/signature.ts",
+        "line": 44,
+        "snippet": "signatureHex = value.toLowerCase();"
+      },
+      {
+        "file": "src/webhook/signature.ts",
+        "line": 48,
+        "snippet": "if (timestampSeconds === null || signatureHex === null) {"
+      },
+      {
+        "file": "src/webhook/signature.ts",
+        "line": 51,
+        "snippet": "return { timestampSeconds, signatureHex };"
+      },
+      {
+        "file": "src/webhook/signature.ts",
+        "line": 57,
+        "snippet": "// timingSafeEqual throws on length mismatch; the length itself is not a secret."
+      },
+      {
+        "file": "src/webhook/signature.ts",
+        "line": 61,
+        "snippet": "return timingSafeEqual(expected, provided);"
+      },
+      {
+        "file": "src/webhook/signature.ts",
+        "line": 64,
+        "snippet": "export interface SignatureVerificationInput {"
+      },
+      {
+        "file": "src/webhook/signature.ts",
+        "line": 74,
+        "snippet": "* Verifies HMAC-SHA256 over `<timestamp>.<raw body>`."
+      },
+      {
+        "file": "src/webhook/signature.ts",
+        "line": 81,
+        "snippet": "* Returns a result instead of throwing: an invalid signature is an expected"
+      },
+      {
+        "file": "src/webhook/signature.ts",
+        "line": 84,
+        "snippet": "export function verifyWebhookSignature(input: SignatureVerificationInput): SignatureVerification {"
+      },
+      {
+        "file": "src/webhook/signature.ts",
+        "line": 84,
+        "snippet": "export function verifyWebhookSignature(input: SignatureVerificationInput): SignatureVerification {"
+      },
+      {
+        "file": "src/webhook/signature.ts",
+        "line": 84,
+        "snippet": "export function verifyWebhookSignature(input: SignatureVerificationInput): SignatureVerification {"
+      },
+      {
+        "file": "src/webhook/signature.ts",
+        "line": 84,
+        "snippet": "export function verifyWebhookSignature(input: SignatureVerificationInput): SignatureVerification {"
+      },
+      {
+        "file": "src/webhook/signature.ts",
+        "line": 89,
+        "snippet": "const parts = parseSignatureHeader(input.header);"
+      },
+      {
+        "file": "src/webhook/signature.ts",
+        "line": 99,
+        "snippet": "const expectedHex = createHmac('sha256', input.secret)"
+      },
+      {
+        "file": "src/webhook/signature.ts",
+        "line": 104,
+        "snippet": "return equalsInConstantTime(expectedHex, parts.signatureHex)"
+      },
+      {
+        "file": "src/webhook/signature.ts",
+        "line": 106,
+        "snippet": ": { ok: false, reason: 'signature_mismatch' };"
+      },
+      {
+        "file": "src/webhook/signature.ts",
+        "line": 110,
+        "snippet": "export function buildSignatureHeader(rawBody: Buffer, secret: string, timestampSeconds: number): string {"
+      },
+      {
+        "file": "src/webhook/signature.ts",
+        "line": 111,
+        "snippet": "const digest = createHmac('sha256', secret)"
+      },
+      {
+        "file": "src/webhook/signature.ts",
+        "line": 115,
+        "snippet": "return `t=${timestampSeconds},${SIGNATURE_SCHEME_VERSION}=${digest}`;"
+      },
+      {
+        "file": "tests/payment-webhook.route.test.ts",
+        "line": 6,
+        "snippet": "import { buildSignatureHeader, SIGNATURE_HEADER } from '../src/webhook/signature.js';"
+      },
+      {
+        "file": "tests/payment-webhook.route.test.ts",
+        "line": 6,
+        "snippet": "import { buildSignatureHeader, SIGNATURE_HEADER } from '../src/webhook/signature.js';"
+      },
+      {
+        "file": "tests/payment-webhook.route.test.ts",
+        "line": 6,
+        "snippet": "import { buildSignatureHeader, SIGNATURE_HEADER } from '../src/webhook/signature.js';"
+      },
+      {
+        "file": "tests/payment-webhook.route.test.ts",
+        "line": 43,
+        "snippet": "return buildSignatureHeader(Buffer.from(body, 'utf8'), SECRET, Math.floor(Date.now() / 1000));"
+      },
+      {
+        "file": "tests/payment-webhook.route.test.ts",
+        "line": 46,
+        "snippet": "function post(app: Express, body: string, signature = sign(body)) {"
+      },
+      {
+        "file": "tests/payment-webhook.route.test.ts",
+        "line": 50,
+        "snippet": ".set(SIGNATURE_HEADER, signature)"
+      },
+      {
+        "file": "tests/payment-webhook.route.test.ts",
+        "line": 50,
+        "snippet": ".set(SIGNATURE_HEADER, signature)"
+      },
+      {
+        "file": "tests/payment-webhook.route.test.ts",
+        "line": 81,
+        "snippet": "it('answers 401 without a signature header and never touches the order', async () => {"
+      },
+      {
+        "file": "tests/payment-webhook.route.test.ts",
+        "line": 89,
+        "snippet": "expect(response.body.error.code).toBe('invalid_signature');"
+      },
+      {
+        "file": "tests/payment-webhook.route.test.ts",
+        "line": 96,
+        "snippet": "const signature = sign(validEvent());"
+      },
+      {
+        "file": "tests/payment-webhook.route.test.ts",
+        "line": 101,
+        "snippet": "const response = await post(app, tampered, signature);"
+      },
+      {
+        "file": "tests/webhook-signature.test.ts",
+        "line": 2,
+        "snippet": "import { createHmac } from 'node:crypto';"
+      },
+      {
+        "file": "tests/webhook-signature.test.ts",
+        "line": 3,
+        "snippet": "import { buildSignatureHeader, verifyWebhookSignature } from '../src/webhook/signature.js';"
+      },
+      {
+        "file": "tests/webhook-signature.test.ts",
+        "line": 3,
+        "snippet": "import { buildSignatureHeader, verifyWebhookSignature } from '../src/webhook/signature.js';"
+      },
+      {
+        "file": "tests/webhook-signature.test.ts",
+        "line": 3,
+        "snippet": "import { buildSignatureHeader, verifyWebhookSignature } from '../src/webhook/signature.js';"
+      },
+      {
+        "file": "tests/webhook-signature.test.ts",
+        "line": 3,
+        "snippet": "import { buildSignatureHeader, verifyWebhookSignature } from '../src/webhook/signature.js';"
+      },
+      {
+        "file": "tests/webhook-signature.test.ts",
+        "line": 10,
+        "snippet": "function verify(header: string | undefined, body: Buffer = BODY, now: Date = NOW) {"
+      },
+      {
+        "file": "tests/webhook-signature.test.ts",
+        "line": 11,
+        "snippet": "return verifyWebhookSignature({"
+      },
+      {
+        "file": "tests/webhook-signature.test.ts",
+        "line": 11,
+        "snippet": "return verifyWebhookSignature({"
+      },
+      {
+        "file": "tests/webhook-signature.test.ts",
+        "line": 20,
+        "snippet": "describe('verifyWebhookSignature', () => {"
+      },
+      {
+        "file": "tests/webhook-signature.test.ts",
+        "line": 20,
+        "snippet": "describe('verifyWebhookSignature', () => {"
+      },
+      {
+        "file": "tests/webhook-signature.test.ts",
+        "line": 22,
+        "snippet": "expect(verify(buildSignatureHeader(BODY, SECRET, NOW_SECONDS))).toEqual({ ok: true });"
+      },
+      {
+        "file": "tests/webhook-signature.test.ts",
+        "line": 22,
+        "snippet": "expect(verify(buildSignatureHeader(BODY, SECRET, NOW_SECONDS))).toEqual({ ok: true });"
+      },
+      {
+        "file": "tests/webhook-signature.test.ts",
+        "line": 26,
+        "snippet": "const header = buildSignatureHeader(BODY, SECRET, NOW_SECONDS + 120);"
+      },
+      {
+        "file": "tests/webhook-signature.test.ts",
+        "line": 27,
+        "snippet": "expect(verify(header)).toEqual({ ok: true });"
+      },
+      {
+        "file": "tests/webhook-signature.test.ts",
+        "line": 31,
+        "snippet": "const header = buildSignatureHeader(BODY, SECRET, NOW_SECONDS);"
+      },
+      {
+        "file": "tests/webhook-signature.test.ts",
+        "line": 33,
+        "snippet": "expect(verify(header, tampered)).toEqual({ ok: false, reason: 'signature_mismatch' });"
+      },
+      {
+        "file": "tests/webhook-signature.test.ts",
+        "line": 33,
+        "snippet": "expect(verify(header, tampered)).toEqual({ ok: false, reason: 'signature_mismatch' });"
+      },
+      {
+        "file": "tests/webhook-signature.test.ts",
+        "line": 36,
+        "snippet": "it('rejects a signature made with a different secret', () => {"
+      },
+      {
+        "file": "tests/webhook-signature.test.ts",
+        "line": 37,
+        "snippet": "const digest = createHmac('sha256', 'another-secret').update(`${NOW_SECONDS}.`).update(BODY).digest('hex');"
+      },
+      {
+        "file": "tests/webhook-signature.test.ts",
+        "line": 38,
+        "snippet": "expect(verify(`t=${NOW_SECONDS},v1=${digest}`)).toEqual({ ok: false, reason: 'signature_mismatch' });"
+      },
+      {
+        "file": "tests/webhook-signature.test.ts",
+        "line": 38,
+        "snippet": "expect(verify(`t=${NOW_SECONDS},v1=${digest}`)).toEqual({ ok: false, reason: 'signature_mismatch' });"
+      },
+      {
+        "file": "tests/webhook-signature.test.ts",
+        "line": 42,
+        "snippet": "const header = buildSignatureHeader(BODY, SECRET, NOW_SECONDS - 301);"
+      },
+      {
+        "file": "tests/webhook-signature.test.ts",
+        "line": 43,
+        "snippet": "expect(verify(header)).toEqual({ ok: false, reason: 'timestamp_out_of_tolerance' });"
+      },
+      {
+        "file": "tests/webhook-signature.test.ts",
+        "line": 47,
+        "snippet": "const header = buildSignatureHeader(BODY, SECRET, NOW_SECONDS);"
+      },
+      {
+        "file": "tests/webhook-signature.test.ts",
+        "line": 49,
+        "snippet": "expect(verify(header, BODY, now)).toEqual({ ok: false, reason: 'timestamp_out_of_tolerance' });"
+      },
+      {
+        "file": "tests/webhook-signature.test.ts",
+        "line": 53,
+        "snippet": "expect(verify(undefined)).toEqual({ ok: false, reason: 'missing_header' });"
+      },
+      {
+        "file": "tests/webhook-signature.test.ts",
+        "line": 60,
+        "snippet": "['signature only', 'v1=abcdef'],"
+      },
+      {
+        "file": "tests/webhook-signature.test.ts",
+        "line": 61,
+        "snippet": "['non-hex signature', `t=${NOW_SECONDS},v1=zzzz`],"
+      },
+      {
+        "file": "tests/webhook-signature.test.ts",
+        "line": 64,
+        "snippet": "const result = verify(header);"
+      },
+      {
+        "file": "tests/webhook-signature.test.ts",
+        "line": 66,
+        "snippet": "expect(result).not.toEqual({ ok: false, reason: 'signature_mismatch' });"
+      },
+      {
+        "file": "tests/webhook-signature.test.ts",
+        "line": 70,
+        "snippet": "const header = `${buildSignatureHeader(BODY, SECRET, NOW_SECONDS)},v2=deadbeef`;"
+      },
+      {
+        "file": "tests/webhook-signature.test.ts",
+        "line": 71,
+        "snippet": "expect(verify(header)).toEqual({ ok: true });"
+      },
+      {
+        "file": "tests/webhook-signature.test.ts",
+        "line": 74,
+        "snippet": "it('rejects a truncated signature instead of matching on a prefix', () => {"
+      },
+      {
+        "file": "tests/webhook-signature.test.ts",
+        "line": 75,
+        "snippet": "const header = buildSignatureHeader(BODY, SECRET, NOW_SECONDS).slice(0, -10);"
+      },
+      {
+        "file": "tests/webhook-signature.test.ts",
+        "line": 76,
+        "snippet": "expect(verify(header)).toEqual({ ok: false, reason: 'signature_mismatch' });"
+      },
+      {
+        "file": "tests/webhook-signature.test.ts",
+        "line": 76,
+        "snippet": "expect(verify(header)).toEqual({ ok: false, reason: 'signature_mismatch' });"
+      },
+      {
+        "file": "tests/webhook-signature.test.ts",
+        "line": 81,
+        "snippet": "const header = buildSignatureHeader(thai, SECRET, NOW_SECONDS);"
+      },
+      {
+        "file": "tests/webhook-signature.test.ts",
+        "line": 82,
+        "snippet": "expect(verify(header, thai)).toEqual({ ok: true });"
+      }
+    ],
+    "idempotency": [
+      {
+        "file": "migrations/001_orders_and_payment_events.sql",
+        "line": 1,
+        "snippet": "-- Orders and the webhook idempotency ledger."
+      },
+      {
+        "file": "migrations/001_orders_and_payment_events.sql",
+        "line": 34,
+        "snippet": "-- Idempotency ledger: the primary key is the concurrency control that makes a"
+      },
+      {
+        "file": "migrations/001_orders_and_payment_events.sql",
+        "line": 37,
+        "snippet": "event_id    TEXT PRIMARY KEY,"
+      },
+      {
+        "file": "src/application/confirm-order-payment.ts",
+        "line": 37,
+        "snippet": "*  1. The state change and the idempotency claim share one transaction, so a"
+      },
+      {
+        "file": "src/infrastructure/postgres/order-repository.ts",
+        "line": 46,
+        "snippet": "// ON CONFLICT DO NOTHING makes the primary key the concurrency control:"
+      },
+      {
+        "file": "src/infrastructure/postgres/order-repository.ts",
+        "line": 49,
+        "snippet": "`INSERT INTO payment_events (event_id, payment_id, order_id, received_at)"
+      },
+      {
+        "file": "src/infrastructure/postgres/order-repository.ts",
+        "line": 51,
+        "snippet": "ON CONFLICT (event_id) DO NOTHING"
+      },
+      {
+        "file": "src/infrastructure/postgres/order-repository.ts",
+        "line": 51,
+        "snippet": "ON CONFLICT (event_id) DO NOTHING"
+      },
+      {
+        "file": "src/infrastructure/postgres/order-repository.ts",
+        "line": 52,
+        "snippet": "RETURNING event_id`,"
+      }
+    ],
+    "transaction": [
+      {
+        "file": "migrations/001_orders_and_payment_events.sql",
+        "line": 4,
+        "snippet": "BEGIN;"
+      },
+      {
+        "file": "migrations/001_orders_and_payment_events.sql",
+        "line": 45,
+        "snippet": "COMMIT;"
+      },
+      {
+        "file": "src/application/confirm-order-payment.ts",
+        "line": 40,
+        "snippet": "*  2. The email is sent *after* the commit and its failure never fails the"
+      },
+      {
+        "file": "src/infrastructure/postgres/order-repository.ts",
+        "line": 93,
+        "snippet": "await client.query('BEGIN');"
+      },
+      {
+        "file": "src/infrastructure/postgres/order-repository.ts",
+        "line": 95,
+        "snippet": "await client.query('COMMIT');"
+      }
+    ],
+    "http_status": [
+      {
+        "file": "src/http/error-handler.ts",
+        "line": 31,
+        "snippet": "res.status(404).json(apiError('not_found', 'Unknown endpoint', { requestId: req.requestId }));"
+      },
+      {
+        "file": "src/http/error-handler.ts",
+        "line": 61,
+        "snippet": ".status(500)"
+      },
+      {
+        "file": "src/http/routes/payment-webhook.ts",
+        "line": 62,
+        "snippet": "res.status(401).json(apiError('invalid_signature', 'Signature verification failed'));"
+      },
+      {
+        "file": "src/http/routes/payment-webhook.ts",
+        "line": 71,
+        "snippet": "res.status(400).json(apiError('invalid_payload', 'Request body is not valid JSON'));"
+      },
+      {
+        "file": "src/http/routes/payment-webhook.ts",
+        "line": 79,
+        "snippet": ".status(400)"
+      }
+    ],
+    "over_abstraction": [],
+    "type_hint_py": [],
+    "docstring_py": []
+  },
+  "all_files": [
+    ".env.example",
+    ".gitignore",
+    "README.md",
+    "RESPONSE.md",
+    "eslint.config.js",
+    "migrations/001_orders_and_payment_events.sql",
+    "package.json",
+    "src/application/confirm-order-payment.ts",
+    "src/application/ports.ts",
+    "src/config.ts",
+    "src/domain/money.ts",
+    "src/domain/order.ts",
+    "src/errors.ts",
+    "src/http/app.ts",
+    "src/http/error-handler.ts",
+    "src/http/request-context.ts",
+    "src/http/routes/payment-webhook.ts",
+    "src/index.ts",
+    "src/infrastructure/email/nodemailer-email-sender.ts",
+    "src/infrastructure/email/order-paid-template.ts",
+    "src/infrastructure/postgres/order-repository.ts",
+    "src/infrastructure/postgres/pool.ts",
+    "src/logger.ts",
+    "src/webhook/schema.ts",
+    "src/webhook/signature.ts",
+    "tests/confirm-order-payment.test.ts",
+    "tests/order-paid-template.test.ts",
+    "tests/order-payment-rules.test.ts",
+    "tests/payment-webhook.route.test.ts",
+    "tests/support/test-doubles.ts",
+    "tests/webhook-signature.test.ts",
+    "tsconfig.json",
+    "vitest.config.ts"
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "expectations": [
+    {
+      "text": "verify signature ของ webhook ก่อนประมวลผล payload",
+      "passed": true,
+      "evidence": "src/routes/paymentWebhook.ts:35-42 mounts express.raw() then verifyWebhookSignature() as middleware BEFORE the handler that calls parseEvent (line 45). src/services/signature.ts:59-71 computes HMAC-SHA256 over `${timestamp}.` + rawBody, checks the timestamp tolerance, and compares with timingSafeEqual (line 45)."
+    },
+    {
+      "text": "มีกลไก idempotency กัน webhook ที่ส่งซ้ำไม่ให้อัพเดท/ส่งอีเมลซ้ำ",
+      "passed": true,
+      "evidence": "src/services/paymentWebhookService.ts:36-40 claims the event id first and returns outcome 'duplicate' without touching the order or the email; :70-79 markAsPaid returns alreadyPaid=true and the email is skipped even under a different event id; :44-47 releases the claim when processing throws so a retry can succeed. Covered by tests/paymentWebhookService.test.ts:40 and :50. Caveat: the only implementation is InMemoryProcessedEventStore (a Set), so the guarantee is per-process and lost on restart."
+    },
+    {
+      "text": "ไม่มี secret hardcode — อ่านจาก env var และมี .env.example",
+      "passed": true,
+      "evidence": ".env.example present with PAYMENT_WEBHOOK_SECRET / SMTP_PASSWORD as 'replace-me' placeholders. src/config/env.ts:7-24 parses all of them from process.env with zod (PAYMENT_WEBHOOK_SECRET min 16 chars) and throws at boot on failure; src/server.ts:16-31 passes env values in. No secret literals in src/."
+    },
+    {
+      "text": "validate payload ด้วย schema (zod หรือเทียบเท่า) ไม่ใช่ใช้ req.body ดิบ ๆ",
+      "passed": true,
+      "evidence": "src/types/webhook.ts:7-19 zod schema (id, type, createdAt coerced to Date, data.paymentId/orderId/amount int nonnegative/currency length 3/status). src/routes/paymentWebhook.ts:16-30 parseEvent JSON.parses the raw Buffer into `unknown` and safeParses it; only parsed.data reaches the service. Raw req.body is used solely as the Buffer for HMAC."
+    },
+    {
+      "text": "TypeScript strict และไม่มี any ในโค้ดที่เขียนเอง",
+      "passed": true,
+      "evidence": "tsconfig.json:8-13 strict:true plus noUncheckedIndexedAccess, exactOptionalPropertyTypes, noImplicitOverride, noFallthroughCasesInSwitch. grep -rn '\\bany\\b' across the whole output tree returns exactly one hit, the English word 'any' in a comment (src/middleware/verifyWebhookSignature.ts:15). The only cast is `req.body as Buffer` after a Buffer.isBuffer guard in the middleware."
+    },
+    {
+      "text": "ส่งอีเมลล้มเหลวไม่ทำให้สถานะ order ที่อัพเดทแล้วพัง (แยกออกจาก critical path หรือจัดการ error ชัดเจน)",
+      "passed": true,
+      "evidence": "src/services/paymentWebhookService.ts:86-95: the email is sent after markAsPaid, inside try/catch; on failure it logs 'Failed to send confirmation email; order remains paid' and still returns outcome 'processed' with emailSent:false, so the route answers 200. Test tests/paymentWebhookService.test.ts:101 'keeps the order paid when the confirmation email fails'."
+    },
+    {
+      "text": "มีไฟล์ test ที่ครอบเคสสำคัญ (signature ผิด / ส่งซ้ำ)",
+      "passed": true,
+      "evidence": "4 test files. tests/signature.test.ts: tampered body, wrong secret, stale timestamp (replay), future timestamp, non-hex signature, missing header. tests/paymentWebhook.route.test.ts:50/62 return 401 for missing and tampered signature; :111 'acknowledges a replayed delivery with 200 without re-sending email'. tests/paymentWebhookService.test.ts:40 duplicate event id, :50 second event on an already-paid order."
+    },
+    {
+      "text": "ตอบ HTTP status code ถูกต้อง (2xx เมื่อรับสำเร็จ, 4xx เมื่อ signature ผิด)",
+      "passed": true,
+      "evidence": "src/utils/errors.ts:14-18 InvalidSignatureError -> 401, InvalidPayloadError -> 400, OrderNotFoundError -> 404, OrderConflictError -> 409, rendered by src/middleware/errorHandler.ts:17-20; the happy/duplicate/ignored paths return 200 (routes/paymentWebhook.ts:49). Asserted end-to-end in tests/paymentWebhook.route.test.ts."
+    },
+    {
+      "text": "ไม่มี TODO / placeholder / ฟังก์ชันที่ยังไม่ implement",
+      "passed": false,
+      "evidence": "No literal TODO markers, but the persistence layer is a declared stand-in: src/repositories/orderRepository.ts:27-30 'Reference in-memory implementation. Swap for a real DB-backed repository', and the interface docstring (lines 17-23) contains the SQL a real implementation 'should' use instead of code. processedEventStore.ts:9 likewise says 'A DB implementation is a single INSERT ... ON CONFLICT DO NOTHING'. Both stand-ins are wired into the production entrypoint (src/server.ts:13-14 `new InMemoryOrderRepository()` with no seed), so the shipped service starts with zero orders — every real webhook would 404 — and the idempotency ledger is lost on restart. RESPONSE.md:57 discloses this ('ยังไม่ต่อ DB จริงกับ SMTP จริง'), but the core requirement 'อัพเดทสถานะ order เป็น paid' is not implemented against any durable store."
+    },
+    {
+      "text": "RESPONSE.md บอกชัดว่าต้องตั้ง env var อะไรบ้างและเหลืออะไรต้องทำต่อ",
+      "passed": false,
+      "evidence": "RESPONSE.md never names a single environment variable and never mentions .env.example or a copy/fill step. The only configuration reference is RESPONSE.md:39 'src/config/env.ts zod validate env, พังตั้งแต่ boot ถ้า config ขาด', and the run instruction is just RESPONSE.md:53 'รัน: npm install && npm test'. The 'เหลืออะไรต้องทำต่อ' half is satisfied (RESPONSE.md:55-59 lists the missing DB/SMTP wiring, rate limiting and the gateway-specific signature format), but the env-var half is absent from RESPONSE.md (it exists only in .env.example and README.md)."
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "failed": 2,
+    "total": 10,
+    "pass_rate": 0.8
+  }
+}

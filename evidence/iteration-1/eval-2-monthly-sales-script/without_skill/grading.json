@@ -1,0 +1,50 @@
+{
+  "expectations": [
+    {
+      "text": "type hint ครบทุก function signature",
+      "passed": false,
+      "evidence": "AST sweep of every def under without_skill/outputs: 52 of 53 functions are fully annotated — every function and method in monthly_sales/ is complete (e.g. db.py:53-58 'def fetch_monthly_sales(cursor: Cursor, start: date, end: date, currency: str | None = None) -> list[MonthlySalesRow]:'), and every unittest method carries '-> None'. The single miss is the test helper at tests/test_config_and_db.py:28 'def __init__(self, rows: list[tuple[object, ...]] | None = None, error: Exception | None = None):' — parameters annotated, return annotation absent. The assertion says ครบทุก (every) signature and the grading scope explicitly includes test helpers, so this fails on the letter; in substance it is one missing '-> None' on a fake cursor."
+    },
+    {
+      "text": "ไม่มี credential hardcode — อ่าน connection string/DSN จาก env var",
+      "passed": true,
+      "evidence": "monthly_sales/config.py:43-65 DatabaseConfig.from_env reads PGHOST/PGPORT/PGDATABASE/PGUSER/PGPASSWORD/PGSSLMODE from os.environ and raises ConfigError listing every missing required var (config.py:45-49). No credential literal exists in monthly_sales/; .env.example ships 'PGPASSWORD=change-me'. config.py:81-86 overrides __repr__ to print password='***' so it cannot leak into logs or tracebacks, and tests/test_config_and_db.py:62 asserts that."
+    },
+    {
+      "text": "aggregate ยอดขายที่ฝั่ง DB ด้วย GROUP BY ไม่ใช่ดึงทุกแถวมารวมใน python",
+      "passed": true,
+      "evidence": "monthly_sales/queries.py:26-41 MONTHLY_SALES_SQL: 'count(*), count(DISTINCT o.customer_id), coalesce(sum(o.total_amount),0)::numeric(14,2), coalesce(avg(o.total_amount),0)::numeric(14,2) FROM orders AS o WHERE ... GROUP BY 1, 2 ORDER BY 1, 2'. Python receives one row per (month, currency); report.py only maps rows and optionally inserts zero rows for empty months (fill_missing_months, report.py:104)."
+    },
+    {
+      "text": "query เป็น parameterized ไม่ต่อ string",
+      "passed": true,
+      "evidence": "queries.py:26 MONTHLY_SALES_SQL is a Final[str] constant using %(start)s, %(end_exclusive)s, %(statuses)s, %(currency)s; db.py:64-71 builds the params dict and calls 'cursor.execute(MONTHLY_SALES_SQL, params)'. No interpolation into the SQL text anywhere. tests/test_config_and_db.py:96-106 test_parameters_are_bound_not_interpolated asserts the executed query equals the constant verbatim and checks each bound value — I ran the suite and it passes."
+    },
+    {
+      "text": "ใช้ Decimal หรือ NUMERIC กับจำนวนเงิน ไม่ใช่ float",
+      "passed": true,
+      "evidence": "SQL casts both money columns to numeric(14,2) (queries.py:32-33) and the assumed column is numeric(12,2) (queries.py:12). MonthlySalesRow.gross_revenue / avg_order_value are typed Decimal (report.py:34-35); report.py:62-69 _as_decimal returns Decimal unchanged, builds Decimal from int/str, and for the defensive float branch uses Decimal(str(value)) rather than Decimal(float) so no binary-float artifact enters; report.py:57-58 as_csv_record formats with f'{self.gross_revenue:.2f}' on the Decimal. Zero-filled months use Decimal('0.00') (report.py:122-123). No float arithmetic on money in the DB-to-CSV path."
+    },
+    {
+      "text": "connection/cursor ถูกปิดเสมอ (context manager หรือ finally)",
+      "passed": true,
+      "evidence": "monthly_sales/db.py:30-50: connect() is a @contextmanager whose 'try: conn.read_only = True; yield conn / finally: conn.close()' guarantees the close on every path, including exceptions raised by the caller. cli.py:100-102 uses it as 'with connect(db_config) as conn:' nested with 'with conn.cursor() as cursor:'. The CSV writer likewise uses 'with tmp.open(...)' plus 'except BaseException: tmp.unlink(missing_ok=True); raise' (report.py:141-152) so no temp file is orphaned."
+    },
+    {
+      "text": "ไม่มี except เปล่าที่กลืน error",
+      "passed": true,
+      "evidence": "No bare 'except:' anywhere. The three broad handlers all re-raise: db.py:43 'except Exception as exc: raise DatabaseError(f\"could not connect to PostgreSQL: {exc}\") from exc', db.py:73 'except Exception as exc: raise DatabaseError(f\"monthly sales query failed: {exc}\") from exc' (deliberately broad because psycopg is a lazy import, so its exception classes are not in scope), and report.py:150 'except BaseException: tmp.unlink(missing_ok=True); raise' which cleans up and re-raises unchanged. Narrow handlers elsewhere chain with 'from exc' (config.py:109, cli.py:66). cli.py:93/103 catch only the tool's own ConfigError/DatabaseError and map them to exit codes 2/3 after logging. No 'pass'/'continue' swallow."
+    },
+    {
+      "text": "ไม่มี TODO / placeholder",
+      "passed": true,
+      "evidence": "grep -riE 'todo|fixme|placeholder|not implemented|NotImplemented' over without_skill/outputs returns no code hits. The three '...' matches are legitimate: db.py:26-27 are Protocol method bodies for structural typing ('def execute(...) -> object: ...'), and queries.py:9 is an ellipsis inside a SQL comment listing statuses. 'change-me' in .env.example is the intended fill-in for an env template. Every function has a real implementation."
+    },
+    {
+      "text": "มี docstring อธิบาย public function และระบุสมมติฐานเรื่อง schema",
+      "passed": true,
+      "evidence": "Schema assumptions are stated inside a docstring: queries.py:1-18 module docstring spells out the assumed orders(id, order_date timestamptz, status text, customer_id bigint, currency char(3), total_amount numeric(12,2)) table, which statuses count as revenue, that this is the single place that knows the names, and that all parameters are bound. Reinforced by schema.sql (DDL + index + read-only grants) and README.md. Public functions carry docstrings: config.from_env (config.py:38, listing every recognised env var), to_conninfo_kwargs (69), db.connect (32), db.fetch_monthly_sales (59, documenting the exclusive upper bound), report.month_start/add_month/subtract_month/default_range/fill_missing_months/write_csv (73, 78, 98, 83, 107, 132), plus cli.resolve_range (71). Caveat: cli.build_parser, cli.main, MonthlySalesRow.from_db_row and as_csv_record have no docstring."
+    }
+  ],
+  "summary": {"passed": 8, "failed": 1, "total": 9, "pass_rate": 0.89}
+}

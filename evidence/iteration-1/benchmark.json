@@ -1,0 +1,484 @@
+{
+  "metadata": {
+    "skill_name": "principal-engineer",
+    "skill_path": "<path/to/skill>",
+    "executor_model": "<model-name>",
+    "analyzer_model": "<model-name>",
+    "timestamp": "2026-08-24T04:30:49Z",
+    "evals_run": [
+      0,
+      1,
+      2
+    ],
+    "runs_per_configuration": 3
+  },
+  "runs": [
+    {
+      "eval_id": 0,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 11,
+        "failed": 0,
+        "total": 11,
+        "time_seconds": 709.5,
+        "tokens": 93056,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "ไม่มี DB password หรือ API key hardcode อยู่ในโค้ดผลลัพธ์ (ย้ายไป env var)",
+          "passed": true,
+          "evidence": "src/config/env.js:48-63 loads every credential through requireEnv() with no default: host/user/password/database, MAIL_API_URL/MAIL_API_KEY. src/db/pool.js:10-21 and src/notifications/order-mailer.js:12-22 receive config by argument. .env.example:1-11 lists keys with EMPTY values only; .gitignore:2 ignores .env. grep for 'Acm3!prod2023' / 'sk_live_' across src/ and tests/ returns nothing; static_checks hardcoded_secret[] is empty."
+        },
+        {
+          "text": "SQL ทุก query เป็น parameterized — ไม่มีการต่อ string ของ user input เข้าไปใน query",
+          "passed": true,
+          "evidence": "All 7 queries live in src/orders/order.repository.js and use ? binding: line 43 'WHERE code = ? LIMIT 1', line 57 'WHERE id = ? LIMIT 1', line 68 'VALUES (?, ?, ?, NOW())', line 85 'VALUES ?', line 99 'WHERE id = ? AND user_id = ?', line 116 'WHERE oi.order_id = ?'. The one template literal (line 30, `IN (${placeholders})`) builds placeholders from productIds.map(() => '?') — derived from the array LENGTH, never from a value; all ids are passed as bound params. static_checks string_concat_sql[] empty."
+        },
+        {
+          "text": "แก้ N+1 ใน GET /orders/:id แล้ว (ไม่มี query ยิงต่อ product ทีละแถวในลูป)",
+          "passed": true,
+          "evidence": "src/orders/order.repository.js:111-121 findOrderItems() uses a single 'SELECT oi.product_id, p.name, ... FROM order_items oi LEFT JOIN products p ON p.id = oi.product_id WHERE oi.order_id = ?'. src/orders/order.service.js:73-93 getOrder() makes exactly 2 awaits total (findOrderForUser, findOrderItems) then a pure items.map() — no await inside any loop. POST path likewise batches via findProductsByIds (repository.js:25-34) and a single multi-row INSERT (line 84). static_checks await_in_loop[] empty."
+        },
+        {
+          "text": "business logic การคิดราคา/ส่วนลด ถูกแยกออกจาก route handler ไปอยู่คนละไฟล์/module",
+          "passed": true,
+          "evidence": "src/orders/pricing.js (205 lines) holds priceLine/calculateCouponDiscount/calculateShipping/priceOrder as pure functions requiring neither express nor mysql (header comment lines 6-7). src/orders/order.routes.js is 42 lines and contains no arithmetic at all — it validates, calls service.createOrder/getOrder, and picks a status code. tests/pricing.test.js exercises the rules with no DB."
+        },
+        {
+          "text": "ไม่มี catch เปล่า และ error ตอบกลับด้วย HTTP status code ที่ถูกต้อง ไม่ใช่ 200 ทุกกรณี",
+          "passed": true,
+          "evidence": "Every catch has a body: order.service.js:109-113 (rollback failure logged via logger.error 'order.transaction.rollback_failed'), order.service.js:134-140 (mail failure logged with orderId/userId). src/http/middleware.js:37-60 maps AppError.status to res.status(status) and unexpected errors to 500 with a scrubbed message; src/errors.js assigns 422 (ValidationError), 404 (NotFoundError), 401 (Unauthorized), 500 (DataIntegrity/Configuration). Routes return 201 on create and 200 on read. static_checks empty_catch hit at order.service.js:121 is a false positive — it is a JSDoc line quoting the legacy `catch (e) {}`."
+        },
+        {
+          "text": "magic number (0.95, 0.9, category 3, 1500, 60) ถูกยกเป็น named constant หรือ config",
+          "passed": true,
+          "evidence": "src/orders/pricing.js:18-29 — BULK_DISCOUNT_MIN_QTY = 11, BULK_DISCOUNT_RATE = 0.05, PROMO_CATEGORY_ID = 3, PROMO_CATEGORY_RATE = 0.1, FREE_SHIPPING_THRESHOLD_MINOR = 150_000, SHIPPING_FEE_MINOR = 6_000, MINOR_UNITS_PER_MAJOR = 100, each with a comment naming the legacy expression it replaces. Validation limits are likewise named in order.validation.js:13-16."
+        },
+        {
+          "text": "มี input validation ของ req.body ก่อนนำไปใช้",
+          "passed": true,
+          "evidence": "src/orders/order.routes.js:22 calls validateCreateOrderPayload(req.body) before anything touches the service. src/orders/order.validation.js:43-98 rejects non-object bodies, empty/oversized items arrays, non-integer productId/qty, qty > 100, duplicate productIds, and coupon codes failing /^[A-Za-z0-9_-]+$/ or exceeding 64 chars — throwing ValidationError (422). req.params.id goes through validateOrderId (line 104). Covered by tests/order.validation.test.js."
+        },
+        {
+          "text": "การส่งอีเมลล้มเหลว ไม่ทำให้ order ที่สร้างสำเร็จแล้วพังหรือถูกกลืนเงียบ ๆ",
+          "passed": true,
+          "evidence": "src/orders/order.service.js:55 calls sendConfirmationBestEffort AFTER withTransaction has committed. Lines 126-141 wrap the send in try/catch and log logger.error('order.confirmation.failed', { orderId, userId, message }) — plus 'order.confirmation.skipped_no_email' when no address exists. The mailer itself throws on non-2xx (order-mailer.js:27-29) and has a 5s AbortSignal.timeout, so a hung mail host cannot hang the request. tests/order.service.test.js:149 'ส่งอีเมลไม่สำเร็จไม่ทำให้ order ที่ commit แล้วล้ม แต่ต้องมี log พร้อม orderId' asserts both halves."
+        },
+        {
+          "text": "ไม่ over-engineer — ไม่มี DI container / abstract class / interface ที่มี implementation เดียว",
+          "passed": true,
+          "evidence": "No container module, no abstract class, no single-implementation interface. Abstractions counted: (1) AppError base — 5 real subclasses (errors.js:26-61); (2) createOrderService / createOrderMailer / createOrderRouter / createErrorHandler — plain closure factories, each with 2 real call sites (src/app.js wiring + the test suites' fakes); (3) order.repository.js is a module of 7 functions taking an `executor` argument, not a class hierarchy. Wiring is 10 lines inline in src/app.js:31-40, not a separate DI module. order.repository.js:8-10 explicitly justifies NOT splitting into product/coupon/order repos, and RESPONSE.md:48 states 'ไม่ใส่ interface/factory/DI container'. static_checks over_abstraction[] is empty."
+        },
+        {
+          "text": "แจ้งผู้ใช้ว่า secret ที่หลุดใน source ต้อง rotate ไม่ใช่แค่ลบออก (ดู RESPONSE.md)",
+          "passed": true,
+          "evidence": "RESPONSE.md:1-7 opens with '⚠️ ก่อนอื่น — เรื่องด่วนที่ต้องทำวันนี้' and states '**ต้อง rotate ทั้งสองตัว ไม่ใช่แค่ลบออกจากไฟล์** เพราะมันอยู่ใน git history ไปแล้ว ใครที่ clone repo นี้ได้ = มี password production ทั้งคู่ ... แต่การเปลี่ยนรหัสจริงต้องทำที่ฝั่ง DB/mail provider'. Repeated as the first item of 'ต้องทำต่อ' (line 75). It also warns the endpoint should be treated as breached until proven otherwise (line 9). Notably it describes the leaked values without re-printing them."
+        },
+        {
+          "text": "RESPONSE.md อธิบายเหตุผล (ทำไม) ของการตัดสินใจเชิงโครงสร้าง ไม่ใช่แค่ list ว่าแก้อะไร",
+          "passed": true,
+          "evidence": "RESPONSE.md has a dedicated section 'เส้นแบ่งที่เลือก และทำไม' (lines 38-48) arguing four structural decisions with trade-offs, not just outcomes: why pricing.js is pure ('กฎส่วนลด/ค่าส่งเป็นส่วนที่ถูกขอแก้บ่อยที่สุดและผิดแล้วเสียเงินจริง'); why SQL stays in ONE file rather than three repos ('ถ้าแตกจะได้ไฟล์ละ 15 บรรทัดที่ต้องเปิด 4 ไฟล์เพื่ออ่าน flow เดียว ซึ่งแย่กว่าเดิม'); why zero new dependencies and no TypeScript conversion ('ควรเป็น PR แยก ไม่ควรพ่วงมากับงานนี้จนอ่าน diff ไม่ออก'); why no DI container. Line 15 reframes the problem itself ('ปัญหาจริงของไฟล์นี้ไม่ใช่ \"ยาว\" แต่คือฟังก์ชันเดียวทำ 5 อย่าง'). A separate 'สิ่งที่เปลี่ยนพฤติกรรม' section (lines 64-71) lists 6 client-visible breaks with reasons, and PLAN.md carries the same rationale."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 10,
+        "failed": 0,
+        "total": 10,
+        "time_seconds": 893.6,
+        "tokens": 115568,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "verify signature ของ webhook ก่อนประมวลผล payload",
+          "passed": true,
+          "evidence": "src/http/routes/payment-webhook.ts:50-64 calls verifyWebhookSignature({rawBody, header: req.get(SIGNATURE_HEADER), ...}) and returns 401 before any JSON.parse (line 68) or schema parse (line 75). src/webhook/signature.ts:99-106 computes HMAC-SHA256 over `${timestamp}.` + rawBody and compares via timingSafeEqual."
+        },
+        {
+          "text": "มีกลไก idempotency กัน webhook ที่ส่งซ้ำไม่ให้อัพเดท/ส่งอีเมลซ้ำ",
+          "passed": true,
+          "evidence": "src/infrastructure/postgres/order-repository.ts:48-55 `INSERT INTO payment_events ... ON CONFLICT (event_id) DO NOTHING RETURNING event_id` returns false on a duplicate; migrations/001:37 makes event_id the PRIMARY KEY. The claim runs inside the same transaction as markPaid (src/application/confirm-order-payment.ts:91-127), and a duplicate short-circuits before the email (line 80 only runs for kind 'paid'). Also SELECT ... FOR UPDATE (order-repository.ts:58-65) and a partial unique index on payment_id."
+        },
+        {
+          "text": "ไม่มี secret hardcode — อ่านจาก env var และมี .env.example",
+          "passed": true,
+          "evidence": ".env.example present with PAYMENT_WEBHOOK_SECRET=, DATABASE_URL=, SMTP_URL= left blank and commented. src/config.ts:9-25 parses every secret from process.env via zod (PAYMENT_WEBHOOK_SECRET: z.string().min(32)) and throws at boot when missing. grep for secret literals in src/ found none; the only literal secret is a test constant in tests/."
+        },
+        {
+          "text": "validate payload ด้วย schema (zod หรือเทียบเท่า) ไม่ใช่ใช้ req.body ดิบ ๆ",
+          "passed": true,
+          "evidence": "src/webhook/schema.ts:14-26 zod object with bounded strings, int/nonnegative amount, 3-letter currency regex; parsePaymentNotification() returns a typed camelCase PaymentNotification. The route never passes req.body onward — it JSON.parses the raw Buffer into `unknown` (payment-webhook.ts:66-68) and only the parsed result reaches the use case (line 93)."
+        },
+        {
+          "text": "TypeScript strict และไม่มี any ในโค้ดที่เขียนเอง",
+          "passed": true,
+          "evidence": "tsconfig.json:9-15 strict:true plus noUncheckedIndexedAccess, noImplicitOverride, noUnusedLocals/Parameters, verbatimModuleSyntax. grep -rn '\\bany\\b' over src/ returns only the word 'any' inside an English comment (src/domain/money.ts:26); eslint.config.js:14 sets '@typescript-eslint/no-explicit-any': 'error'. The two hits in tests are the vitest matcher expect.any(String)."
+        },
+        {
+          "text": "ส่งอีเมลล้มเหลวไม่ทำให้สถานะ order ที่อัพเดทแล้วพัง (แยกออกจาก critical path หรือจัดการ error ชัดเจน)",
+          "passed": true,
+          "evidence": "src/application/confirm-order-payment.ts:80 sends the email only AFTER applyInTransaction has committed; sendConfirmation (135-155) wraps it in try/catch, logs 'confirmation email failed; order stays paid and awaits the email retry sweep' and returns false. The route still answers 200 with emailDelivered:false. migrations/001:31-32 adds a partial index on (status='paid' AND confirmation_email_sent_at IS NULL) as the retry queue."
+        },
+        {
+          "text": "มีไฟล์ test ที่ครอบเคสสำคัญ (signature ผิด / ส่งซ้ำ)",
+          "passed": true,
+          "evidence": "5 test files, 674 lines. tests/webhook-signature.test.ts (10 cases: tampered body, wrong secret, stale/future timestamp, malformed header, truncated hash). tests/payment-webhook.route.test.ts (12 cases incl. 401 on missing/tampered signature, replayed delivery). tests/confirm-order-payment.test.ts (10 cases incl. duplicate event id, same payment under a new event id, SMTP failure leaves the order paid)."
+        },
+        {
+          "text": "ตอบ HTTP status code ถูกต้อง (2xx เมื่อรับสำเร็จ, 4xx เมื่อ signature ผิด)",
+          "passed": true,
+          "evidence": "payment-webhook.ts:62 res.status(401) 'invalid_signature'; :71 and :79 400 for non-JSON / schema failure; :89 200 for ignored event types; :94 200 with the outcome for processed/duplicate/already_applied. Documented policy in the header comment (lines 18-25) and mirrored in RESPONSE.md's table."
+        },
+        {
+          "text": "ไม่มี TODO / placeholder / ฟังก์ชันที่ยังไม่ implement",
+          "passed": true,
+          "evidence": "grep for TODO/FIXME/XXX/'not implemented'/placeholder over all .ts/.js returns nothing. Every port has a real implementation: PostgresOrderRepository with parameterised SQL, NodemailerEmailSender with real transport and timeouts, plus migrations/001_orders_and_payment_events.sql. No throwing stubs."
+        },
+        {
+          "text": "RESPONSE.md บอกชัดว่าต้องตั้ง env var อะไรบ้างและเหลืออะไรต้องทำต่อ",
+          "passed": true,
+          "evidence": "RESPONSE.md:66-70 'ต้องตั้งค่าเพิ่มก่อนใช้': npm install -> cp .env.example .env -> เติมค่า -> npm run migrate, plus which two files to adapt per gateway and how to merge into an existing orders table. RESPONSE.md:72-76 'สิ่งที่ยังไม่ได้ทำ (ตั้งใจ)' lists the email retry sweeper, rate limiting and refund/payment.failed. Note: the individual variable names are delegated to the annotated .env.example rather than repeated in RESPONSE.md."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.89,
+        "passed": 8,
+        "failed": 1,
+        "total": 9,
+        "time_seconds": 529.8,
+        "tokens": 81703,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "type hint ครบทุก function signature",
+          "passed": false,
+          "evidence": "AST sweep of every def under with_skill/outputs: 25 of 67 functions are fully annotated. All 25 non-test functions in src/monthly_sales_report/ are complete (e.g. db.py:37 'def fetch_monthly_totals(config: AppConfig, period: MonthRange) -> list[MonthlyTotals]:'), but all 42 test functions lack a return annotation, e.g. tests/test_report.py:28 'def test_empty_result_still_returns_every_month():' and tests/test_periods.py:106 'def test_is_current_month():'. Three also lack parameter annotations: tests/test_config.py:24 'def test_missing_dsn_is_a_config_error(env):', tests/test_config.py:40 '(raw)', tests/test_periods.py:27 '(text)'. The assertion says ครบทุก (every) signature, so this fails on the letter; note also pyproject.toml declares [tool.mypy] strict = true with files = [\"src\", \"tests\"], which those 42 defs would violate."
+        },
+        {
+          "text": "ไม่มี credential hardcode — อ่าน connection string/DSN จาก env var",
+          "passed": true,
+          "evidence": "src/monthly_sales_report/config.py:15 'DSN_ENV_VAR = \"DATABASE_URL\"'; config.py:41-46 reads it from os.environ and raises ConfigError when empty. No literal DSN/password anywhere in src/. config.py:78 mask_dsn() strips the password before any log line (db.py:52 passes mask_dsn(config.dsn) into logger.info). .env.example carries only 'CHANGE_ME'. Deliberately refuses a --dsn CLI flag (config.py:3-4: argv leaks via ps aux / shell history)."
+        },
+        {
+          "text": "aggregate ยอดขายที่ฝั่ง DB ด้วย GROUP BY ไม่ใช่ดึงทุกแถวมารวมใน python",
+          "passed": true,
+          "evidence": "src/monthly_sales_report/db.py:22-34 MONTHLY_SALES_SQL: 'count(*)::bigint AS order_count, count(DISTINCT o.customer_id)::bigint, coalesce(sum(o.total_amount), 0)::numeric AS gross_sales ... GROUP BY 1 ORDER BY 1'. Python only fills gap months and computes MoM over the already-aggregated rows (report.py:43 build_report). db.py:40 docstring: 'จำนวนแถวที่วิ่งกลับมาเท่ากับจำนวนเดือน ไม่ใช่จำนวนออเดอร์'."
+        },
+        {
+          "text": "query เป็น parameterized ไม่ต่อ string",
+          "passed": true,
+          "evidence": "src/monthly_sales_report/db.py:22-34 is a module-level constant with named placeholders %(timezone)s, %(start)s, %(end)s, %(statuses)s, executed at db.py:66 'cursor.execute(MONTHLY_SALES_SQL, params)' with the dict built at db.py:43-48. No f-string, %, .format() or concatenation touches the SQL text anywhere in src/."
+        },
+        {
+          "text": "ใช้ Decimal หรือ NUMERIC กับจำนวนเงิน ไม่ใช่ float",
+          "passed": true,
+          "evidence": "SQL casts sum to ::numeric (db.py:27); MonthlyTotals.gross_sales / MonthlySalesRow.gross_sales, avg_order_value, mom_growth_pct are all typed Decimal (report.py:28, 38-40); report.py:109 _to_money quantizes with Decimal('0.01') ROUND_HALF_UP; division uses Decimal(order_count) (report.py:95) and Decimal(100) (report.py:105); csv_export.py:53 _decimal_cell writes f'{value:f}'. grep for 'float' over src/ returns only the prose in report.py:3 — zero float in the DB-to-CSV path."
+        },
+        {
+          "text": "connection/cursor ถูกปิดเสมอ (context manager หรือ finally)",
+          "passed": true,
+          "evidence": "src/monthly_sales_report/db.py:59-67: 'with psycopg.connect(...) as connection:' nested with 'with connection.cursor(row_factory=class_row(MonthlyTotals)) as cursor:' — psycopg3's connection context manager closes the connection on exit, including on the exception paths handled at db.py:68-73. The file handle in csv_export.py:30 is likewise a 'with destination.open(...)'."
+        },
+        {
+          "text": "ไม่มี except เปล่าที่กลืน error",
+          "passed": true,
+          "evidence": "grep for 'except:' / 'except Exception' over outputs returns nothing. Every handler is narrow and re-raises with cause: db.py:68 'except psycopg.OperationalError as cause: raise DatabaseError(...) from cause', db.py:72 'except psycopg.Error as cause: ... from cause', config.py:51 'except (ZoneInfoNotFoundError, ValueError) as cause: ... from cause', config.py:71 'except ValueError as cause: ... from cause', csv_export.py:32 'except OSError as cause: raise ExportError(...) from cause'. cli.py:89 catches only the SalesReportError base and maps it to exit code 1, printing the message to stderr; unexpected exceptions still surface as tracebacks (errors.py:3-4 states this intent). No 'pass'/'continue' swallow."
+        },
+        {
+          "text": "ไม่มี TODO / placeholder",
+          "passed": true,
+          "evidence": "grep -riE 'todo|fixme|xxx|placeholder|not implemented|NotImplemented' over with_skill/outputs returns zero hits. Every function has a real body; no stub raises NotImplementedError. The only fill-me token is 'CHANGE_ME' inside .env.example, which is the intended purpose of an example env template, not an unfinished code path."
+        },
+        {
+          "text": "มี docstring อธิบาย public function และระบุสมมติฐานเรื่อง schema",
+          "passed": true,
+          "evidence": "Public API functions carry docstrings: db.py:38 fetch_monthly_totals, report.py:44 build_report, periods.py:18 parse_month, periods.py:74 to_utc_bounds, periods.py:90 resolve_month_range, csv_export.py:27 write_csv, csv_export.py:37 write_csv_stream, config.py:35 AppConfig.from_env, config.py:79 mask_dsn, plus module docstrings on all 7 modules. Schema assumptions are stated explicitly: db.py:17-21 comments name the counted statuses and the timezone-truncation rule, the SQL names sales.orders and its columns, and README.md carries the full assumed DDL plus an assumption/where-to-fix table (statuses, total_amount is order-level net, Thai-time month cut, single currency, refunds). Caveat: the DDL lives in README.md and comments rather than inside a docstring, and a handful of small public functions (cli.build_parser, cli.main, periods.first_day_of_month, periods.is_current_month, report.total_gross_sales) have no docstring."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 0,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.91,
+        "passed": 10,
+        "failed": 1,
+        "total": 11,
+        "time_seconds": 420.0,
+        "tokens": 63152,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "ไม่มี DB password หรือ API key hardcode อยู่ในโค้ดผลลัพธ์ (ย้ายไป env var)",
+          "passed": true,
+          "evidence": "src/config/index.js:34-44 pulls DB_HOST/DB_USER/DB_PASSWORD/DB_NAME and MAILER_API_KEY through required(), which throws at boot if unset (lines 13-19). src/db/pool.js:10-25 takes injected config. .env.example:5,11 leave DB_PASSWORD= and MAILER_API_KEY= empty. Neither 'Acm3!prod2023' nor 'sk_live_9f2b1c8a7d' appears anywhere under src/. The only static_checks hardcoded_secret hit is tests/notificationService.test.js:8 apiKey:'test-key' — a fixture, not a real credential. (Caveat, not part of this assertion: .env.example:2-6 and config/index.js:42 do re-commit the internal hostname db.internal.acme.co, user app_admin, db shop and the mailer URL as defaults — not secrets, but avoidable infra disclosure.)"
+        },
+        {
+          "text": "SQL ทุก query เป็น parameterized — ไม่มีการต่อ string ของ user input เข้าไปใน query",
+          "passed": true,
+          "evidence": "All SQL is confined to src/repositories/. productRepository.js:25-28 and :37 use 'WHERE id IN (?)' with [unique] (mysql2 array expansion); couponRepository.js:23-30 'WHERE code = ?'; orderRepository.js:22-24 'VALUES (?, ?, ?, NOW())', :40-43 'VALUES ?', :48-51 'WHERE id = ? LIMIT 1', :57-60 'WHERE order_id = ?'. No template interpolation or '+' concatenation of any request value; static_checks string_concat_sql[] is empty. pool.js:24 additionally sets multipleStatements:false as defence in depth."
+        },
+        {
+          "text": "แก้ N+1 ใน GET /orders/:id แล้ว (ไม่มี query ยิงต่อ product ทีละแถวในลูป)",
+          "passed": true,
+          "evidence": "src/services/orderService.js:115-137 getOrder() issues exactly three queries regardless of item count: orders.findById, orders.findItemsByOrderId, then products.findNamesByIds(items.map(i => i.product_id)) which resolves all names in one 'WHERE id IN (?)' (productRepository.js:33-39). The item loop at line 131 is a pure map over the in-memory namesById Map. Same batching on POST (findByIds, line 39). No await appears inside any loop in src/."
+        },
+        {
+          "text": "business logic การคิดราคา/ส่วนลด ถูกแยกออกจาก route handler ไปอยู่คนละไฟล์/module",
+          "passed": true,
+          "evidence": "src/domain/pricing.js (153 lines) contains discountedUnitPrice, priceLines, applyCoupon, shippingFeeFor and quoteOrder as pure functions — header comment lines 6-9 'No database, no Express, no I/O'. src/domain/money.js holds the integer-minor-unit arithmetic. src/http/routes/orders.js (66 lines) has no pricing arithmetic; it validates, checks ownership, and calls orderService. tests/pricing.test.js drives the rules with no DB."
+        },
+        {
+          "text": "ไม่มี catch เปล่า และ error ตอบกลับด้วย HTTP status code ที่ถูกต้อง ไม่ใช่ 200 ทุกกรณี",
+          "passed": true,
+          "evidence": "src/http/middleware/errorHandler.js:15-39 returns res.status(error.status) for AppError and 500 otherwise; AppError.js:25-39 defines 400/422/404/409 factories and orderService throws 500 for bad coupon data — routes return 201 on create (routes/orders.js:43) and 403/404 on ownership failures. The legacy 'answer everything with 200 {ok:false}' is gone. notificationService.js:50-53 logs rather than swallowing. One borderline case: src/db/transaction.js:30-34 is `catch { /* a rollback failure must not mask the original error */ }` with no statement — no logging of a failed rollback (compare the sibling run, which logs it). Graded PASS because the block carries an explanatory comment (ESLint no-empty treats a commented block as non-empty) and the original error is still rethrown on line 35, so nothing disappears silently — but this is the weakest point of the assertion here."
+        },
+        {
+          "text": "magic number (0.95, 0.9, category 3, 1500, 60) ถูกยกเป็น named constant หรือ config",
+          "passed": true,
+          "evidence": "src/domain/pricing.js:14-27 defines a frozen PRICING_RULES: bulkQuantityThreshold: 10, bulkDiscountRate: 0.05, discountedCategoryIds: [3], categoryDiscountRate: 0.1, freeShippingThreshold: 150000 (// 1,500.00), shippingFee: 6000 (// 60.00) — each with a doc comment. Request limits are named in config/index.js:46-49 and overridable via MAX_ITEMS_PER_ORDER / MAX_QTY_PER_LINE."
+        },
+        {
+          "text": "มี input validation ของ req.body ก่อนนำไปใช้",
+          "passed": true,
+          "evidence": "src/http/routes/orders.js:28 calls validateCreateOrder(req.body, limits) as the first statement of the handler. src/http/validators/orderValidators.js:26-88 rejects non-object bodies, non-positive-integer userId, empty/oversized items arrays, non-object items, non-integer productId/qty, qty above maxQtyPerLine, coupon strings over 64 chars, and malformed emails — accumulating all errors and throwing AppError.validation (422). validateOrderId (line 91) guards req.params.id with 400. tests/orderValidators.test.js covers the injection-string cases."
+        },
+        {
+          "text": "การส่งอีเมลล้มเหลว ไม่ทำให้ order ที่สร้างสำเร็จแล้วพังหรือถูกกลืนเงียบ ๆ",
+          "passed": true,
+          "evidence": "src/services/orderService.js:63 sends the confirmation after withTransaction has committed (lines 43-52). src/services/notificationService.js:28-55 is documented 'Never throws' and returns a boolean: it logs 'order.confirmation.skipped' (no recipient), 'order.confirmation.failed' with the HTTP status on a non-ok response, and 'order.confirmation.error' with error.message in the catch — so a mail outage is recorded, not swallowed. AbortSignal.timeout(config.timeoutMs) (line 42) stops a hung mail host from pinning the request. tests/notificationService.test.js exercises all four paths."
+        },
+        {
+          "text": "ไม่ over-engineer — ไม่มี DI container / abstract class / interface ที่มี implementation เดียว",
+          "passed": false,
+          "evidence": "src/container.js is a hand-rolled DI/composition container: buildContainer(overrides = {}) news up five collaborators and returns a container bag (lines 17-40), threaded through src/app.js:13-26 via an `overrides` object and re-exposed as `container` on the return value. Counting the abstractions and their real implementations/callers: ProductRepository, CouponRepository, OrderRepository and NotificationService are each a class with exactly ONE implementation and exactly ONE production consumer (OrderService) — the tests use plain object literals, not second implementations. Three separate repository files hold 2, 1 and 4 methods respectively, so reading one order flow means opening four files. OrderRepository.withConnection() (orderRepository.js:13-15) adds a further indirection that allocates a new repository per transaction. pricing.js additionally threads a `rules = PRICING_RULES` parameter through four functions (lines 37, 57, 122, 132) as a configurability seam that is never overridden anywhere in src/ or tests/. The behaviour is correct, but this is exactly the container + one-implementation-per-class shape the assertion prohibits."
+        },
+        {
+          "text": "แจ้งผู้ใช้ว่า secret ที่หลุดใน source ต้อง rotate ไม่ใช่แค่ลบออก (ดู RESPONSE.md)",
+          "passed": true,
+          "evidence": "RESPONSE.md:3-10 leads with '⚠️ เรื่องด่วนที่ต้องทำวันนี้' and makes the point explicitly: 'ของสองอย่างนี้อยู่ใน git history แปลว่าใครที่เคย clone repo หรือเห็น CI log ก็ได้ไปหมดแล้ว **การย้ายไปไว้ใน env var ไม่ได้ทำให้ปลอดภัยขึ้นเลยถ้ายังไม่เปลี่ยนรหัส** — ต้อง rotate ทั้งคู่ครับ แล้วค่อยล้าง git history ทีหลัง'. Repeated as item 1 of 'ที่ต้องทำต่อ' (line 76). Caveat: lines 7-8 reprint the live values 'Acm3!prod2023' and 'sk_live_9f2b1c8a7d' verbatim into a new deliverable file, spreading the leak one file further — the assertion is still met, but this is poor handling of a known-compromised credential."
+        },
+        {
+          "text": "RESPONSE.md อธิบายเหตุผล (ทำไม) ของการตัดสินใจเชิงโครงสร้าง ไม่ใช่แค่ list ว่าแก้อะไร",
+          "passed": true,
+          "evidence": "Beyond the change list, RESPONSE.md:60 gives the reasoning behind the two central structural moves: 'หัวใจคือ domain/pricing.js เป็น pure function ทั้งหมด ตรรกะธุรกิจที่สำคัญที่สุดเลยเทสได้โดยไม่ต้องมี DB' and 'router เปลี่ยนเป็น factory ที่รับ dependency เข้ามา — ของเดิมพอ require ไฟล์ก็เปิด connection ไป production ทันที ซึ่งเป็นเหตุผลที่มันเทสไม่ได้เลย'. Line 44 explains the reinterpretation of the dead `total = total` branch and invites correction. Weaker than it could be: sections 'ช่องโหว่ที่เจอ' and 'บั๊กที่แก้ไปด้วย' are predominantly what-was-fixed, and no rationale is offered for the choices that actually drive the file layout (why a container module, why three repository classes, why domain/ split from services/) — but the assertion's bar, that structural decisions be reasoned rather than merely listed, is met."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.8,
+        "passed": 8,
+        "failed": 2,
+        "total": 10,
+        "time_seconds": 313.1,
+        "tokens": 52690,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "verify signature ของ webhook ก่อนประมวลผล payload",
+          "passed": true,
+          "evidence": "src/routes/paymentWebhook.ts:35-42 mounts express.raw() then verifyWebhookSignature() as middleware BEFORE the handler that calls parseEvent (line 45). src/services/signature.ts:59-71 computes HMAC-SHA256 over `${timestamp}.` + rawBody, checks the timestamp tolerance, and compares with timingSafeEqual (line 45)."
+        },
+        {
+          "text": "มีกลไก idempotency กัน webhook ที่ส่งซ้ำไม่ให้อัพเดท/ส่งอีเมลซ้ำ",
+          "passed": true,
+          "evidence": "src/services/paymentWebhookService.ts:36-40 claims the event id first and returns outcome 'duplicate' without touching the order or the email; :70-79 markAsPaid returns alreadyPaid=true and the email is skipped even under a different event id; :44-47 releases the claim when processing throws so a retry can succeed. Covered by tests/paymentWebhookService.test.ts:40 and :50. Caveat: the only implementation is InMemoryProcessedEventStore (a Set), so the guarantee is per-process and lost on restart."
+        },
+        {
+          "text": "ไม่มี secret hardcode — อ่านจาก env var และมี .env.example",
+          "passed": true,
+          "evidence": ".env.example present with PAYMENT_WEBHOOK_SECRET / SMTP_PASSWORD as 'replace-me' placeholders. src/config/env.ts:7-24 parses all of them from process.env with zod (PAYMENT_WEBHOOK_SECRET min 16 chars) and throws at boot on failure; src/server.ts:16-31 passes env values in. No secret literals in src/."
+        },
+        {
+          "text": "validate payload ด้วย schema (zod หรือเทียบเท่า) ไม่ใช่ใช้ req.body ดิบ ๆ",
+          "passed": true,
+          "evidence": "src/types/webhook.ts:7-19 zod schema (id, type, createdAt coerced to Date, data.paymentId/orderId/amount int nonnegative/currency length 3/status). src/routes/paymentWebhook.ts:16-30 parseEvent JSON.parses the raw Buffer into `unknown` and safeParses it; only parsed.data reaches the service. Raw req.body is used solely as the Buffer for HMAC."
+        },
+        {
+          "text": "TypeScript strict และไม่มี any ในโค้ดที่เขียนเอง",
+          "passed": true,
+          "evidence": "tsconfig.json:8-13 strict:true plus noUncheckedIndexedAccess, exactOptionalPropertyTypes, noImplicitOverride, noFallthroughCasesInSwitch. grep -rn '\\bany\\b' across the whole output tree returns exactly one hit, the English word 'any' in a comment (src/middleware/verifyWebhookSignature.ts:15). The only cast is `req.body as Buffer` after a Buffer.isBuffer guard in the middleware."
+        },
+        {
+          "text": "ส่งอีเมลล้มเหลวไม่ทำให้สถานะ order ที่อัพเดทแล้วพัง (แยกออกจาก critical path หรือจัดการ error ชัดเจน)",
+          "passed": true,
+          "evidence": "src/services/paymentWebhookService.ts:86-95: the email is sent after markAsPaid, inside try/catch; on failure it logs 'Failed to send confirmation email; order remains paid' and still returns outcome 'processed' with emailSent:false, so the route answers 200. Test tests/paymentWebhookService.test.ts:101 'keeps the order paid when the confirmation email fails'."
+        },
+        {
+          "text": "มีไฟล์ test ที่ครอบเคสสำคัญ (signature ผิด / ส่งซ้ำ)",
+          "passed": true,
+          "evidence": "4 test files. tests/signature.test.ts: tampered body, wrong secret, stale timestamp (replay), future timestamp, non-hex signature, missing header. tests/paymentWebhook.route.test.ts:50/62 return 401 for missing and tampered signature; :111 'acknowledges a replayed delivery with 200 without re-sending email'. tests/paymentWebhookService.test.ts:40 duplicate event id, :50 second event on an already-paid order."
+        },
+        {
+          "text": "ตอบ HTTP status code ถูกต้อง (2xx เมื่อรับสำเร็จ, 4xx เมื่อ signature ผิด)",
+          "passed": true,
+          "evidence": "src/utils/errors.ts:14-18 InvalidSignatureError -> 401, InvalidPayloadError -> 400, OrderNotFoundError -> 404, OrderConflictError -> 409, rendered by src/middleware/errorHandler.ts:17-20; the happy/duplicate/ignored paths return 200 (routes/paymentWebhook.ts:49). Asserted end-to-end in tests/paymentWebhook.route.test.ts."
+        },
+        {
+          "text": "ไม่มี TODO / placeholder / ฟังก์ชันที่ยังไม่ implement",
+          "passed": false,
+          "evidence": "No literal TODO markers, but the persistence layer is a declared stand-in: src/repositories/orderRepository.ts:27-30 'Reference in-memory implementation. Swap for a real DB-backed repository', and the interface docstring (lines 17-23) contains the SQL a real implementation 'should' use instead of code. processedEventStore.ts:9 likewise says 'A DB implementation is a single INSERT ... ON CONFLICT DO NOTHING'. Both stand-ins are wired into the production entrypoint (src/server.ts:13-14 `new InMemoryOrderRepository()` with no seed), so the shipped service starts with zero orders — every real webhook would 404 — and the idempotency ledger is lost on restart. RESPONSE.md:57 discloses this ('ยังไม่ต่อ DB จริงกับ SMTP จริง'), but the core requirement 'อัพเดทสถานะ order เป็น paid' is not implemented against any durable store."
+        },
+        {
+          "text": "RESPONSE.md บอกชัดว่าต้องตั้ง env var อะไรบ้างและเหลืออะไรต้องทำต่อ",
+          "passed": false,
+          "evidence": "RESPONSE.md never names a single environment variable and never mentions .env.example or a copy/fill step. The only configuration reference is RESPONSE.md:39 'src/config/env.ts zod validate env, พังตั้งแต่ boot ถ้า config ขาด', and the run instruction is just RESPONSE.md:53 'รัน: npm install && npm test'. The 'เหลืออะไรต้องทำต่อ' half is satisfied (RESPONSE.md:55-59 lists the missing DB/SMTP wiring, rate limiting and the gateway-specific signature format), but the env-var half is absent from RESPONSE.md (it exists only in .env.example and README.md)."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.89,
+        "passed": 8,
+        "failed": 1,
+        "total": 9,
+        "time_seconds": 209.9,
+        "tokens": 44903,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "type hint ครบทุก function signature",
+          "passed": false,
+          "evidence": "AST sweep of every def under without_skill/outputs: 52 of 53 functions are fully annotated — every function and method in monthly_sales/ is complete (e.g. db.py:53-58 'def fetch_monthly_sales(cursor: Cursor, start: date, end: date, currency: str | None = None) -> list[MonthlySalesRow]:'), and every unittest method carries '-> None'. The single miss is the test helper at tests/test_config_and_db.py:28 'def __init__(self, rows: list[tuple[object, ...]] | None = None, error: Exception | None = None):' — parameters annotated, return annotation absent. The assertion says ครบทุก (every) signature and the grading scope explicitly includes test helpers, so this fails on the letter; in substance it is one missing '-> None' on a fake cursor."
+        },
+        {
+          "text": "ไม่มี credential hardcode — อ่าน connection string/DSN จาก env var",
+          "passed": true,
+          "evidence": "monthly_sales/config.py:43-65 DatabaseConfig.from_env reads PGHOST/PGPORT/PGDATABASE/PGUSER/PGPASSWORD/PGSSLMODE from os.environ and raises ConfigError listing every missing required var (config.py:45-49). No credential literal exists in monthly_sales/; .env.example ships 'PGPASSWORD=change-me'. config.py:81-86 overrides __repr__ to print password='***' so it cannot leak into logs or tracebacks, and tests/test_config_and_db.py:62 asserts that."
+        },
+        {
+          "text": "aggregate ยอดขายที่ฝั่ง DB ด้วย GROUP BY ไม่ใช่ดึงทุกแถวมารวมใน python",
+          "passed": true,
+          "evidence": "monthly_sales/queries.py:26-41 MONTHLY_SALES_SQL: 'count(*), count(DISTINCT o.customer_id), coalesce(sum(o.total_amount),0)::numeric(14,2), coalesce(avg(o.total_amount),0)::numeric(14,2) FROM orders AS o WHERE ... GROUP BY 1, 2 ORDER BY 1, 2'. Python receives one row per (month, currency); report.py only maps rows and optionally inserts zero rows for empty months (fill_missing_months, report.py:104)."
+        },
+        {
+          "text": "query เป็น parameterized ไม่ต่อ string",
+          "passed": true,
+          "evidence": "queries.py:26 MONTHLY_SALES_SQL is a Final[str] constant using %(start)s, %(end_exclusive)s, %(statuses)s, %(currency)s; db.py:64-71 builds the params dict and calls 'cursor.execute(MONTHLY_SALES_SQL, params)'. No interpolation into the SQL text anywhere. tests/test_config_and_db.py:96-106 test_parameters_are_bound_not_interpolated asserts the executed query equals the constant verbatim and checks each bound value — I ran the suite and it passes."
+        },
+        {
+          "text": "ใช้ Decimal หรือ NUMERIC กับจำนวนเงิน ไม่ใช่ float",
+          "passed": true,
+          "evidence": "SQL casts both money columns to numeric(14,2) (queries.py:32-33) and the assumed column is numeric(12,2) (queries.py:12). MonthlySalesRow.gross_revenue / avg_order_value are typed Decimal (report.py:34-35); report.py:62-69 _as_decimal returns Decimal unchanged, builds Decimal from int/str, and for the defensive float branch uses Decimal(str(value)) rather than Decimal(float) so no binary-float artifact enters; report.py:57-58 as_csv_record formats with f'{self.gross_revenue:.2f}' on the Decimal. Zero-filled months use Decimal('0.00') (report.py:122-123). No float arithmetic on money in the DB-to-CSV path."
+        },
+        {
+          "text": "connection/cursor ถูกปิดเสมอ (context manager หรือ finally)",
+          "passed": true,
+          "evidence": "monthly_sales/db.py:30-50: connect() is a @contextmanager whose 'try: conn.read_only = True; yield conn / finally: conn.close()' guarantees the close on every path, including exceptions raised by the caller. cli.py:100-102 uses it as 'with connect(db_config) as conn:' nested with 'with conn.cursor() as cursor:'. The CSV writer likewise uses 'with tmp.open(...)' plus 'except BaseException: tmp.unlink(missing_ok=True); raise' (report.py:141-152) so no temp file is orphaned."
+        },
+        {
+          "text": "ไม่มี except เปล่าที่กลืน error",
+          "passed": true,
+          "evidence": "No bare 'except:' anywhere. The three broad handlers all re-raise: db.py:43 'except Exception as exc: raise DatabaseError(f\"could not connect to PostgreSQL: {exc}\") from exc', db.py:73 'except Exception as exc: raise DatabaseError(f\"monthly sales query failed: {exc}\") from exc' (deliberately broad because psycopg is a lazy import, so its exception classes are not in scope), and report.py:150 'except BaseException: tmp.unlink(missing_ok=True); raise' which cleans up and re-raises unchanged. Narrow handlers elsewhere chain with 'from exc' (config.py:109, cli.py:66). cli.py:93/103 catch only the tool's own ConfigError/DatabaseError and map them to exit codes 2/3 after logging. No 'pass'/'continue' swallow."
+        },
+        {
+          "text": "ไม่มี TODO / placeholder",
+          "passed": true,
+          "evidence": "grep -riE 'todo|fixme|placeholder|not implemented|NotImplemented' over without_skill/outputs returns no code hits. The three '...' matches are legitimate: db.py:26-27 are Protocol method bodies for structural typing ('def execute(...) -> object: ...'), and queries.py:9 is an ellipsis inside a SQL comment listing statuses. 'change-me' in .env.example is the intended fill-in for an env template. Every function has a real implementation."
+        },
+        {
+          "text": "มี docstring อธิบาย public function และระบุสมมติฐานเรื่อง schema",
+          "passed": true,
+          "evidence": "Schema assumptions are stated inside a docstring: queries.py:1-18 module docstring spells out the assumed orders(id, order_date timestamptz, status text, customer_id bigint, currency char(3), total_amount numeric(12,2)) table, which statuses count as revenue, that this is the single place that knows the names, and that all parameters are bound. Reinforced by schema.sql (DDL + index + read-only grants) and README.md. Public functions carry docstrings: config.from_env (config.py:38, listing every recognised env var), to_conninfo_kwargs (69), db.connect (32), db.fetch_monthly_sales (59, documenting the exclusive upper bound), report.month_start/add_month/subtract_month/default_range/fill_missing_months/write_csv (73, 78, 98, 83, 107, 132), plus cli.resolve_range (71). Caveat: cli.build_parser, cli.main, MonthlySalesRow.from_db_row and as_csv_record have no docstring."
+        }
+      ],
+      "notes": []
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 0.9633,
+        "stddev": 0.0635,
+        "min": 0.89,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 710.9667,
+        "stddev": 181.9044,
+        "min": 529.8,
+        "max": 893.6
+      },
+      "tokens": {
+        "mean": 96775.6667,
+        "stddev": 17236.1973,
+        "min": 81703,
+        "max": 115568
+      }
+    },
+    "without_skill": {
+      "pass_rate": {
+        "mean": 0.8667,
+        "stddev": 0.0586,
+        "min": 0.8,
+        "max": 0.91
+      },
+      "time_seconds": {
+        "mean": 314.3333,
+        "stddev": 105.0554,
+        "min": 209.9,
+        "max": 420.0
+      },
+      "tokens": {
+        "mean": 53581.6667,
+        "stddev": 9157.1176,
+        "min": 44903,
+        "max": 63152
+      }
+    },
+    "delta": {
+      "pass_rate": "+0.10",
+      "time_seconds": "+396.6",
+      "tokens": "+43194"
+    }
+  },
+  "notes": [
+    "Pass rate +9.6pp (96.3% vs 86.7%) แต่ตัวเลขนี้ต่ำกว่าความจริง — assertion 14 จาก 30 ข้อผ่านทั้งสองฝั่งแบบไม่แยกฝีมือ ความต่างจริงอยู่ในสิ่งที่ grader เจอนอกเหนือ assertion",
+    "eval-0: baseline สร้าง DI container + 4 class ที่มี implementation เดียว (fail ข้อ over-engineering) ส่วน with_skill wiring 10 บรรทัดใน app.js — กติกา 'abstraction ต้องมีผู้ใช้ >= 2 ราย' ใน SKILL.md ทำงานตามเจตนา",
+    "eval-0: baseline แอบเปลี่ยน business rule (ค่าส่งฟรี > 1500 -> >= 1500) แล้วเขียน test ล็อกค่าใหม่ ส่วน with_skill รักษาพฤติกรรมเดิมพร้อม test ที่ระบุ boundary ชัด — แต่ไม่มี assertion ข้อไหนตรวจเรื่องนี้เลย ต้องเพิ่มใน iteration ถัดไป",
+    "eval-0: baseline พิมพ์ secret จริง (password + API key) ซ้ำลงใน RESPONSE.md ขณะกำลังบอกให้ rotate — ยังผ่าน assertion 10 อยู่ดี แปลว่า assertion เขียนหลวมไป",
+    "eval-1: baseline ส่ง in-memory repository ที่ wire เข้า production entrypoint (webhook จริงจะ 404 ทุกใบ) และ idempotency เป็น Set check-then-add ที่ race ได้ ส่วน with_skill ใช้ INSERT ON CONFLICT ใน transaction เดียวกับ SELECT FOR UPDATE",
+    "eval-1 REGRESSION: with_skill อ้างว่ารัน test ได้ 25/25, 9/9, 3/3 แต่ไฟล์ import จาก vitest ซึ่งรันไม่ได้ และจำนวนไม่ตรงกับ it() ในไฟล์จริง — ข้อกำหนด 'รัน test จริงแล้วดูผล' ใน SKILL.md กลับกระตุ้นให้รายงานตัวเลขที่ยืนยันไม่ได้ ต้องแก้ถ้อยคำ",
+    "eval-2 REGRESSION: ไม่มี assertion ข้อไหนแยกสองฝั่งได้เลย (8/9 เท่ากัน) และ with_skill over-engineer หนักกว่า baseline — โจทย์ขอ 'script' แต่ได้ 18 ไฟล์ 1,125 บรรทัด (baseline 14 ไฟล์ 839) พร้อม errors.py 6 exception class, __main__.py, build backend",
+    "eval-2: with_skill ใส่ type hint ครบเฉพาะ src (25/25) แต่ test 42 ฟังก์ชันไม่มี -> None ทั้งที่ pyproject ตั้ง mypy strict ครอบ tests เอง = ขัดแย้งในตัว; baseline ทำได้ 52/53",
+    "eval-2: with_skill ทำ month-boundary ถูกกว่า (parameterized AT TIME ZONE) ส่วน baseline ใช้ date_trunc เปล่าที่ขึ้นกับ session TZ — เป็น defect จริงที่ไม่มี assertion ตรวจ",
+    "ต้นทุน: with_skill ใช้เวลา 2.3x และ token 1.8x ของ baseline ทุกเคส (711s/97k vs 314s/54k) ส่วนหนึ่งมาจากการอ่าน reference files ส่วนหนึ่งมาจากการสร้างของเกินโจทย์"
+  ]
+}

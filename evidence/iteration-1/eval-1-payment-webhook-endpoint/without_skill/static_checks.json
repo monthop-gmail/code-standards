@@ -1,0 +1,708 @@
+{
+  "root": "iteration-1/eval-1-payment-webhook-endpoint/without_skill/outputs",
+  "files": [
+    {
+      "path": "jest.config.js",
+      "lines": 9
+    },
+    {
+      "path": "src/app.ts",
+      "lines": 47
+    },
+    {
+      "path": "src/config/env.ts",
+      "lines": 36
+    },
+    {
+      "path": "src/middleware/errorHandler.ts",
+      "lines": 28
+    },
+    {
+      "path": "src/middleware/requestId.ts",
+      "lines": 16
+    },
+    {
+      "path": "src/middleware/verifyWebhookSignature.ts",
+      "lines": 37
+    },
+    {
+      "path": "src/repositories/orderRepository.ts",
+      "lines": 55
+    },
+    {
+      "path": "src/repositories/processedEventStore.ts",
+      "lines": 32
+    },
+    {
+      "path": "src/routes/paymentWebhook.ts",
+      "lines": 58
+    },
+    {
+      "path": "src/server.ts",
+      "lines": 56
+    },
+    {
+      "path": "src/services/emailService.ts",
+      "lines": 100
+    },
+    {
+      "path": "src/services/paymentWebhookService.ts",
+      "lines": 98
+    },
+    {
+      "path": "src/services/signature.ts",
+      "lines": 73
+    },
+    {
+      "path": "src/types/order.ts",
+      "lines": 28
+    },
+    {
+      "path": "src/types/webhook.ts",
+      "lines": 24
+    },
+    {
+      "path": "src/utils/errors.ts",
+      "lines": 38
+    },
+    {
+      "path": "src/utils/logger.ts",
+      "lines": 18
+    },
+    {
+      "path": "tests/emailService.test.ts",
+      "lines": 45
+    },
+    {
+      "path": "tests/helpers.ts",
+      "lines": 59
+    },
+    {
+      "path": "tests/paymentWebhook.route.test.ts",
+      "lines": 131
+    },
+    {
+      "path": "tests/paymentWebhookService.test.ts",
+      "lines": 111
+    },
+    {
+      "path": "tests/signature.test.ts",
+      "lines": 59
+    }
+  ],
+  "hits": {
+    "hardcoded_secret": [
+      {
+        "file": "tests/helpers.ts",
+        "line": 52,
+        "snippet": "export const TEST_SECRET = 'test-secret-value-long-enough';"
+      }
+    ],
+    "string_concat_sql": [],
+    "fstring_sql": [],
+    "empty_catch": [],
+    "todo_placeholder": [],
+    "ts_any": [],
+    "await_in_loop": [],
+    "env_usage": [
+      {
+        "file": "src/utils/logger.ts",
+        "line": 4,
+        "snippet": "level: process.env.LOG_LEVEL ?? 'info',"
+      }
+    ],
+    "param_query": [
+      {
+        "file": "src/repositories/orderRepository.ts",
+        "line": 20,
+        "snippet": "*   UPDATE orders SET status='paid', paid_at=$2, payment_reference=$3"
+      },
+      {
+        "file": "src/repositories/orderRepository.ts",
+        "line": 20,
+        "snippet": "*   UPDATE orders SET status='paid', paid_at=$2, payment_reference=$3"
+      },
+      {
+        "file": "src/repositories/orderRepository.ts",
+        "line": 21,
+        "snippet": "*   WHERE id=$1 AND status='pending' RETURNING *;"
+      }
+    ],
+    "decimal_money": [],
+    "float_money": [],
+    "group_by": [],
+    "context_manager": [],
+    "zod_schema": [
+      {
+        "file": "src/config/env.ts",
+        "line": 1,
+        "snippet": "import { z } from 'zod';"
+      },
+      {
+        "file": "src/config/env.ts",
+        "line": 7,
+        "snippet": "const envSchema = z.object({"
+      },
+      {
+        "file": "src/types/webhook.ts",
+        "line": 1,
+        "snippet": "import { z } from 'zod';"
+      },
+      {
+        "file": "src/types/webhook.ts",
+        "line": 7,
+        "snippet": "export const paymentWebhookEventSchema = z.object({"
+      },
+      {
+        "file": "src/types/webhook.ts",
+        "line": 11,
+        "snippet": "data: z.object({"
+      }
+    ],
+    "signature_verify": [
+      {
+        "file": "src/middleware/verifyWebhookSignature.ts",
+        "line": 2,
+        "snippet": "import { verifySignature } from '../services/signature';"
+      },
+      {
+        "file": "src/middleware/verifyWebhookSignature.ts",
+        "line": 2,
+        "snippet": "import { verifySignature } from '../services/signature';"
+      },
+      {
+        "file": "src/middleware/verifyWebhookSignature.ts",
+        "line": 2,
+        "snippet": "import { verifySignature } from '../services/signature';"
+      },
+      {
+        "file": "src/middleware/verifyWebhookSignature.ts",
+        "line": 3,
+        "snippet": "import { InvalidPayloadError, InvalidSignatureError } from '../utils/errors';"
+      },
+      {
+        "file": "src/middleware/verifyWebhookSignature.ts",
+        "line": 5,
+        "snippet": "export const SIGNATURE_HEADER = 'x-payment-signature';"
+      },
+      {
+        "file": "src/middleware/verifyWebhookSignature.ts",
+        "line": 5,
+        "snippet": "export const SIGNATURE_HEADER = 'x-payment-signature';"
+      },
+      {
+        "file": "src/middleware/verifyWebhookSignature.ts",
+        "line": 7,
+        "snippet": "export interface SignatureMiddlewareOptions {"
+      },
+      {
+        "file": "src/middleware/verifyWebhookSignature.ts",
+        "line": 14,
+        "snippet": "* Must run on a route mounted with `express.raw()`: the HMAC is computed over"
+      },
+      {
+        "file": "src/middleware/verifyWebhookSignature.ts",
+        "line": 17,
+        "snippet": "export function verifyWebhookSignature(options: SignatureMiddlewareOptions) {"
+      },
+      {
+        "file": "src/middleware/verifyWebhookSignature.ts",
+        "line": 17,
+        "snippet": "export function verifyWebhookSignature(options: SignatureMiddlewareOptions) {"
+      },
+      {
+        "file": "src/middleware/verifyWebhookSignature.ts",
+        "line": 17,
+        "snippet": "export function verifyWebhookSignature(options: SignatureMiddlewareOptions) {"
+      },
+      {
+        "file": "src/middleware/verifyWebhookSignature.ts",
+        "line": 18,
+        "snippet": "return function verifyWebhookSignatureMiddleware("
+      },
+      {
+        "file": "src/middleware/verifyWebhookSignature.ts",
+        "line": 18,
+        "snippet": "return function verifyWebhookSignatureMiddleware("
+      },
+      {
+        "file": "src/middleware/verifyWebhookSignature.ts",
+        "line": 28,
+        "snippet": "const ok = verifySignature(req.body, req.header(SIGNATURE_HEADER), {"
+      },
+      {
+        "file": "src/middleware/verifyWebhookSignature.ts",
+        "line": 28,
+        "snippet": "const ok = verifySignature(req.body, req.header(SIGNATURE_HEADER), {"
+      },
+      {
+        "file": "src/middleware/verifyWebhookSignature.ts",
+        "line": 28,
+        "snippet": "const ok = verifySignature(req.body, req.header(SIGNATURE_HEADER), {"
+      },
+      {
+        "file": "src/middleware/verifyWebhookSignature.ts",
+        "line": 34,
+        "snippet": "next(ok ? undefined : new InvalidSignatureError());"
+      },
+      {
+        "file": "src/routes/paymentWebhook.ts",
+        "line": 2,
+        "snippet": "import { verifyWebhookSignature } from '../middleware/verifyWebhookSignature';"
+      },
+      {
+        "file": "src/routes/paymentWebhook.ts",
+        "line": 2,
+        "snippet": "import { verifyWebhookSignature } from '../middleware/verifyWebhookSignature';"
+      },
+      {
+        "file": "src/routes/paymentWebhook.ts",
+        "line": 2,
+        "snippet": "import { verifyWebhookSignature } from '../middleware/verifyWebhookSignature';"
+      },
+      {
+        "file": "src/routes/paymentWebhook.ts",
+        "line": 2,
+        "snippet": "import { verifyWebhookSignature } from '../middleware/verifyWebhookSignature';"
+      },
+      {
+        "file": "src/routes/paymentWebhook.ts",
+        "line": 38,
+        "snippet": "verifyWebhookSignature({"
+      },
+      {
+        "file": "src/routes/paymentWebhook.ts",
+        "line": 38,
+        "snippet": "verifyWebhookSignature({"
+      },
+      {
+        "file": "src/services/signature.ts",
+        "line": 1,
+        "snippet": "import { createHmac, timingSafeEqual } from 'node:crypto';"
+      },
+      {
+        "file": "src/services/signature.ts",
+        "line": 1,
+        "snippet": "import { createHmac, timingSafeEqual } from 'node:crypto';"
+      },
+      {
+        "file": "src/services/signature.ts",
+        "line": 3,
+        "snippet": "export interface SignatureHeader {"
+      },
+      {
+        "file": "src/services/signature.ts",
+        "line": 5,
+        "snippet": "readonly signature: string;"
+      },
+      {
+        "file": "src/services/signature.ts",
+        "line": 9,
+        "snippet": "* Parses a Stripe-style header: `t=1700000000,v1=<hex hmac>`."
+      },
+      {
+        "file": "src/services/signature.ts",
+        "line": 12,
+        "snippet": "export function parseSignatureHeader(header: string | undefined): SignatureHeader | null {"
+      },
+      {
+        "file": "src/services/signature.ts",
+        "line": 12,
+        "snippet": "export function parseSignatureHeader(header: string | undefined): SignatureHeader | null {"
+      },
+      {
+        "file": "src/services/signature.ts",
+        "line": 16,
+        "snippet": "let signature: string | null = null;"
+      },
+      {
+        "file": "src/services/signature.ts",
+        "line": 25,
+        "snippet": "signature = value;"
+      },
+      {
+        "file": "src/services/signature.ts",
+        "line": 29,
+        "snippet": "if (timestamp === null || signature === null) return null;"
+      },
+      {
+        "file": "src/services/signature.ts",
+        "line": 30,
+        "snippet": "return { timestamp, signature };"
+      },
+      {
+        "file": "src/services/signature.ts",
+        "line": 33,
+        "snippet": "export function computeSignature(secret: string, timestamp: number, rawBody: Buffer): string {"
+      },
+      {
+        "file": "src/services/signature.ts",
+        "line": 34,
+        "snippet": "return createHmac('sha256', secret)"
+      },
+      {
+        "file": "src/services/signature.ts",
+        "line": 45,
+        "snippet": "return timingSafeEqual(Buffer.from(a, 'hex'), Buffer.from(b, 'hex'));"
+      },
+      {
+        "file": "src/services/signature.ts",
+        "line": 48,
+        "snippet": "export interface VerifyOptions {"
+      },
+      {
+        "file": "src/services/signature.ts",
+        "line": 56,
+        "snippet": "* Verifies HMAC-SHA256 over `${timestamp}.${rawBody}` in constant time,"
+      },
+      {
+        "file": "src/services/signature.ts",
+        "line": 59,
+        "snippet": "export function verifySignature("
+      },
+      {
+        "file": "src/services/signature.ts",
+        "line": 59,
+        "snippet": "export function verifySignature("
+      },
+      {
+        "file": "src/services/signature.ts",
+        "line": 62,
+        "snippet": "options: VerifyOptions,"
+      },
+      {
+        "file": "src/services/signature.ts",
+        "line": 64,
+        "snippet": "const parsed = parseSignatureHeader(header);"
+      },
+      {
+        "file": "src/services/signature.ts",
+        "line": 70,
+        "snippet": "const expected = computeSignature(options.secret, parsed.timestamp, rawBody);"
+      },
+      {
+        "file": "src/services/signature.ts",
+        "line": 71,
+        "snippet": "return safeEqualHex(expected, parsed.signature);"
+      },
+      {
+        "file": "src/utils/errors.ts",
+        "line": 13,
+        "snippet": "/** Signature/format problems — the gateway must not retry these. */"
+      },
+      {
+        "file": "src/utils/errors.ts",
+        "line": 14,
+        "snippet": "export class InvalidSignatureError extends AppError {"
+      },
+      {
+        "file": "src/utils/errors.ts",
+        "line": 15,
+        "snippet": "constructor(message = 'Invalid webhook signature') {"
+      },
+      {
+        "file": "src/utils/errors.ts",
+        "line": 16,
+        "snippet": "super(message, 401, 'invalid_signature');"
+      },
+      {
+        "file": "src/utils/logger.ts",
+        "line": 9,
+        "snippet": "'req.headers[\"x-payment-signature\"]',"
+      },
+      {
+        "file": "tests/helpers.ts",
+        "line": 3,
+        "snippet": "import { computeSignature } from '../src/services/signature';"
+      },
+      {
+        "file": "tests/helpers.ts",
+        "line": 3,
+        "snippet": "import { computeSignature } from '../src/services/signature';"
+      },
+      {
+        "file": "tests/helpers.ts",
+        "line": 57,
+        "snippet": "return `t=${timestamp},v1=${computeSignature(secret, timestamp, Buffer.from(body, 'utf8'))}`;"
+      },
+      {
+        "file": "tests/paymentWebhook.route.test.ts",
+        "line": 9,
+        "snippet": "const SIGNATURE_HEADER = 'x-payment-signature';"
+      },
+      {
+        "file": "tests/paymentWebhook.route.test.ts",
+        "line": 9,
+        "snippet": "const SIGNATURE_HEADER = 'x-payment-signature';"
+      },
+      {
+        "file": "tests/paymentWebhook.route.test.ts",
+        "line": 31,
+        "snippet": "function post(app: ReturnType<typeof buildApp>['app'], body: string, signature?: string) {"
+      },
+      {
+        "file": "tests/paymentWebhook.route.test.ts",
+        "line": 33,
+        "snippet": "if (signature !== undefined) req.set(SIGNATURE_HEADER, signature);"
+      },
+      {
+        "file": "tests/paymentWebhook.route.test.ts",
+        "line": 33,
+        "snippet": "if (signature !== undefined) req.set(SIGNATURE_HEADER, signature);"
+      },
+      {
+        "file": "tests/paymentWebhook.route.test.ts",
+        "line": 33,
+        "snippet": "if (signature !== undefined) req.set(SIGNATURE_HEADER, signature);"
+      },
+      {
+        "file": "tests/paymentWebhook.route.test.ts",
+        "line": 50,
+        "snippet": "it('returns 401 and does not touch the order when the signature is missing', async () => {"
+      },
+      {
+        "file": "tests/paymentWebhook.route.test.ts",
+        "line": 57,
+        "snippet": "expect(res.body.error.code).toBe('invalid_signature');"
+      },
+      {
+        "file": "tests/paymentWebhook.route.test.ts",
+        "line": 64,
+        "snippet": "const signature = signBody(JSON.stringify(makeEventPayload()));"
+      },
+      {
+        "file": "tests/paymentWebhook.route.test.ts",
+        "line": 67,
+        "snippet": "const res = await post(app, tampered, signature);"
+      },
+      {
+        "file": "tests/paymentWebhook.route.test.ts",
+        "line": 114,
+        "snippet": "const signature = signBody(body);"
+      },
+      {
+        "file": "tests/paymentWebhook.route.test.ts",
+        "line": 116,
+        "snippet": "await post(app, body, signature);"
+      },
+      {
+        "file": "tests/paymentWebhook.route.test.ts",
+        "line": 117,
+        "snippet": "const res = await post(app, body, signature);"
+      },
+      {
+        "file": "tests/signature.test.ts",
+        "line": 1,
+        "snippet": "import { computeSignature, parseSignatureHeader, verifySignature } from '../src/services/signature';"
+      },
+      {
+        "file": "tests/signature.test.ts",
+        "line": 1,
+        "snippet": "import { computeSignature, parseSignatureHeader, verifySignature } from '../src/services/signature';"
+      },
+      {
+        "file": "tests/signature.test.ts",
+        "line": 1,
+        "snippet": "import { computeSignature, parseSignatureHeader, verifySignature } from '../src/services/signature';"
+      },
+      {
+        "file": "tests/signature.test.ts",
+        "line": 1,
+        "snippet": "import { computeSignature, parseSignatureHeader, verifySignature } from '../src/services/signature';"
+      },
+      {
+        "file": "tests/signature.test.ts",
+        "line": 1,
+        "snippet": "import { computeSignature, parseSignatureHeader, verifySignature } from '../src/services/signature';"
+      },
+      {
+        "file": "tests/signature.test.ts",
+        "line": 8,
+        "snippet": "describe('parseSignatureHeader', () => {"
+      },
+      {
+        "file": "tests/signature.test.ts",
+        "line": 10,
+        "snippet": "expect(parseSignatureHeader('t=1700000000,v1=abc')).toEqual({ timestamp: 1700000000, signature: 'abc' });"
+      },
+      {
+        "file": "tests/signature.test.ts",
+        "line": 10,
+        "snippet": "expect(parseSignatureHeader('t=1700000000,v1=abc')).toEqual({ timestamp: 1700000000, signature: 'abc' });"
+      },
+      {
+        "file": "tests/signature.test.ts",
+        "line": 16,
+        "snippet": "expect(parseSignatureHeader(header as string | undefined)).toBeNull();"
+      },
+      {
+        "file": "tests/signature.test.ts",
+        "line": 21,
+        "snippet": "describe('verifySignature', () => {"
+      },
+      {
+        "file": "tests/signature.test.ts",
+        "line": 21,
+        "snippet": "describe('verifySignature', () => {"
+      },
+      {
+        "file": "tests/signature.test.ts",
+        "line": 22,
+        "snippet": "it('accepts a valid signature', () => {"
+      },
+      {
+        "file": "tests/signature.test.ts",
+        "line": 23,
+        "snippet": "expect(verifySignature(body, signBody(body.toString('utf8')), options)).toBe(true);"
+      },
+      {
+        "file": "tests/signature.test.ts",
+        "line": 23,
+        "snippet": "expect(verifySignature(body, signBody(body.toString('utf8')), options)).toBe(true);"
+      },
+      {
+        "file": "tests/signature.test.ts",
+        "line": 28,
+        "snippet": "expect(verifySignature(Buffer.from('{\"hello\":\"evil\"}'), header, options)).toBe(false);"
+      },
+      {
+        "file": "tests/signature.test.ts",
+        "line": 28,
+        "snippet": "expect(verifySignature(Buffer.from('{\"hello\":\"evil\"}'), header, options)).toBe(false);"
+      },
+      {
+        "file": "tests/signature.test.ts",
+        "line": 31,
+        "snippet": "it('rejects a signature made with a different secret', () => {"
+      },
+      {
+        "file": "tests/signature.test.ts",
+        "line": 33,
+        "snippet": "expect(verifySignature(body, header, options)).toBe(false);"
+      },
+      {
+        "file": "tests/signature.test.ts",
+        "line": 33,
+        "snippet": "expect(verifySignature(body, header, options)).toBe(false);"
+      },
+      {
+        "file": "tests/signature.test.ts",
+        "line": 39,
+        "snippet": "expect(verifySignature(body, header, options)).toBe(false);"
+      },
+      {
+        "file": "tests/signature.test.ts",
+        "line": 39,
+        "snippet": "expect(verifySignature(body, header, options)).toBe(false);"
+      },
+      {
+        "file": "tests/signature.test.ts",
+        "line": 45,
+        "snippet": "expect(verifySignature(body, header, options)).toBe(false);"
+      },
+      {
+        "file": "tests/signature.test.ts",
+        "line": 45,
+        "snippet": "expect(verifySignature(body, header, options)).toBe(false);"
+      },
+      {
+        "file": "tests/signature.test.ts",
+        "line": 48,
+        "snippet": "it('rejects a non-hex signature of the same length', () => {"
+      },
+      {
+        "file": "tests/signature.test.ts",
+        "line": 50,
+        "snippet": "const valid = computeSignature(TEST_SECRET, timestamp, body);"
+      },
+      {
+        "file": "tests/signature.test.ts",
+        "line": 52,
+        "snippet": "expect(verifySignature(body, `t=${timestamp},v1=${notHex}`, options)).toBe(false);"
+      },
+      {
+        "file": "tests/signature.test.ts",
+        "line": 52,
+        "snippet": "expect(verifySignature(body, `t=${timestamp},v1=${notHex}`, options)).toBe(false);"
+      },
+      {
+        "file": "tests/signature.test.ts",
+        "line": 56,
+        "snippet": "expect(verifySignature(body, undefined, options)).toBe(false);"
+      },
+      {
+        "file": "tests/signature.test.ts",
+        "line": 56,
+        "snippet": "expect(verifySignature(body, undefined, options)).toBe(false);"
+      }
+    ],
+    "idempotency": [
+      {
+        "file": "src/repositories/orderRepository.ts",
+        "line": 18,
+        "snippet": "* Must be atomic and idempotent. A real implementation should use a"
+      },
+      {
+        "file": "src/repositories/processedEventStore.ts",
+        "line": 2,
+        "snippet": "* Deduplicates webhook deliveries. Gateways retry aggressively and may deliver"
+      },
+      {
+        "file": "src/repositories/processedEventStore.ts",
+        "line": 9,
+        "snippet": "* A DB implementation is a single `INSERT ... ON CONFLICT DO NOTHING`."
+      },
+      {
+        "file": "tests/emailService.test.ts",
+        "line": 27,
+        "snippet": "it('sends to the order customer with an idempotency reference header', async () => {"
+      }
+    ],
+    "transaction": [],
+    "http_status": [
+      {
+        "file": "src/app.ts",
+        "line": 40,
+        "snippet": "res.status(404).json({ error: { code: 'not_found', message: 'Not found' } });"
+      },
+      {
+        "file": "src/middleware/errorHandler.ts",
+        "line": 25,
+        "snippet": "res.status(500).json({ error: { code: 'internal_error', message: 'Internal server error' } });"
+      }
+    ],
+    "over_abstraction": [],
+    "type_hint_py": [],
+    "docstring_py": []
+  },
+  "all_files": [
+    ".env.example",
+    ".gitignore",
+    "README.md",
+    "RESPONSE.md",
+    "jest.config.js",
+    "package.json",
+    "src/app.ts",
+    "src/config/env.ts",
+    "src/middleware/errorHandler.ts",
+    "src/middleware/requestId.ts",
+    "src/middleware/verifyWebhookSignature.ts",
+    "src/repositories/orderRepository.ts",
+    "src/repositories/processedEventStore.ts",
+    "src/routes/paymentWebhook.ts",
+    "src/server.ts",
+    "src/services/emailService.ts",
+    "src/services/paymentWebhookService.ts",
+    "src/services/signature.ts",
+    "src/types/order.ts",
+    "src/types/webhook.ts",
+    "src/utils/errors.ts",
+    "src/utils/logger.ts",
+    "tests/emailService.test.ts",
+    "tests/helpers.ts",
+    "tests/paymentWebhook.route.test.ts",
+    "tests/paymentWebhookService.test.ts",
+    "tests/signature.test.ts",
+    "tsconfig.json"
+  ]
+}

@@ -1,0 +1,933 @@
+{
+  "root": "iteration-1/eval-2-monthly-sales-script/with_skill/outputs",
+  "files": [
+    {
+      "path": "monthly-sales-report/src/monthly_sales_report/__init__.py",
+      "lines": 5
+    },
+    {
+      "path": "monthly-sales-report/src/monthly_sales_report/__main__.py",
+      "lines": 5
+    },
+    {
+      "path": "monthly-sales-report/src/monthly_sales_report/cli.py",
+      "lines": 96
+    },
+    {
+      "path": "monthly-sales-report/src/monthly_sales_report/config.py",
+      "lines": 90
+    },
+    {
+      "path": "monthly-sales-report/src/monthly_sales_report/csv_export.py",
+      "lines": 58
+    },
+    {
+      "path": "monthly-sales-report/src/monthly_sales_report/db.py",
+      "lines": 74
+    },
+    {
+      "path": "monthly-sales-report/src/monthly_sales_report/errors.py",
+      "lines": 32
+    },
+    {
+      "path": "monthly-sales-report/src/monthly_sales_report/periods.py",
+      "lines": 107
+    },
+    {
+      "path": "monthly-sales-report/src/monthly_sales_report/report.py",
+      "lines": 111
+    },
+    {
+      "path": "monthly-sales-report/tests/test_cli.py",
+      "lines": 33
+    },
+    {
+      "path": "monthly-sales-report/tests/test_config.py",
+      "lines": 52
+    },
+    {
+      "path": "monthly-sales-report/tests/test_csv_export.py",
+      "lines": 75
+    },
+    {
+      "path": "monthly-sales-report/tests/test_periods.py",
+      "lines": 109
+    },
+    {
+      "path": "monthly-sales-report/tests/test_report.py",
+      "lines": 123
+    }
+  ],
+  "hits": {
+    "hardcoded_secret": [
+      {
+        "file": "monthly-sales-report/tests/test_config.py",
+        "line": 12,
+        "snippet": "DSN = \"postgresql://reporter:s3cret@db.internal:5432/salesdb\""
+      }
+    ],
+    "string_concat_sql": [],
+    "fstring_sql": [],
+    "empty_catch": [],
+    "todo_placeholder": [],
+    "ts_any": [],
+    "await_in_loop": [],
+    "env_usage": [
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/config.py",
+        "line": 37,
+        "snippet": "รับ ``env`` เข้ามาได้เพื่อให้ test ไม่ต้องไปยุ่งกับ ``os.environ`` ของ process จริง."
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/config.py",
+        "line": 39,
+        "snippet": "source = os.environ if env is None else env"
+      }
+    ],
+    "param_query": [
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/cli.py",
+        "line": 72,
+        "snippet": "\"ช่วงรายงานรวมเดือนปัจจุบัน (%s) ซึ่งยังไม่จบเดือน ตัวเลขจึงยังไม่สมบูรณ์\","
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/csv_export.py",
+        "line": 57,
+        "snippet": "return f\"{value:f}\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/db.py",
+        "line": 51,
+        "snippet": "\"querying %s for %s..%s (%s)\","
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/db.py",
+        "line": 51,
+        "snippet": "\"querying %s for %s..%s (%s)\","
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/db.py",
+        "line": 51,
+        "snippet": "\"querying %s for %s..%s (%s)\","
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/db.py",
+        "line": 51,
+        "snippet": "\"querying %s for %s..%s (%s)\","
+      }
+    ],
+    "decimal_money": [
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/csv_export.py",
+        "line": 6,
+        "snippet": "from decimal import Decimal"
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/csv_export.py",
+        "line": 6,
+        "snippet": "from decimal import Decimal"
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/csv_export.py",
+        "line": 53,
+        "snippet": "def _decimal_cell(value: Decimal | None) -> str:"
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/db.py",
+        "line": 27,
+        "snippet": "coalesce(sum(o.total_amount), 0)::numeric                           AS gross_sales"
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/report.py",
+        "line": 3,
+        "snippet": "เก็บเงินเป็น ``Decimal`` ตลอดเส้นทาง (ไม่ใช่ float) เพราะยอดขายที่ปัดผิด 0.01 บาท"
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/report.py",
+        "line": 11,
+        "snippet": "from decimal import ROUND_HALF_UP, Decimal"
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/report.py",
+        "line": 11,
+        "snippet": "from decimal import ROUND_HALF_UP, Decimal"
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/report.py",
+        "line": 16,
+        "snippet": "MONEY_QUANTUM = Decimal(\"0.01\")"
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/report.py",
+        "line": 17,
+        "snippet": "PERCENT_QUANTUM = Decimal(\"0.01\")"
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/report.py",
+        "line": 18,
+        "snippet": "ZERO = Decimal(\"0\")"
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/report.py",
+        "line": 28,
+        "snippet": "gross_sales: Decimal"
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/report.py",
+        "line": 38,
+        "snippet": "gross_sales: Decimal"
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/report.py",
+        "line": 39,
+        "snippet": "avg_order_value: Decimal"
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/report.py",
+        "line": 40,
+        "snippet": "mom_growth_pct: Decimal | None"
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/report.py",
+        "line": 66,
+        "snippet": "previous_sales: Decimal | None = None"
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/report.py",
+        "line": 88,
+        "snippet": "def total_gross_sales(rows: list[MonthlySalesRow]) -> Decimal:"
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/report.py",
+        "line": 92,
+        "snippet": "def _average_order_value(gross_sales: Decimal, order_count: int) -> Decimal:"
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/report.py",
+        "line": 92,
+        "snippet": "def _average_order_value(gross_sales: Decimal, order_count: int) -> Decimal:"
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/report.py",
+        "line": 95,
+        "snippet": "return _to_money(gross_sales / Decimal(order_count))"
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/report.py",
+        "line": 98,
+        "snippet": "def _growth_pct(previous_sales: Decimal | None, current_sales: Decimal) -> Decimal | None:"
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/report.py",
+        "line": 98,
+        "snippet": "def _growth_pct(previous_sales: Decimal | None, current_sales: Decimal) -> Decimal | None:"
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/report.py",
+        "line": 98,
+        "snippet": "def _growth_pct(previous_sales: Decimal | None, current_sales: Decimal) -> Decimal | None:"
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/report.py",
+        "line": 105,
+        "snippet": "change = (current_sales - previous_sales) / previous_sales * Decimal(100)"
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/report.py",
+        "line": 109,
+        "snippet": "def _to_money(value: Decimal) -> Decimal:"
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/report.py",
+        "line": 109,
+        "snippet": "def _to_money(value: Decimal) -> Decimal:"
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/report.py",
+        "line": 110,
+        "snippet": "return Decimal(value).quantize(MONEY_QUANTUM, rounding=ROUND_HALF_UP)"
+      },
+      {
+        "file": "monthly-sales-report/tests/test_csv_export.py",
+        "line": 6,
+        "snippet": "from decimal import Decimal"
+      },
+      {
+        "file": "monthly-sales-report/tests/test_csv_export.py",
+        "line": 6,
+        "snippet": "from decimal import Decimal"
+      },
+      {
+        "file": "monthly-sales-report/tests/test_csv_export.py",
+        "line": 27,
+        "snippet": "MonthlyTotals(date(2026, 1, 1), 10, 7, Decimal(\"12345.60\")),"
+      },
+      {
+        "file": "monthly-sales-report/tests/test_csv_export.py",
+        "line": 28,
+        "snippet": "MonthlyTotals(date(2026, 2, 1), 12, 9, Decimal(\"15000.00\")),"
+      },
+      {
+        "file": "monthly-sales-report/tests/test_report.py",
+        "line": 4,
+        "snippet": "from decimal import Decimal"
+      },
+      {
+        "file": "monthly-sales-report/tests/test_report.py",
+        "line": 4,
+        "snippet": "from decimal import Decimal"
+      },
+      {
+        "file": "monthly-sales-report/tests/test_report.py",
+        "line": 24,
+        "snippet": "gross_sales=Decimal(sales),"
+      },
+      {
+        "file": "monthly-sales-report/tests/test_report.py",
+        "line": 32,
+        "snippet": "assert all(row.gross_sales == Decimal(\"0.00\") for row in rows)"
+      },
+      {
+        "file": "monthly-sales-report/tests/test_report.py",
+        "line": 34,
+        "snippet": "assert all(row.avg_order_value == Decimal(\"0.00\") for row in rows)"
+      },
+      {
+        "file": "monthly-sales-report/tests/test_report.py",
+        "line": 47,
+        "snippet": "assert rows[1].gross_sales == Decimal(\"0.00\")"
+      },
+      {
+        "file": "monthly-sales-report/tests/test_report.py",
+        "line": 48,
+        "snippet": "assert rows[1].mom_growth_pct == Decimal(\"-100.00\")"
+      },
+      {
+        "file": "monthly-sales-report/tests/test_report.py",
+        "line": 66,
+        "snippet": "assert rows[1].mom_growth_pct == Decimal(\"37.45\")"
+      },
+      {
+        "file": "monthly-sales-report/tests/test_report.py",
+        "line": 71,
+        "snippet": "assert rows[0].avg_order_value == Decimal(\"33.33\")"
+      },
+      {
+        "file": "monthly-sales-report/tests/test_report.py",
+        "line": 76,
+        "snippet": "assert rows[0].avg_order_value == Decimal(\"0.03\")"
+      },
+      {
+        "file": "monthly-sales-report/tests/test_report.py",
+        "line": 87,
+        "snippet": "assert rows[1].gross_sales == Decimal(\"-50.00\")"
+      },
+      {
+        "file": "monthly-sales-report/tests/test_report.py",
+        "line": 88,
+        "snippet": "assert rows[1].mom_growth_pct == Decimal(\"-112.50\")"
+      },
+      {
+        "file": "monthly-sales-report/tests/test_report.py",
+        "line": 118,
+        "snippet": "assert total_gross_sales(rows) == Decimal(\"3000.30\")"
+      },
+      {
+        "file": "monthly-sales-report/tests/test_report.py",
+        "line": 122,
+        "snippet": "assert total_gross_sales([]) == Decimal(\"0.00\")"
+      }
+    ],
+    "float_money": [],
+    "group_by": [
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/db.py",
+        "line": 32,
+        "snippet": "GROUP BY 1"
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/report.py",
+        "line": 23,
+        "snippet": "\"\"\"แถวดิบที่ได้จาก ``GROUP BY`` ฝั่ง PostgreSQL.\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/report.py",
+        "line": 46,
+        "snippet": "เดือนที่ไม่มีออเดอร์เลยจะไม่ปรากฏในผล ``GROUP BY`` แต่รายงานต้องมีทุกเดือน"
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/report.py",
+        "line": 54,
+        "snippet": "f\"ได้ผลลัพธ์ซ้ำสำหรับเดือน {month:%Y-%m} — query ไม่ได้ group by เดือนจริง\""
+      }
+    ],
+    "context_manager": [
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/csv_export.py",
+        "line": 30,
+        "snippet": "with destination.open(\"w\", encoding=CSV_ENCODING, newline=\"\") as stream:"
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/db.py",
+        "line": 65,
+        "snippet": "with connection.cursor(row_factory=class_row(MonthlyTotals)) as cursor:"
+      },
+      {
+        "file": "monthly-sales-report/tests/test_cli.py",
+        "line": 31,
+        "snippet": "with pytest.raises(SystemExit):"
+      },
+      {
+        "file": "monthly-sales-report/tests/test_config.py",
+        "line": 25,
+        "snippet": "with pytest.raises(ConfigError, match=\"DATABASE_URL\"):"
+      },
+      {
+        "file": "monthly-sales-report/tests/test_config.py",
+        "line": 30,
+        "snippet": "with pytest.raises(ConfigError, match=\"timezone\"):"
+      },
+      {
+        "file": "monthly-sales-report/tests/test_config.py",
+        "line": 41,
+        "snippet": "with pytest.raises(ConfigError):"
+      },
+      {
+        "file": "monthly-sales-report/tests/test_csv_export.py",
+        "line": 73,
+        "snippet": "with pytest.raises(ExportError):"
+      },
+      {
+        "file": "monthly-sales-report/tests/test_periods.py",
+        "line": 28,
+        "snippet": "with pytest.raises(InvalidPeriodError):"
+      },
+      {
+        "file": "monthly-sales-report/tests/test_periods.py",
+        "line": 40,
+        "snippet": "with pytest.raises(InvalidPeriodError):"
+      },
+      {
+        "file": "monthly-sales-report/tests/test_periods.py",
+        "line": 51,
+        "snippet": "with pytest.raises(InvalidPeriodError):"
+      },
+      {
+        "file": "monthly-sales-report/tests/test_periods.py",
+        "line": 56,
+        "snippet": "with pytest.raises(InvalidPeriodError):"
+      },
+      {
+        "file": "monthly-sales-report/tests/test_periods.py",
+        "line": 63,
+        "snippet": "with pytest.raises(InvalidPeriodError):"
+      },
+      {
+        "file": "monthly-sales-report/tests/test_periods.py",
+        "line": 102,
+        "snippet": "with pytest.raises(InvalidPeriodError):"
+      },
+      {
+        "file": "monthly-sales-report/tests/test_report.py",
+        "line": 93,
+        "snippet": "with pytest.raises(ReportError, match=\"ซ้ำ\"):"
+      },
+      {
+        "file": "monthly-sales-report/tests/test_report.py",
+        "line": 101,
+        "snippet": "with pytest.raises(ReportError, match=\"นอกช่วง\"):"
+      },
+      {
+        "file": "monthly-sales-report/tests/test_report.py",
+        "line": 106,
+        "snippet": "with pytest.raises(ReportError):"
+      }
+    ],
+    "zod_schema": [],
+    "signature_verify": [],
+    "idempotency": [],
+    "transaction": [],
+    "http_status": [],
+    "over_abstraction": [],
+    "type_hint_py": [
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/cli.py",
+        "line": 25,
+        "snippet": "def build_parser() -> argparse.ArgumentParser:"
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/cli.py",
+        "line": 59,
+        "snippet": "def main(argv: list[str] | None = None) -> int:"
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/config.py",
+        "line": 34,
+        "snippet": "def from_env(cls, env: dict[str, str] | None = None) -> \"AppConfig\":"
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/config.py",
+        "line": 65,
+        "snippet": "def _read_positive_int(source: dict[str, str], name: str, default: int) -> int:"
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/config.py",
+        "line": 78,
+        "snippet": "def mask_dsn(dsn: str) -> str:"
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/csv_export.py",
+        "line": 26,
+        "snippet": "def write_csv(rows: Sequence[MonthlySalesRow], destination: Path) -> None:"
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/csv_export.py",
+        "line": 36,
+        "snippet": "def write_csv_stream(rows: Iterable[MonthlySalesRow], stream: IO[str]) -> None:"
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/csv_export.py",
+        "line": 53,
+        "snippet": "def _decimal_cell(value: Decimal | None) -> str:"
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/db.py",
+        "line": 37,
+        "snippet": "def fetch_monthly_totals(config: AppConfig, period: MonthRange) -> list[MonthlyTotals]:"
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/periods.py",
+        "line": 17,
+        "snippet": "def parse_month(text: str) -> date:"
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/periods.py",
+        "line": 30,
+        "snippet": "def first_day_of_month(value: date) -> date:"
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/periods.py",
+        "line": 34,
+        "snippet": "def add_months(month_start: date, delta: int) -> date:"
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/periods.py",
+        "line": 50,
+        "snippet": "def __post_init__(self) -> None:"
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/periods.py",
+        "line": 64,
+        "snippet": "def month_count(self) -> int:"
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/periods.py",
+        "line": 69,
+        "snippet": "def months(self) -> list[date]:"
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/periods.py",
+        "line": 73,
+        "snippet": "def to_utc_bounds(self, timezone: ZoneInfo) -> tuple[datetime, datetime]:"
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/periods.py",
+        "line": 84,
+        "snippet": "def resolve_month_range("
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/periods.py",
+        "line": 105,
+        "snippet": "def is_current_month(month: date, today: date) -> bool:"
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/report.py",
+        "line": 43,
+        "snippet": "def build_report(totals: list[MonthlyTotals], period: MonthRange) -> list[MonthlySalesRow]:"
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/report.py",
+        "line": 88,
+        "snippet": "def total_gross_sales(rows: list[MonthlySalesRow]) -> Decimal:"
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/report.py",
+        "line": 92,
+        "snippet": "def _average_order_value(gross_sales: Decimal, order_count: int) -> Decimal:"
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/report.py",
+        "line": 98,
+        "snippet": "def _growth_pct(previous_sales: Decimal | None, current_sales: Decimal) -> Decimal | None:"
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/report.py",
+        "line": 109,
+        "snippet": "def _to_money(value: Decimal) -> Decimal:"
+      },
+      {
+        "file": "monthly-sales-report/tests/test_csv_export.py",
+        "line": 24,
+        "snippet": "def sample_rows() -> list[MonthlySalesRow]:"
+      },
+      {
+        "file": "monthly-sales-report/tests/test_report.py",
+        "line": 19,
+        "snippet": "def totals(month: date, orders: int, customers: int, sales: str) -> MonthlyTotals:"
+      }
+    ],
+    "docstring_py": [
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/__init__.py",
+        "line": 1,
+        "snippet": "\"\"\"สรุปยอดขายรายเดือนจาก PostgreSQL ออกเป็น CSV.\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/__init__.py",
+        "line": 1,
+        "snippet": "\"\"\"สรุปยอดขายรายเดือนจาก PostgreSQL ออกเป็น CSV.\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/cli.py",
+        "line": 1,
+        "snippet": "\"\"\"Command-line entry point — parse argument, ต่อสายงาน, และเป็น catch-all ชั้นนอกสุด.\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/cli.py",
+        "line": 1,
+        "snippet": "\"\"\"Command-line entry point — parse argument, ต่อสายงาน, และเป็น catch-all ชั้นนอกสุด.\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/config.py",
+        "line": 1,
+        "snippet": "\"\"\"Runtime configuration ที่อ่านจาก environment variables เท่านั้น."
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/config.py",
+        "line": 5,
+        "snippet": "\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/config.py",
+        "line": 26,
+        "snippet": "\"\"\"ค่าที่จำเป็นต่อการรัน report หนึ่งครั้ง.\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/config.py",
+        "line": 26,
+        "snippet": "\"\"\"ค่าที่จำเป็นต่อการรัน report หนึ่งครั้ง.\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/config.py",
+        "line": 35,
+        "snippet": "\"\"\"สร้าง config จาก env vars และ fail เร็วถ้าค่าผิด."
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/config.py",
+        "line": 38,
+        "snippet": "\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/config.py",
+        "line": 79,
+        "snippet": "\"\"\"ซ่อน password ใน DSN ก่อนเอาไปแสดงผล/เขียน log.\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/config.py",
+        "line": 79,
+        "snippet": "\"\"\"ซ่อน password ใน DSN ก่อนเอาไปแสดงผล/เขียน log.\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/csv_export.py",
+        "line": 1,
+        "snippet": "\"\"\"เขียนรายงานเป็น CSV — แยกจาก report layer เพราะรูปแบบไฟล์เปลี่ยนคนละจังหวะกับสูตรคำนวณ.\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/csv_export.py",
+        "line": 1,
+        "snippet": "\"\"\"เขียนรายงานเป็น CSV — แยกจาก report layer เพราะรูปแบบไฟล์เปลี่ยนคนละจังหวะกับสูตรคำนวณ.\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/csv_export.py",
+        "line": 27,
+        "snippet": "\"\"\"เขียนรายงานลงไฟล์ โดยสร้าง directory ปลายทางให้ถ้ายังไม่มี.\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/csv_export.py",
+        "line": 27,
+        "snippet": "\"\"\"เขียนรายงานลงไฟล์ โดยสร้าง directory ปลายทางให้ถ้ายังไม่มี.\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/csv_export.py",
+        "line": 37,
+        "snippet": "\"\"\"เขียนรายงานลง text stream ที่เปิดไว้แล้ว (ใช้กับ stdout ได้ตรง ๆ).\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/csv_export.py",
+        "line": 37,
+        "snippet": "\"\"\"เขียนรายงานลง text stream ที่เปิดไว้แล้ว (ใช้กับ stdout ได้ตรง ๆ).\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/csv_export.py",
+        "line": 54,
+        "snippet": "\"\"\"ค่าที่เทียบไม่ได้เขียนเป็นช่องว่าง — ดีกว่าใส่ 0 ที่อ่านแล้วเข้าใจผิดว่ายอดไม่โต.\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/csv_export.py",
+        "line": 54,
+        "snippet": "\"\"\"ค่าที่เทียบไม่ได้เขียนเป็นช่องว่าง — ดีกว่าใส่ 0 ที่อ่านแล้วเข้าใจผิดว่ายอดไม่โต.\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/db.py",
+        "line": 1,
+        "snippet": "\"\"\"ชั้นติดต่อ PostgreSQL — ที่เดียวในโปรเจกต์ที่รู้จัก psycopg และรู้จัก schema จริง.\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/db.py",
+        "line": 1,
+        "snippet": "\"\"\"ชั้นติดต่อ PostgreSQL — ที่เดียวในโปรเจกต์ที่รู้จัก psycopg และรู้จัก schema จริง.\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/db.py",
+        "line": 22,
+        "snippet": "MONTHLY_SALES_SQL = \"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/db.py",
+        "line": 34,
+        "snippet": "\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/db.py",
+        "line": 38,
+        "snippet": "\"\"\"ดึงยอดรวมรายเดือนจาก PostgreSQL."
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/db.py",
+        "line": 41,
+        "snippet": "\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/errors.py",
+        "line": 1,
+        "snippet": "\"\"\"Exception hierarchy for the monthly sales report tool."
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/errors.py",
+        "line": 5,
+        "snippet": "\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/errors.py",
+        "line": 11,
+        "snippet": "\"\"\"Base class ของทุก expected failure ในเครื่องมือนี้.\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/errors.py",
+        "line": 11,
+        "snippet": "\"\"\"Base class ของทุก expected failure ในเครื่องมือนี้.\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/errors.py",
+        "line": 15,
+        "snippet": "\"\"\"ค่า config/env var หายหรือผิดรูปแบบ.\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/errors.py",
+        "line": 15,
+        "snippet": "\"\"\"ค่า config/env var หายหรือผิดรูปแบบ.\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/errors.py",
+        "line": 19,
+        "snippet": "\"\"\"ช่วงเดือนที่ผู้ใช้ระบุไม่ถูกต้อง.\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/errors.py",
+        "line": 19,
+        "snippet": "\"\"\"ช่วงเดือนที่ผู้ใช้ระบุไม่ถูกต้อง.\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/errors.py",
+        "line": 23,
+        "snippet": "\"\"\"ติดต่อ PostgreSQL ไม่ได้ หรือ query ล้มเหลว.\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/errors.py",
+        "line": 23,
+        "snippet": "\"\"\"ติดต่อ PostgreSQL ไม่ได้ หรือ query ล้มเหลว.\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/errors.py",
+        "line": 27,
+        "snippet": "\"\"\"ข้อมูลที่ได้จาก DB ไม่ตรงกับที่ report layer คาดไว้.\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/errors.py",
+        "line": 27,
+        "snippet": "\"\"\"ข้อมูลที่ได้จาก DB ไม่ตรงกับที่ report layer คาดไว้.\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/errors.py",
+        "line": 31,
+        "snippet": "\"\"\"เขียนไฟล์ CSV ปลายทางไม่ได้.\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/errors.py",
+        "line": 31,
+        "snippet": "\"\"\"เขียนไฟล์ CSV ปลายทางไม่ได้.\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/periods.py",
+        "line": 1,
+        "snippet": "\"\"\"Pure logic ของ \"ช่วงเดือน\" — ไม่มี IO ไม่มี DB จึง test ได้เร็วและครบทุก edge case.\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/periods.py",
+        "line": 1,
+        "snippet": "\"\"\"Pure logic ของ \"ช่วงเดือน\" — ไม่มี IO ไม่มี DB จึง test ได้เร็วและครบทุก edge case.\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/periods.py",
+        "line": 18,
+        "snippet": "\"\"\"แปลง ``\"2026-08\"`` เป็นวันที่แรกของเดือนนั้น.\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/periods.py",
+        "line": 18,
+        "snippet": "\"\"\"แปลง ``\"2026-08\"`` เป็นวันที่แรกของเดือนนั้น.\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/periods.py",
+        "line": 35,
+        "snippet": "\"\"\"บวก/ลบเดือนโดยไม่พึ่ง dateutil — ทำงานกับวันที่ 1 ของเดือนเท่านั้น.\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/periods.py",
+        "line": 35,
+        "snippet": "\"\"\"บวก/ลบเดือนโดยไม่พึ่ง dateutil — ทำงานกับวันที่ 1 ของเดือนเท่านั้น.\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/periods.py",
+        "line": 45,
+        "snippet": "\"\"\"ช่วงเดือนแบบ inclusive ทั้งสองฝั่ง เก็บเป็นวันที่ 1 ของเดือนเสมอ.\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/periods.py",
+        "line": 45,
+        "snippet": "\"\"\"ช่วงเดือนแบบ inclusive ทั้งสองฝั่ง เก็บเป็นวันที่ 1 ของเดือนเสมอ.\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/periods.py",
+        "line": 70,
+        "snippet": "\"\"\"ทุกเดือนในช่วง เรียงจากเก่าไปใหม่ — ใช้เติมเดือนที่ไม่มียอดขายให้ครบ.\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/periods.py",
+        "line": 70,
+        "snippet": "\"\"\"ทุกเดือนในช่วง เรียงจากเก่าไปใหม่ — ใช้เติมเดือนที่ไม่มียอดขายให้ครบ.\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/periods.py",
+        "line": 74,
+        "snippet": "\"\"\"คืนขอบเขต ``[start, end)`` เป็น timestamp with time zone."
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/periods.py",
+        "line": 78,
+        "snippet": "\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/periods.py",
+        "line": 90,
+        "snippet": "\"\"\"ตีความ argument ``--from``/``--to`` ให้เป็นช่วงเดือนที่ชัดเจน."
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/periods.py",
+        "line": 94,
+        "snippet": "\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/report.py",
+        "line": 1,
+        "snippet": "\"\"\"Business logic ของรายงาน — pure function ล้วน ไม่รู้จัก psycopg และไม่รู้จัก CSV."
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/report.py",
+        "line": 5,
+        "snippet": "\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/report.py",
+        "line": 23,
+        "snippet": "\"\"\"แถวดิบที่ได้จาก ``GROUP BY`` ฝั่ง PostgreSQL.\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/report.py",
+        "line": 23,
+        "snippet": "\"\"\"แถวดิบที่ได้จาก ``GROUP BY`` ฝั่ง PostgreSQL.\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/report.py",
+        "line": 33,
+        "snippet": "\"\"\"หนึ่งเดือนในรายงาน — ทุกเดือนในช่วงจะมีแถวเสมอ แม้ยอดขายเป็นศูนย์.\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/report.py",
+        "line": 33,
+        "snippet": "\"\"\"หนึ่งเดือนในรายงาน — ทุกเดือนในช่วงจะมีแถวเสมอ แม้ยอดขายเป็นศูนย์.\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/report.py",
+        "line": 44,
+        "snippet": "\"\"\"เติมเดือนที่ไม่มียอดขายให้ครบ แล้วคำนวณค่าเฉลี่ยต่อออเดอร์และการเติบโต MoM."
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/report.py",
+        "line": 48,
+        "snippet": "\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/report.py",
+        "line": 99,
+        "snippet": "\"\"\"คืน ``None`` เมื่อเทียบไม่ได้ (เดือนแรกของช่วง หรือเดือนก่อนหน้ายอดเป็นศูนย์)."
+      },
+      {
+        "file": "monthly-sales-report/src/monthly_sales_report/report.py",
+        "line": 102,
+        "snippet": "\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/tests/test_cli.py",
+        "line": 1,
+        "snippet": "\"\"\"ทดสอบเฉพาะส่วน argument parsing — ส่วนที่แตะ DB ต้องมี psycopg ติดตั้งจริงถึงจะ import ได้.\"\"\""
+      },
+      {
+        "file": "monthly-sales-report/tests/test_cli.py",
+        "line": 1,
+        "snippet": "\"\"\"ทดสอบเฉพาะส่วน argument parsing — ส่วนที่แตะ DB ต้องมี psycopg ติดตั้งจริงถึงจะ import ได้.\"\"\""
+      }
+    ]
+  },
+  "all_files": [
+    "RESPONSE.md",
+    "monthly-sales-report/.env.example",
+    "monthly-sales-report/.gitignore",
+    "monthly-sales-report/README.md",
+    "monthly-sales-report/pyproject.toml",
+    "monthly-sales-report/src/monthly_sales_report/__init__.py",
+    "monthly-sales-report/src/monthly_sales_report/__main__.py",
+    "monthly-sales-report/src/monthly_sales_report/cli.py",
+    "monthly-sales-report/src/monthly_sales_report/config.py",
+    "monthly-sales-report/src/monthly_sales_report/csv_export.py",
+    "monthly-sales-report/src/monthly_sales_report/db.py",
+    "monthly-sales-report/src/monthly_sales_report/errors.py",
+    "monthly-sales-report/src/monthly_sales_report/periods.py",
+    "monthly-sales-report/src/monthly_sales_report/report.py",
+    "monthly-sales-report/tests/test_cli.py",
+    "monthly-sales-report/tests/test_config.py",
+    "monthly-sales-report/tests/test_csv_export.py",
+    "monthly-sales-report/tests/test_periods.py",
+    "monthly-sales-report/tests/test_report.py"
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "eval_id": 1,
+  "eval_name": "payment-webhook-endpoint",
+  "prompt": "ทำ endpoint รับ webhook จาก payment gateway หน่อย พอจ่ายเงินสำเร็จให้อัพเดทสถานะ order เป็น paid แล้วส่งอีเมลยืนยัน ใช้ Node + TypeScript + Express นะ",
+  "assertions": [
+    "verify signature ของ webhook ก่อนประมวลผล payload",
+    "มีกลไก idempotency กัน webhook ที่ส่งซ้ำไม่ให้อัพเดท/ส่งอีเมลซ้ำ",
+    "ไม่มี secret hardcode — อ่านจาก env var และมี .env.example",
+    "validate payload ด้วย schema (zod หรือเทียบเท่า) ไม่ใช่ใช้ req.body ดิบ ๆ",
+    "TypeScript strict และไม่มี any ในโค้ดที่เขียนเอง",
+    "ส่งอีเมลล้มเหลวไม่ทำให้สถานะ order ที่อัพเดทแล้วพัง (แยกออกจาก critical path หรือจัดการ error ชัดเจน)",
+    "มีไฟล์ test ที่ครอบเคสสำคัญ (signature ผิด / ส่งซ้ำ)",
+    "ตอบ HTTP status code ถูกต้อง (2xx เมื่อรับสำเร็จ, 4xx เมื่อ signature ผิด)",
+    "ไม่มี TODO / placeholder / ฟังก์ชันที่ยังไม่ implement",
+    "RESPONSE.md บอกชัดว่าต้องตั้ง env var อะไรบ้างและเหลืออะไรต้องทำต่อ",
+    "[ใหม่] การเปลี่ยนสถานะ order ถูกเก็บลง datastore จริง ไม่ใช่ Map/Set ในโปรเซสที่ wire เข้า production entrypoint",
+    "[ใหม่] idempotency ถูกบังคับด้วย unique constraint หรือ transaction ไม่ใช่ check-then-write ใน memory",
+    "[ใหม่] HMAC คำนวณจาก raw request body (Buffer) ไม่ใช่ JSON ที่ serialize ใหม่ และ route ไม่ได้อยู่หลัง express.json()",
+    "[ใหม่] อีเมลผู้รับดึงจาก order ใน DB ไม่ใช่จาก payload ที่ gateway ส่งมา",
+    "[ใหม่] ไม่รายงานตัวเลขผ่าน/ไม่ผ่านของ test ที่ไม่ได้มาจาก test runner จริง — ถ้ารันไม่ได้ต้องบอกว่ารันไม่ได้และเพราะอะไร"
+  ],
+  "iteration": 2,
+  "baseline": "iteration-1/<eval>/with_skill (skill เวอร์ชันเก่า)"
+}

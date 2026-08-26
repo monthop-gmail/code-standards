@@ -1,0 +1,745 @@
+{
+  "root": "/home/admin/.claude/skills/principal-engineer-workspace/iteration-2/eval-1-payment-webhook-endpoint/new_skill/outputs",
+  "files": [
+    {
+      "path": "payment-webhook/migrations/001_orders_and_payment_webhook_events.sql",
+      "lines": 36
+    },
+    {
+      "path": "payment-webhook/src/config.ts",
+      "lines": 33
+    },
+    {
+      "path": "payment-webhook/src/db.ts",
+      "lines": 47
+    },
+    {
+      "path": "payment-webhook/src/email/mailer.ts",
+      "lines": 87
+    },
+    {
+      "path": "payment-webhook/src/http/app.ts",
+      "lines": 78
+    },
+    {
+      "path": "payment-webhook/src/index.ts",
+      "lines": 62
+    },
+    {
+      "path": "payment-webhook/src/logger.ts",
+      "lines": 70
+    },
+    {
+      "path": "payment-webhook/src/payments/orderRepository.ts",
+      "lines": 122
+    },
+    {
+      "path": "payment-webhook/src/payments/paymentService.ts",
+      "lines": 162
+    },
+    {
+      "path": "payment-webhook/src/payments/signature.ts",
+      "lines": 104
+    },
+    {
+      "path": "payment-webhook/src/payments/webhookRoute.ts",
+      "lines": 179
+    },
+    {
+      "path": "payment-webhook/tests/paymentService.test.ts",
+      "lines": 232
+    },
+    {
+      "path": "payment-webhook/tests/signature.test.ts",
+      "lines": 84
+    }
+  ],
+  "hits": {
+    "hardcoded_secret": [
+      {
+        "file": "payment-webhook/tests/signature.test.ts",
+        "line": 4,
+        "snippet": "const SECRET = 'test-secret-at-least-16-chars';"
+      }
+    ],
+    "string_concat_sql": [],
+    "fstring_sql": [],
+    "empty_catch": [],
+    "todo_placeholder": [],
+    "ts_any": [],
+    "await_in_loop": [],
+    "env_usage": [],
+    "param_query": [
+      {
+        "file": "payment-webhook/src/payments/orderRepository.ts",
+        "line": 51,
+        "snippet": "VALUES ($1, $2)"
+      },
+      {
+        "file": "payment-webhook/src/payments/orderRepository.ts",
+        "line": 51,
+        "snippet": "VALUES ($1, $2)"
+      },
+      {
+        "file": "payment-webhook/src/payments/orderRepository.ts",
+        "line": 67,
+        "snippet": "WHERE id = $1"
+      },
+      {
+        "file": "payment-webhook/src/payments/orderRepository.ts",
+        "line": 81,
+        "snippet": "paid_at = $2,"
+      },
+      {
+        "file": "payment-webhook/src/payments/orderRepository.ts",
+        "line": 82,
+        "snippet": "payment_reference = $3,"
+      },
+      {
+        "file": "payment-webhook/src/payments/orderRepository.ts",
+        "line": 84,
+        "snippet": "WHERE id = $1"
+      },
+      {
+        "file": "payment-webhook/src/payments/orderRepository.ts",
+        "line": 101,
+        "snippet": "SET confirmation_email_sent_at = $2,"
+      },
+      {
+        "file": "payment-webhook/src/payments/orderRepository.ts",
+        "line": 103,
+        "snippet": "WHERE id = $1`,"
+      },
+      {
+        "file": "payment-webhook/tests/paymentService.test.ts",
+        "line": 182,
+        "snippet": "'order สถานะ %s ไม่ถูกอัปเดตเป็น paid',"
+      }
+    ],
+    "decimal_money": [],
+    "float_money": [],
+    "group_by": [],
+    "context_manager": [
+      {
+        "file": "payment-webhook/src/email/mailer.ts",
+        "line": 38,
+        "snippet": "transporter.close();"
+      }
+    ],
+    "zod_schema": [
+      {
+        "file": "payment-webhook/src/config.ts",
+        "line": 1,
+        "snippet": "import { z } from 'zod';"
+      },
+      {
+        "file": "payment-webhook/src/config.ts",
+        "line": 8,
+        "snippet": "const envSchema = z.object({"
+      },
+      {
+        "file": "payment-webhook/src/payments/webhookRoute.ts",
+        "line": 2,
+        "snippet": "import { z } from 'zod';"
+      },
+      {
+        "file": "payment-webhook/src/payments/webhookRoute.ts",
+        "line": 20,
+        "snippet": "const paymentEventSchema = z.object({"
+      },
+      {
+        "file": "payment-webhook/src/payments/webhookRoute.ts",
+        "line": 23,
+        "snippet": "data: z.object({"
+      }
+    ],
+    "signature_verify": [
+      {
+        "file": "payment-webhook/src/config.ts",
+        "line": 5,
+        "snippet": "* เหตุผลที่ fail fast: ถ้า PAYMENT_WEBHOOK_SECRET หาย service จะรับ webhook ที่ verify ไม่ได้"
+      },
+      {
+        "file": "payment-webhook/src/email/mailer.ts",
+        "line": 33,
+        "snippet": "export async function verifyMailerConnection(): Promise<void> {"
+      },
+      {
+        "file": "payment-webhook/src/email/mailer.ts",
+        "line": 34,
+        "snippet": "await transporter.verify();"
+      },
+      {
+        "file": "payment-webhook/src/index.ts",
+        "line": 3,
+        "snippet": "import { closeMailer, verifyMailerConnection } from './email/mailer.js';"
+      },
+      {
+        "file": "payment-webhook/src/index.ts",
+        "line": 15,
+        "snippet": "void verifyMailerConnection().catch((error: unknown) => {"
+      },
+      {
+        "file": "payment-webhook/src/payments/signature.ts",
+        "line": 1,
+        "snippet": "import { createHmac, timingSafeEqual } from 'node:crypto';"
+      },
+      {
+        "file": "payment-webhook/src/payments/signature.ts",
+        "line": 1,
+        "snippet": "import { createHmac, timingSafeEqual } from 'node:crypto';"
+      },
+      {
+        "file": "payment-webhook/src/payments/signature.ts",
+        "line": 4,
+        "snippet": "* รูปแบบ header ที่รองรับ: `t=<unix seconds>,v1=<hex hmac sha256>`"
+      },
+      {
+        "file": "payment-webhook/src/payments/signature.ts",
+        "line": 8,
+        "snippet": "* ที่เหลือของระบบไม่รู้จักรูปแบบ signature เลย"
+      },
+      {
+        "file": "payment-webhook/src/payments/signature.ts",
+        "line": 10,
+        "snippet": "const SIGNATURE_VERSION_KEY = 'v1';"
+      },
+      {
+        "file": "payment-webhook/src/payments/signature.ts",
+        "line": 15,
+        "snippet": "export type SignatureFailureReason ="
+      },
+      {
+        "file": "payment-webhook/src/payments/signature.ts",
+        "line": 19,
+        "snippet": "| 'signature_mismatch';"
+      },
+      {
+        "file": "payment-webhook/src/payments/signature.ts",
+        "line": 21,
+        "snippet": "export type SignatureVerification ="
+      },
+      {
+        "file": "payment-webhook/src/payments/signature.ts",
+        "line": 23,
+        "snippet": "| { readonly valid: false; readonly reason: SignatureFailureReason };"
+      },
+      {
+        "file": "payment-webhook/src/payments/signature.ts",
+        "line": 25,
+        "snippet": "export interface VerifyWebhookSignatureParams {"
+      },
+      {
+        "file": "payment-webhook/src/payments/signature.ts",
+        "line": 25,
+        "snippet": "export interface VerifyWebhookSignatureParams {"
+      },
+      {
+        "file": "payment-webhook/src/payments/signature.ts",
+        "line": 36,
+        "snippet": "* ตรวจ signature ของ webhook ก่อนแตะ payload ใด ๆ"
+      },
+      {
+        "file": "payment-webhook/src/payments/signature.ts",
+        "line": 37,
+        "snippet": "* payload ที่ยังไม่ verify = ใครส่งมาก็ได้ ห้ามเอาไปตัดสินใจเรื่องเงินเด็ดขาด"
+      },
+      {
+        "file": "payment-webhook/src/payments/signature.ts",
+        "line": 39,
+        "snippet": "export function verifyWebhookSignature(params: VerifyWebhookSignatureParams): SignatureVerification {"
+      },
+      {
+        "file": "payment-webhook/src/payments/signature.ts",
+        "line": 39,
+        "snippet": "export function verifyWebhookSignature(params: VerifyWebhookSignatureParams): SignatureVerification {"
+      },
+      {
+        "file": "payment-webhook/src/payments/signature.ts",
+        "line": 39,
+        "snippet": "export function verifyWebhookSignature(params: VerifyWebhookSignatureParams): SignatureVerification {"
+      },
+      {
+        "file": "payment-webhook/src/payments/signature.ts",
+        "line": 39,
+        "snippet": "export function verifyWebhookSignature(params: VerifyWebhookSignatureParams): SignatureVerification {"
+      },
+      {
+        "file": "payment-webhook/src/payments/signature.ts",
+        "line": 39,
+        "snippet": "export function verifyWebhookSignature(params: VerifyWebhookSignatureParams): SignatureVerification {"
+      },
+      {
+        "file": "payment-webhook/src/payments/signature.ts",
+        "line": 46,
+        "snippet": "const parsed = parseSignatureHeader(header);"
+      },
+      {
+        "file": "payment-webhook/src/payments/signature.ts",
+        "line": 58,
+        "snippet": "const expected = createHmac('sha256', secret)"
+      },
+      {
+        "file": "payment-webhook/src/payments/signature.ts",
+        "line": 63,
+        "snippet": "if (expected.length !== parsed.signature.length) {"
+      },
+      {
+        "file": "payment-webhook/src/payments/signature.ts",
+        "line": 64,
+        "snippet": "return { valid: false, reason: 'signature_mismatch' };"
+      },
+      {
+        "file": "payment-webhook/src/payments/signature.ts",
+        "line": 66,
+        "snippet": "if (!timingSafeEqual(expected, parsed.signature)) {"
+      },
+      {
+        "file": "payment-webhook/src/payments/signature.ts",
+        "line": 66,
+        "snippet": "if (!timingSafeEqual(expected, parsed.signature)) {"
+      },
+      {
+        "file": "payment-webhook/src/payments/signature.ts",
+        "line": 67,
+        "snippet": "return { valid: false, reason: 'signature_mismatch' };"
+      },
+      {
+        "file": "payment-webhook/src/payments/signature.ts",
+        "line": 72,
+        "snippet": "function parseSignatureHeader(header: string): { timestamp: number; signature: Buffer } | null {"
+      },
+      {
+        "file": "payment-webhook/src/payments/signature.ts",
+        "line": 72,
+        "snippet": "function parseSignatureHeader(header: string): { timestamp: number; signature: Buffer } | null {"
+      },
+      {
+        "file": "payment-webhook/src/payments/signature.ts",
+        "line": 74,
+        "snippet": "let signatureHex: string | null = null;"
+      },
+      {
+        "file": "payment-webhook/src/payments/signature.ts",
+        "line": 84,
+        "snippet": "} else if (key === SIGNATURE_VERSION_KEY && HEX_SHA256_PATTERN.test(value)) {"
+      },
+      {
+        "file": "payment-webhook/src/payments/signature.ts",
+        "line": 85,
+        "snippet": "signatureHex = value;"
+      },
+      {
+        "file": "payment-webhook/src/payments/signature.ts",
+        "line": 89,
+        "snippet": "if (timestamp === null || signatureHex === null) return null;"
+      },
+      {
+        "file": "payment-webhook/src/payments/signature.ts",
+        "line": 90,
+        "snippet": "return { timestamp, signature: Buffer.from(signatureHex, 'hex') };"
+      },
+      {
+        "file": "payment-webhook/src/payments/signature.ts",
+        "line": 90,
+        "snippet": "return { timestamp, signature: Buffer.from(signatureHex, 'hex') };"
+      },
+      {
+        "file": "payment-webhook/src/payments/signature.ts",
+        "line": 98,
+        "snippet": "const signature = createHmac('sha256', secret)"
+      },
+      {
+        "file": "payment-webhook/src/payments/signature.ts",
+        "line": 98,
+        "snippet": "const signature = createHmac('sha256', secret)"
+      },
+      {
+        "file": "payment-webhook/src/payments/signature.ts",
+        "line": 102,
+        "snippet": "return `t=${timestampSeconds},v1=${signature}`;"
+      },
+      {
+        "file": "payment-webhook/src/payments/webhookRoute.ts",
+        "line": 9,
+        "snippet": "import { verifyWebhookSignature } from './signature.js';"
+      },
+      {
+        "file": "payment-webhook/src/payments/webhookRoute.ts",
+        "line": 9,
+        "snippet": "import { verifyWebhookSignature } from './signature.js';"
+      },
+      {
+        "file": "payment-webhook/src/payments/webhookRoute.ts",
+        "line": 9,
+        "snippet": "import { verifyWebhookSignature } from './signature.js';"
+      },
+      {
+        "file": "payment-webhook/src/payments/webhookRoute.ts",
+        "line": 11,
+        "snippet": "const SIGNATURE_HEADER = 'x-payment-signature';"
+      },
+      {
+        "file": "payment-webhook/src/payments/webhookRoute.ts",
+        "line": 11,
+        "snippet": "const SIGNATURE_HEADER = 'x-payment-signature';"
+      },
+      {
+        "file": "payment-webhook/src/payments/webhookRoute.ts",
+        "line": 48,
+        "snippet": "* ลำดับสำคัญมาก: verify signature จาก raw bytes ก่อน แล้วค่อย parse JSON"
+      },
+      {
+        "file": "payment-webhook/src/payments/webhookRoute.ts",
+        "line": 48,
+        "snippet": "* ลำดับสำคัญมาก: verify signature จาก raw bytes ก่อน แล้วค่อย parse JSON"
+      },
+      {
+        "file": "payment-webhook/src/payments/webhookRoute.ts",
+        "line": 49,
+        "snippet": "* ถ้า parse ก่อนแล้ว stringify ใหม่เพื่อ verify ไบต์จะไม่ตรงกับที่ gateway เซ็น"
+      },
+      {
+        "file": "payment-webhook/src/payments/webhookRoute.ts",
+        "line": 64,
+        "snippet": "const signature = verifyWebhookSignature({"
+      },
+      {
+        "file": "payment-webhook/src/payments/webhookRoute.ts",
+        "line": 64,
+        "snippet": "const signature = verifyWebhookSignature({"
+      },
+      {
+        "file": "payment-webhook/src/payments/webhookRoute.ts",
+        "line": 64,
+        "snippet": "const signature = verifyWebhookSignature({"
+      },
+      {
+        "file": "payment-webhook/src/payments/webhookRoute.ts",
+        "line": 66,
+        "snippet": "header: req.get(SIGNATURE_HEADER),"
+      },
+      {
+        "file": "payment-webhook/src/payments/webhookRoute.ts",
+        "line": 70,
+        "snippet": "if (!signature.valid) {"
+      },
+      {
+        "file": "payment-webhook/src/payments/webhookRoute.ts",
+        "line": 72,
+        "snippet": "logger.warn('payment_webhook_signature_rejected', { requestId, reason: signature.reason });"
+      },
+      {
+        "file": "payment-webhook/src/payments/webhookRoute.ts",
+        "line": 72,
+        "snippet": "logger.warn('payment_webhook_signature_rejected', { requestId, reason: signature.reason });"
+      },
+      {
+        "file": "payment-webhook/src/payments/webhookRoute.ts",
+        "line": 73,
+        "snippet": "sendError(res, 401, 'invalid_signature', 'signature ไม่ถูกต้อง');"
+      },
+      {
+        "file": "payment-webhook/src/payments/webhookRoute.ts",
+        "line": 73,
+        "snippet": "sendError(res, 401, 'invalid_signature', 'signature ไม่ถูกต้อง');"
+      },
+      {
+        "file": "payment-webhook/tests/signature.test.ts",
+        "line": 2,
+        "snippet": "import { signWebhookPayload, verifyWebhookSignature } from '../src/payments/signature.js';"
+      },
+      {
+        "file": "payment-webhook/tests/signature.test.ts",
+        "line": 2,
+        "snippet": "import { signWebhookPayload, verifyWebhookSignature } from '../src/payments/signature.js';"
+      },
+      {
+        "file": "payment-webhook/tests/signature.test.ts",
+        "line": 2,
+        "snippet": "import { signWebhookPayload, verifyWebhookSignature } from '../src/payments/signature.js';"
+      },
+      {
+        "file": "payment-webhook/tests/signature.test.ts",
+        "line": 9,
+        "snippet": "function verify(payload: Buffer, header: string | undefined, secret = SECRET) {"
+      },
+      {
+        "file": "payment-webhook/tests/signature.test.ts",
+        "line": 10,
+        "snippet": "return verifyWebhookSignature({"
+      },
+      {
+        "file": "payment-webhook/tests/signature.test.ts",
+        "line": 10,
+        "snippet": "return verifyWebhookSignature({"
+      },
+      {
+        "file": "payment-webhook/tests/signature.test.ts",
+        "line": 19,
+        "snippet": "describe('verifyWebhookSignature', () => {"
+      },
+      {
+        "file": "payment-webhook/tests/signature.test.ts",
+        "line": 19,
+        "snippet": "describe('verifyWebhookSignature', () => {"
+      },
+      {
+        "file": "payment-webhook/tests/signature.test.ts",
+        "line": 22,
+        "snippet": "it('ยอมรับ signature ที่เซ็นด้วย secret เดียวกันและ timestamp ปัจจุบัน', () => {"
+      },
+      {
+        "file": "payment-webhook/tests/signature.test.ts",
+        "line": 24,
+        "snippet": "expect(verify(payload, header)).toEqual({ valid: true });"
+      },
+      {
+        "file": "payment-webhook/tests/signature.test.ts",
+        "line": 30,
+        "snippet": "expect(verify(thaiPayload, header)).toEqual({ valid: true });"
+      },
+      {
+        "file": "payment-webhook/tests/signature.test.ts",
+        "line": 36,
+        "snippet": "expect(verify(tampered, header)).toEqual({ valid: false, reason: 'signature_mismatch' });"
+      },
+      {
+        "file": "payment-webhook/tests/signature.test.ts",
+        "line": 36,
+        "snippet": "expect(verify(tampered, header)).toEqual({ valid: false, reason: 'signature_mismatch' });"
+      },
+      {
+        "file": "payment-webhook/tests/signature.test.ts",
+        "line": 41,
+        "snippet": "expect(verify(payload, header)).toEqual({ valid: false, reason: 'signature_mismatch' });"
+      },
+      {
+        "file": "payment-webhook/tests/signature.test.ts",
+        "line": 41,
+        "snippet": "expect(verify(payload, header)).toEqual({ valid: false, reason: 'signature_mismatch' });"
+      },
+      {
+        "file": "payment-webhook/tests/signature.test.ts",
+        "line": 45,
+        "snippet": "expect(verify(payload, undefined)).toEqual({ valid: false, reason: 'missing_header' });"
+      },
+      {
+        "file": "payment-webhook/tests/signature.test.ts",
+        "line": 46,
+        "snippet": "expect(verify(payload, '   ')).toEqual({ valid: false, reason: 'missing_header' });"
+      },
+      {
+        "file": "payment-webhook/tests/signature.test.ts",
+        "line": 51,
+        "snippet": "const signatureOnly = validHeader.split(',')[1] ?? '';"
+      },
+      {
+        "file": "payment-webhook/tests/signature.test.ts",
+        "line": 53,
+        "snippet": "expect(verify(payload, 'garbage')).toEqual({ valid: false, reason: 'malformed_header' });"
+      },
+      {
+        "file": "payment-webhook/tests/signature.test.ts",
+        "line": 54,
+        "snippet": "expect(verify(payload, signatureOnly)).toEqual({ valid: false, reason: 'malformed_header' });"
+      },
+      {
+        "file": "payment-webhook/tests/signature.test.ts",
+        "line": 54,
+        "snippet": "expect(verify(payload, signatureOnly)).toEqual({ valid: false, reason: 'malformed_header' });"
+      },
+      {
+        "file": "payment-webhook/tests/signature.test.ts",
+        "line": 55,
+        "snippet": "expect(verify(payload, `t=${NOW_SECONDS}`)).toEqual({ valid: false, reason: 'malformed_header' });"
+      },
+      {
+        "file": "payment-webhook/tests/signature.test.ts",
+        "line": 56,
+        "snippet": "expect(verify(payload, `t=${NOW_SECONDS},v1=not-hex`)).toEqual({ valid: false, reason: 'malformed_header' });"
+      },
+      {
+        "file": "payment-webhook/tests/signature.test.ts",
+        "line": 57,
+        "snippet": "expect(verify(payload, `t=abc,v1=${'a'.repeat(64)}`)).toEqual({ valid: false, reason: 'malformed_header' });"
+      },
+      {
+        "file": "payment-webhook/tests/signature.test.ts",
+        "line": 60,
+        "snippet": "it('ปฏิเสธ signature ที่ timestamp เก่าเกิน tolerance (กัน replay)', () => {"
+      },
+      {
+        "file": "payment-webhook/tests/signature.test.ts",
+        "line": 63,
+        "snippet": "expect(verify(payload, header)).toEqual({ valid: false, reason: 'timestamp_out_of_tolerance' });"
+      },
+      {
+        "file": "payment-webhook/tests/signature.test.ts",
+        "line": 66,
+        "snippet": "it('ปฏิเสธ signature ที่ timestamp ล้ำอนาคตเกิน tolerance', () => {"
+      },
+      {
+        "file": "payment-webhook/tests/signature.test.ts",
+        "line": 69,
+        "snippet": "expect(verify(payload, header)).toEqual({ valid: false, reason: 'timestamp_out_of_tolerance' });"
+      },
+      {
+        "file": "payment-webhook/tests/signature.test.ts",
+        "line": 75,
+        "snippet": "expect(verify(payload, header)).toEqual({ valid: true });"
+      },
+      {
+        "file": "payment-webhook/tests/signature.test.ts",
+        "line": 81,
+        "snippet": "expect(verify(empty, header)).toEqual({ valid: true });"
+      }
+    ],
+    "idempotency": [
+      {
+        "file": "payment-webhook/migrations/001_orders_and_payment_webhook_events.sql",
+        "line": 26,
+        "snippet": "-- event_id เป็น PK คือหัวใจของ idempotency: gateway ส่งซ้ำได้เสมอ"
+      },
+      {
+        "file": "payment-webhook/migrations/001_orders_and_payment_webhook_events.sql",
+        "line": 26,
+        "snippet": "-- event_id เป็น PK คือหัวใจของ idempotency: gateway ส่งซ้ำได้เสมอ"
+      },
+      {
+        "file": "payment-webhook/migrations/001_orders_and_payment_webhook_events.sql",
+        "line": 30,
+        "snippet": "event_id     TEXT        PRIMARY KEY,"
+      },
+      {
+        "file": "payment-webhook/src/payments/orderRepository.ts",
+        "line": 50,
+        "snippet": "`INSERT INTO payment_webhook_events (event_id, event_type)"
+      },
+      {
+        "file": "payment-webhook/src/payments/orderRepository.ts",
+        "line": 52,
+        "snippet": "ON CONFLICT (event_id) DO NOTHING`,"
+      },
+      {
+        "file": "payment-webhook/src/payments/orderRepository.ts",
+        "line": 52,
+        "snippet": "ON CONFLICT (event_id) DO NOTHING`,"
+      },
+      {
+        "file": "payment-webhook/src/payments/paymentService.ts",
+        "line": 54,
+        "snippet": "* - idempotent: gateway ยิงซ้ำกี่ครั้ง order ก็ถูกอัปเดตครั้งเดียว และอีเมลออกใบเดียว"
+      },
+      {
+        "file": "payment-webhook/src/payments/paymentService.ts",
+        "line": 135,
+        "snippet": "* แล้ว retry นั้นจะถูกกันด้วย idempotency อยู่ดี → อีเมลไม่ถูกส่งซ้ำและไม่ได้ช่วยอะไร"
+      },
+      {
+        "file": "payment-webhook/tests/paymentService.test.ts",
+        "line": 41,
+        "snippet": "readonly eventAlreadyProcessed?: boolean;"
+      },
+      {
+        "file": "payment-webhook/tests/paymentService.test.ts",
+        "line": 75,
+        "snippet": "return options.eventAlreadyProcessed !== true;"
+      },
+      {
+        "file": "payment-webhook/tests/paymentService.test.ts",
+        "line": 130,
+        "snippet": "const { deps, calls } = createHarness({ eventAlreadyProcessed: true });"
+      }
+    ],
+    "transaction": [
+      {
+        "file": "payment-webhook/migrations/001_orders_and_payment_webhook_events.sql",
+        "line": 4,
+        "snippet": "BEGIN;"
+      },
+      {
+        "file": "payment-webhook/migrations/001_orders_and_payment_webhook_events.sql",
+        "line": 35,
+        "snippet": "COMMIT;"
+      },
+      {
+        "file": "payment-webhook/src/db.ts",
+        "line": 29,
+        "snippet": "await client.query('BEGIN');"
+      },
+      {
+        "file": "payment-webhook/src/db.ts",
+        "line": 31,
+        "snippet": "await client.query('COMMIT');"
+      },
+      {
+        "file": "payment-webhook/src/payments/orderRepository.ts",
+        "line": 95,
+        "snippet": "* เพราะ order ถูก commit ว่า paid ไปแล้ว การส่งอีเมลล้มต้องไม่ทำให้สถานะเงินหาย"
+      },
+      {
+        "file": "payment-webhook/src/payments/paymentService.ts",
+        "line": 36,
+        "snippet": "* ใช้กับกรณีที่ \"ยังไม่ควรถือว่า event นี้ถูกประมวลผลแล้ว\" — ถ้าปล่อยให้ commit"
+      },
+      {
+        "file": "payment-webhook/src/payments/paymentService.ts",
+        "line": 56,
+        "snippet": "* - อีเมลส่งหลัง commit: อีเมลล้มไม่ทำให้สถานะการจ่ายเงินหาย"
+      },
+      {
+        "file": "payment-webhook/src/payments/paymentService.ts",
+        "line": 76,
+        "snippet": "// อาจเป็น race (webhook มาถึงก่อน order commit) — rollback เพื่อให้ retry ยังมีโอกาสสำเร็จ"
+      },
+      {
+        "file": "payment-webhook/src/payments/paymentService.ts",
+        "line": 134,
+        "snippet": "* order ถูก commit เป็น paid ไปแล้ว การตอบ error กลับไปหา gateway จะทำให้มัน retry"
+      },
+      {
+        "file": "payment-webhook/src/payments/webhookRoute.ts",
+        "line": 145,
+        "snippet": "// 404 เพื่อให้ gateway retry — เผื่อ webhook วิ่งมาถึงก่อน order ถูก commit"
+      }
+    ],
+    "http_status": [
+      {
+        "file": "payment-webhook/src/http/app.ts",
+        "line": 33,
+        "snippet": "res.status(404).json({ error: { code: 'not_found', message: 'ไม่พบ endpoint นี้' } });"
+      },
+      {
+        "file": "payment-webhook/src/http/app.ts",
+        "line": 70,
+        "snippet": "res.status(500).json({ error: { code: 'internal_error', message: 'เกิดข้อผิดพลาดภายในระบบ' } });"
+      }
+    ],
+    "over_abstraction": [],
+    "type_hint_py": [],
+    "docstring_py": []
+  },
+  "all_files": [
+    "RESPONSE.md",
+    "payment-webhook/.env.example",
+    "payment-webhook/.gitignore",
+    "payment-webhook/README.md",
+    "payment-webhook/migrations/001_orders_and_payment_webhook_events.sql",
+    "payment-webhook/package.json",
+    "payment-webhook/src/config.ts",
+    "payment-webhook/src/db.ts",
+    "payment-webhook/src/email/mailer.ts",
+    "payment-webhook/src/http/app.ts",
+    "payment-webhook/src/index.ts",
+    "payment-webhook/src/logger.ts",
+    "payment-webhook/src/payments/orderRepository.ts",
+    "payment-webhook/src/payments/paymentService.ts",
+    "payment-webhook/src/payments/signature.ts",
+    "payment-webhook/src/payments/webhookRoute.ts",
+    "payment-webhook/tests/paymentService.test.ts",
+    "payment-webhook/tests/signature.test.ts",
+    "payment-webhook/tsconfig.json",
+    "payment-webhook/tsconfig.test.json"
+  ]
+}

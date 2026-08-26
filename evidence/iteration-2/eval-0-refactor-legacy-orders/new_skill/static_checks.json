@@ -1,0 +1,162 @@
+{
+  "root": "/home/admin/.claude/skills/principal-engineer-workspace/iteration-2/eval-0-refactor-legacy-orders/new_skill/outputs",
+  "files": [
+    {
+      "path": "src/db.js",
+      "lines": 65
+    },
+    {
+      "path": "src/errors.js",
+      "lines": 27
+    },
+    {
+      "path": "src/mailer.js",
+      "lines": 64
+    },
+    {
+      "path": "src/money.js",
+      "lines": 37
+    },
+    {
+      "path": "src/orders/pricing.js",
+      "lines": 154
+    },
+    {
+      "path": "src/orders/repository.js",
+      "lines": 131
+    },
+    {
+      "path": "src/orders/routes.js",
+      "lines": 114
+    },
+    {
+      "path": "src/orders/service.js",
+      "lines": 91
+    },
+    {
+      "path": "src/orders/validation.js",
+      "lines": 144
+    },
+    {
+      "path": "test/pricing.test.js",
+      "lines": 213
+    },
+    {
+      "path": "test/validation.test.js",
+      "lines": 125
+    }
+  ],
+  "hits": {
+    "hardcoded_secret": [],
+    "string_concat_sql": [],
+    "fstring_sql": [],
+    "empty_catch": [],
+    "todo_placeholder": [],
+    "ts_any": [],
+    "await_in_loop": [],
+    "env_usage": [
+      {
+        "file": "src/db.js",
+        "line": 28,
+        "snippet": "port: Number(process.env.DB_PORT ?? 3306),"
+      },
+      {
+        "file": "src/db.js",
+        "line": 33,
+        "snippet": "connectionLimit: Number(process.env.DB_POOL_SIZE ?? 10),"
+      },
+      {
+        "file": "src/mailer.js",
+        "line": 18,
+        "snippet": "const endpoint = process.env.MAIL_API_URL;"
+      },
+      {
+        "file": "src/mailer.js",
+        "line": 19,
+        "snippet": "const apiKey = process.env.MAIL_API_KEY;"
+      },
+      {
+        "file": "src/mailer.js",
+        "line": 37,
+        "snippet": "signal: AbortSignal.timeout(Number(process.env.MAIL_TIMEOUT_MS ?? DEFAULT_TIMEOUT_MS)),"
+      }
+    ],
+    "param_query": [
+      {
+        "file": "src/orders/repository.js",
+        "line": 24,
+        "snippet": "'SELECT id, name, price, category FROM products WHERE id IN (?)',"
+      },
+      {
+        "file": "src/orders/repository.js",
+        "line": 60,
+        "snippet": "\"INSERT INTO orders (user_id, total, status, created_at) VALUES (?, ?, 'new', NOW())\","
+      },
+      {
+        "file": "src/orders/repository.js",
+        "line": 60,
+        "snippet": "\"INSERT INTO orders (user_id, total, status, created_at) VALUES (?, ?, 'new', NOW())\","
+      }
+    ],
+    "decimal_money": [
+      {
+        "file": "src/money.js",
+        "line": 8,
+        "snippet": "* ทำไมต้องแปลง: mysql2 คืนค่า DECIMAL มาเป็น string และการคูณส่วนลดด้วย float"
+      },
+      {
+        "file": "src/money.js",
+        "line": 25,
+        "snippet": "* แปลงกลับเป็นหน่วยหลัก (บาท) สำหรับเก็บลงคอลัมน์ DECIMAL เดิมและตอบกลับ client"
+      }
+    ],
+    "float_money": [],
+    "group_by": [],
+    "context_manager": [],
+    "zod_schema": [],
+    "signature_verify": [],
+    "idempotency": [],
+    "transaction": [
+      {
+        "file": "src/db.js",
+        "line": 38,
+        "snippet": "* รัน callback ใน transaction เดียว: commit เมื่อสำเร็จ, rollback เมื่อ throw,"
+      },
+      {
+        "file": "src/db.js",
+        "line": 54,
+        "snippet": "await conn.commit();"
+      },
+      {
+        "file": "src/mailer.js",
+        "line": 10,
+        "snippet": "* ไม่เคย throw โดยตั้งใจ: order commit ไปแล้ว การส่งเมลไม่สำเร็จจึงต้องไม่ทำให้"
+      }
+    ],
+    "http_status": [
+      {
+        "file": "src/orders/routes.js",
+        "line": 107,
+        "snippet": "res.status(500).json({"
+      }
+    ],
+    "over_abstraction": [],
+    "type_hint_py": [],
+    "docstring_py": []
+  },
+  "all_files": [
+    ".env.example",
+    "RESPONSE.md",
+    "src/db.js",
+    "src/errors.js",
+    "src/mailer.js",
+    "src/money.js",
+    "src/orders/pricing.js",
+    "src/orders/repository.js",
+    "src/orders/routes.js",
+    "src/orders/service.js",
+    "src/orders/validation.js",
+    "test/pricing.test.js",
+    "test/validation.test.js"
+  ]
+}

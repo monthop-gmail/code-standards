@@ -1,0 +1,85 @@
+{
+  "expectations": [
+    {
+      "text": "verify signature ของ webhook ก่อนประมวลผล payload",
+      "passed": true,
+      "evidence": "src/payments/webhookRoute.ts:64-75 verifyWebhookSignature() runs on the raw Buffer and returns 401 before any JSON.parse (parseJson called only at line 77). signature.ts:58-68 uses createHmac('sha256', secret).update(`${parsed.timestamp}.`).update(payload) + timingSafeEqual, plus a timestamp tolerance check (line 52) against replay."
+    },
+    {
+      "text": "มีกลไก idempotency กัน webhook ที่ส่งซ้ำไม่ให้อัพเดท/ส่งอีเมลซ้ำ",
+      "passed": true,
+      "evidence": "orderRepository.ts:49-55 `INSERT INTO payment_webhook_events (event_id, event_type) VALUES ($1,$2) ON CONFLICT (event_id) DO NOTHING` returns rowCount>0; paymentService.ts:69-72 `if (!isNewEvent) return { outcome: 'duplicate_event' }` short-circuits before markOrderPaid and before the email. Second layer: orderRepository.ts:78-88 `UPDATE orders ... WHERE id=$1 AND status='pending'`."
+    },
+    {
+      "text": "ไม่มี secret hardcode — อ่านจาก env var และมี .env.example",
+      "passed": true,
+      "evidence": "src/config.ts:8-16 zod envSchema reads PAYMENT_WEBHOOK_SECRET/DATABASE_URL/SMTP_URL from process.env (config.ts:21 `envSchema.safeParse(process.env)`), min(16) enforced; .env.example exists with `PAYMENT_WEBHOOK_SECRET=` left blank and .gitignore covers .env. static_checks 'hardcoded_secret' hit is tests/signature.test.ts:4 `const SECRET = 'test-secret-at-least-16-chars'` — a test fixture, not production code."
+    },
+    {
+      "text": "validate payload ด้วย schema (zod หรือเทียบเท่า) ไม่ใช่ใช้ req.body ดิบ ๆ",
+      "passed": true,
+      "evidence": "src/payments/webhookRoute.ts:20-33 paymentEventSchema (z.object with order_id z.string().uuid(), amount z.number().int().positive(), currency regex) and line 84 `paymentEventSchema.safeParse(payload)` -> 400 on failure. req.body is only touched as an unknown Buffer (line 56) guarded by Buffer.isBuffer."
+    },
+    {
+      "text": "TypeScript strict และไม่มี any ในโค้ดที่เขียนเอง",
+      "passed": true,
+      "evidence": "tsconfig.json:9-17 `\"strict\": true` plus noUncheckedIndexedAccess, noImplicitOverride, noFallthroughCasesInSwitch, noUnusedLocals/Parameters, verbatimModuleSyntax. grep -rnE '\\bany\\b' over src/ and tests/ returns nothing; unknown is used instead (webhookRoute.ts:56 `const rawBody: unknown`, logger.ts:55 `describeError(error: unknown)`)."
+    },
+    {
+      "text": "ส่งอีเมลล้มเหลวไม่ทำให้สถานะ order ที่อัพเดทแล้วพัง (แยกออกจาก critical path หรือจัดการ error ชัดเจน)",
+      "passed": true,
+      "evidence": "paymentService.ts:127 sendConfirmationEmail is called AFTER runInTransaction returns (commit at db.ts:31), and 139-160 wraps it in try/catch returning false + logger.error('order_confirmation_email_failed'). Route still answers 200 (webhookRoute.ts:124-128 with confirmation_email_sent flag). Retry queue is designed in: migrations 22-24 partial index `WHERE status='paid' AND confirmation_email_sent_at IS NULL`. Test at tests/paymentService.test.ts:203 'ส่งอีเมลไม่สำเร็จ ต้องไม่ทำให้การบันทึกว่าจ่ายแล้วล้มตาม'."
+    },
+    {
+      "text": "มีไฟล์ test ที่ครอบเคสสำคัญ (signature ผิด / ส่งซ้ำ)",
+      "passed": true,
+      "evidence": "tests/signature.test.ts:33 'ปฏิเสธเมื่อ payload ถูกแก้หลังเซ็น', :39 'ปฏิเสธเมื่อเซ็นด้วย secret คนละตัว', :44 missing header, :49 malformed header, :60/:66 replay both directions, :78 empty body. tests/paymentService.test.ts:129 'ยิง event เดิมซ้ำ ไม่อัปเดตและไม่ส่งอีเมลซ้ำ' asserting markPaidInputs/emailedOrderIds have length 0, plus :194 lost-race case."
+    },
+    {
+      "text": "ตอบ HTTP status code ถูกต้อง (2xx เมื่อรับสำเร็จ, 4xx เมื่อ signature ผิด)",
+      "passed": true,
+      "evidence": "webhookRoute.ts:73 `sendError(res, 401, 'invalid_signature', ...)`; :124 200 on 'processed'; :135 200 on duplicate_event/order_already_paid so the gateway stops retrying; :99 200 for ignored event types; :80 400 invalid JSON, :91 400 invalid payload, :147 404 order_not_found (deliberately retryable), :152 409 amount_mismatch. Documented in README.md:57-66."
+    },
+    {
+      "text": "ไม่มี TODO / placeholder / ฟังก์ชันที่ยังไม่ implement",
+      "passed": true,
+      "evidence": "static_checks.json 'todo_placeholder': [] and my own grep for TODO|FIXME|XXX|'not implemented' over src/ and tests/ returned nothing. Every exported function has a real body; the only unwritten piece (the retry worker) is declared as out of scope in RESPONSE.md:82, not left as a stub."
+    },
+    {
+      "text": "RESPONSE.md บอกชัดว่าต้องตั้ง env var อะไรบ้างและเหลืออะไรต้องทำต่อ",
+      "passed": true,
+      "evidence": "RESPONSE.md:63-70 'ต้องตั้งค่าเพิ่ม' gives npm install / cp .env.example .env / psql -f migrations/... and 'env ที่จำเป็น: DATABASE_URL, PAYMENT_WEBHOOK_SECRET (>=16 ตัว), SMTP_URL, MAIL_FROM'. RESPONSE.md:80-86 'ที่ยังไม่ได้ทำ (ตั้งใจ)' lists the email retry worker, edge rate limit/IP allowlist, HTTP integration tests, ESLint/Prettier. README.md:22-35 repeats the full env table with defaults."
+    },
+    {
+      "text": "[ใหม่] การเปลี่ยนสถานะ order ถูกเก็บลง datastore จริง ไม่ใช่ Map/Set ในโปรเซสที่ wire เข้า production entrypoint",
+      "passed": true,
+      "evidence": "orderRepository.ts:78-88 issues a real parameterized `UPDATE orders SET status='paid', paid_at=$2, payment_reference=$3 ...` on a pg client. Production wiring is index.ts:9 createApp().listen -> http/app.ts:30 mounts paymentWebhookRouter -> webhookRoute.ts:36-37 `withTransaction((client) => fn(createOrderRepository(client)))` where withTransaction (db.ts:25-45) draws from `pool = new pg.Pool({connectionString: config.DATABASE_URL})`. grep for 'new Map|new Set|InMemory' in src/ returns nothing — the only in-memory doubles live in tests/paymentService.test.ts's harness."
+    },
+    {
+      "text": "[ใหม่] idempotency ถูกบังคับด้วย unique constraint หรือ transaction ไม่ใช่ check-then-write ใน memory",
+      "passed": true,
+      "evidence": "migrations/001:29-33 `CREATE TABLE ... payment_webhook_events (event_id TEXT PRIMARY KEY, ...)` — the constraint, not a lookup. The dedup INSERT (orderRepository.ts:49-55) and the order UPDATE (78-88) both run on the SAME transaction client: paymentService.ts:68-109 does both inside one runInTransaction callback, which db.ts:29-31 wraps in BEGIN/COMMIT with ROLLBACK on throw. findOrderForUpdate uses `FOR UPDATE` (orderRepository.ts:68) to serialize concurrent deliveries. RollbackSignal (paymentService.ts:40-48, thrown at 77 and 95) deliberately rolls the dedup row back on order_not_found/amount_mismatch so a gateway retry is not permanently swallowed."
+    },
+    {
+      "text": "[ใหม่] HMAC คำนวณจาก raw request body (Buffer) ไม่ใช่ JSON ที่ serialize ใหม่ และ route ไม่ได้อยู่หลัง express.json()",
+      "passed": true,
+      "evidence": "webhookRoute.ts:53 mounts `express.raw({ type: 'application/json', limit: MAX_BODY_SIZE })` on this route only; :56-62 rejects with 400 unless Buffer.isBuffer(req.body); :64-69 passes that Buffer straight to verifyWebhookSignature. signature.ts:58-61 `.update(`${parsed.timestamp}.`).update(payload)` feeds the Buffer to the hash without a toString round-trip (comment at 56-57 cites Thai/emoji byte stability). grep -rn 'express.json|bodyParser' across src/ and tests/ returns ZERO hits; http/app.ts registers only attachRequestId before the router."
+    },
+    {
+      "text": "[ใหม่] อีเมลผู้รับดึงจาก order ใน DB ไม่ใช่จาก payload ที่ gateway ส่งมา",
+      "passed": true,
+      "evidence": "mailer.ts:24-26 `to: order.customerEmail`, where Order comes from orderRepository.ts:58-73 findOrderForUpdate SELECTing customer_email from the orders row (toOrder(), line 115). paymentService.ts:146 `deps.sendOrderConfirmationEmail(order, event.paymentReference)` passes the DB order, and the zod paymentEventSchema (webhookRoute.ts:20-33) has NO email field at all, so no attacker-supplied address can reach the mailer."
+    },
+    {
+      "text": "[ใหม่] ไม่รายงานตัวเลขผ่าน/ไม่ผ่านของ test ที่ไม่ได้มาจาก test runner จริง — ถ้ารันไม่ได้ต้องบอกว่ารันไม่ได้และเพราะอะไร",
+      "passed": true,
+      "evidence": "RESPONSE.md:55-57 heading 'เรื่อง test — ยังรันไม่ได้' then: 'รัน `npm test` ไม่ได้เพราะยังไม่ได้ `npm install` (ไม่มี vitest ในเครื่อง) เลย **ไม่มีตัวเลขผ่าน/ไม่ผ่านให้**'. RESPONSE.md:61: 'แต่นั่นไม่ใช่การรัน test suite จริง ยังไม่ได้ผ่าน `tsc` ด้วย (ไม่มี typescript ในเครื่อง) หลัง `npm install` รบกวนรัน `npm run typecheck && npm test` อีกรอบ'. It still enumerates the cases each file covers (RESPONSE.md:58-59) without asserting outcomes. A regex sweep for pass/fail counts over every produced file (RESPONSE.md, README.md, tests, src) returned zero hits — contrast iteration-1's RESPONSE.md:58-60 '25/25 ผ่าน', '9/9 ผ่าน', '3/3 ผ่าน'."
+    }
+  ],
+  "summary": {
+    "passed": 15,
+    "failed": 0,
+    "total": 15,
+    "pass_rate": 1.0
+  }
+}
